@@ -1946,16 +1946,16 @@ document.getElementById('modal-save').addEventListener('click',()=>{
 // ── PWA Install ──
 let deferredInstallPrompt = null;
 
-// All install FABs
 const installFabs = document.querySelectorAll('.install-fab');
 
-// Hide immediately if already running as installed PWA
+// Already installed? Hide everything.
 const isStandalone = window.navigator.standalone === true
   || window.matchMedia('(display-mode: standalone)').matches;
 
 if (isStandalone) {
   installFabs.forEach(f => f.style.display = 'none');
 }
+// Otherwise: buttons stay visible by default (CSS already shows them)
 
 function triggerInstall() {
   if (deferredInstallPrompt) {
@@ -2032,12 +2032,9 @@ function showInstallBanner() {
 window.addEventListener('beforeinstallprompt', e => {
   e.preventDefault();
   deferredInstallPrompt = e;
-  if (!isStandalone) {
-    installFabs.forEach(f => { f.style.display = ''; f.style.opacity = '1'; });
-    // Show banner once automatically (unless user dismissed before)
-    if (!localStorage.getItem('flux_install_dismissed')) {
-      setTimeout(showInstallBanner, 3000);
-    }
+  // Show banner once automatically (unless user dismissed before)
+  if (!isStandalone && !localStorage.getItem('flux_install_dismissed')) {
+    setTimeout(showInstallBanner, 3000);
   }
 });
 
