@@ -834,6 +834,27 @@ input[type="date"]::-webkit-calendar-picker-indicator{opacity:0.4;}
 
 <script type="module">
 // ══════════════════════════════════════════════
+// CACHE BUSTING — bump APP_VERSION bei jedem neuen Design
+// ══════════════════════════════════════════════
+const APP_VERSION = 'v14';
+const storedVersion = localStorage.getItem('flux_app_version');
+if (storedVersion !== APP_VERSION) {
+  // Alle alten SW-Caches löschen
+  if ('caches' in window) {
+    caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
+  }
+  // Alten Service Worker deregistrieren, damit er sofort aktualisiert wird
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then(regs => {
+      regs.forEach(reg => reg.unregister());
+    });
+  }
+  localStorage.setItem('flux_app_version', APP_VERSION);
+  // Nur einmal neu laden (verhindert Endlosschleife)
+  if (storedVersion !== null) location.reload();
+}
+
+// ══════════════════════════════════════════════
 // FIREBASE CONFIG
 // ══════════════════════════════════════════════
 const FIREBASE_CONFIG = {
@@ -1840,7 +1861,16 @@ setInterval(()=>{
   ['dash-date','insights-date','cal-date'].forEach(id=>{document.getElementById(id).textContent=f;});
 },60000);
 
-if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js').then(reg=>{
+    reg.update();
+    reg.addEventListener('updatefound',()=>{
+      const newSW=reg.installing;
+      if(newSW){newSW.addEventListener('statechange',()=>{if(newSW.state==='installed'&&navigator.serviceWorker.controller){newSW.postMessage({type:'SKIP_WAITING'});}});}
+    });
+  }).catch(()=>{});
+  navigator.serviceWorker.addEventListener('controllerchange',()=>location.reload());
+}
 </script>
 </body>
 </html>
