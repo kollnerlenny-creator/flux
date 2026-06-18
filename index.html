@@ -4,30 +4,42 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>Flux – Energie-Tracking</title>
+
+<!-- PWA -->
+<meta name="theme-color" content="#030810">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Flux">
+<meta name="description" content="Flux – dein persönliches Energie-Tagebuch">
+<!-- Icons: lege deine Dateien im GitHub-Repo unter /icons/ ab -->
+<link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180.png">
+<link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152.png">
+<link rel="apple-touch-icon" sizes="120x120" href="icons/icon-120.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
+<link rel="manifest" href="manifest.json">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500&family=Space+Grotesk:wght@300;400;500;600&display=swap');
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --bg: #050508;
+    --bg: #030810;
     --glass: rgba(255,255,255,0.04);
     --glass-md: rgba(255,255,255,0.06);
-    --glass-border: rgba(255,255,255,0.08);
-    --glass-border-strong: rgba(255,255,255,0.14);
-    --glass-hover: rgba(255,255,255,0.07);
-    --blue: #4A9EFF;
-    --violet: #9B6BFF;
-    --teal: #00D4AA;
-    --rose: #FF6B9D;
-    --amber: #FFB347;
-    --emerald: #00E5A0;
+    --glass-border: rgba(80,220,255,0.1);
+    --glass-border-strong: rgba(80,220,255,0.22);
+    --glass-hover: rgba(80,220,255,0.07);
+    --cyan: #50DCFF;
+    --cyan2: #7AE8FF;
+    --teal: #00C4CC;
+    --teal2: #00E5D0;
+    --deep: #0088AA;
     --text: rgba(255,255,255,0.92);
-    --text-dim: rgba(255,255,255,0.42);
-    --text-faint: rgba(255,255,255,0.14);
-    --glow-blue: rgba(74,158,255,0.18);
-    --glow-violet: rgba(155,107,255,0.18);
-    --glow-teal: rgba(0,212,170,0.12);
+    --text-dim: rgba(180,240,255,0.45);
+    --text-faint: rgba(120,200,220,0.18);
+    --glow-cyan: rgba(80,220,255,0.2);
   }
 
   html, body {
@@ -39,39 +51,24 @@
     overflow: hidden;
     touch-action: none;
     -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
   }
 
   /* ── Ambient Background ── */
-  .ambient {
-    position: fixed; inset: 0; z-index: 0; pointer-events: none;
-  }
+  .ambient { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
   .orb {
     position: absolute; border-radius: 50%;
-    filter: blur(90px); opacity: 0;
-    animation: orbFloat 16s ease-in-out infinite alternate;
-    will-change: transform, opacity;
+    filter: blur(90px);
+    animation: orbFloat 18s ease-in-out infinite alternate;
+    will-change: transform;
   }
-  .orb.loaded { opacity: 1; transition: opacity 2s ease; }
-  .orb1 { width: 500px; height: 500px; background: radial-gradient(circle, rgba(74,158,255,0.5), transparent 70%); top: -150px; left: -100px; animation-duration: 18s; opacity: 0.3; }
-  .orb2 { width: 420px; height: 420px; background: radial-gradient(circle, rgba(155,107,255,0.5), transparent 70%); bottom: -100px; right: -80px; animation-duration: 14s; animation-delay: -5s; opacity: 0.28; }
-  .orb3 { width: 250px; height: 250px; background: radial-gradient(circle, rgba(0,212,170,0.4), transparent 70%); top: 45%; left: 55%; transform: translate(-50%,-50%); animation-duration: 11s; animation-delay: -3s; opacity: 0.18; }
-  .orb4 { width: 180px; height: 180px; background: radial-gradient(circle, rgba(255,107,157,0.35), transparent 70%); top: 30%; right: 10%; animation-duration: 20s; animation-delay: -8s; opacity: 0.12; }
+  .orb1 { width: 520px; height: 520px; background: radial-gradient(circle, rgba(0,136,170,0.55), transparent 70%); top: -160px; left: -120px; animation-duration: 20s; opacity: 0.7; }
+  .orb2 { width: 400px; height: 400px; background: radial-gradient(circle, rgba(0,196,204,0.4), transparent 70%); bottom: -100px; right: -80px; animation-duration: 15s; animation-delay: -6s; opacity: 0.55; }
+  .orb3 { width: 220px; height: 220px; background: radial-gradient(circle, rgba(80,220,255,0.3), transparent 70%); top: 42%; left: 55%; transform: translate(-50%,-50%); animation-duration: 12s; animation-delay: -3s; opacity: 0.4; }
 
   @keyframes orbFloat {
     0%   { transform: translate(0,0) scale(1); }
-    33%  { transform: translate(20px,-15px) scale(1.05); }
-    66%  { transform: translate(-10px,25px) scale(0.97); }
-    100% { transform: translate(30px,10px) scale(1.08); }
-  }
-
-  /* Noise texture overlay for glass feel */
-  .ambient::after {
-    content: '';
-    position: absolute; inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-    opacity: 0.4;
-    pointer-events: none;
+    40%  { transform: translate(25px,-18px) scale(1.06); }
+    100% { transform: translate(-10px,28px) scale(0.96); }
   }
 
   /* ── App Shell ── */
@@ -82,46 +79,61 @@
     max-width: 430px; margin: 0 auto;
   }
 
-  /* ── Screens Container ── */
-  #screens {
-    flex: 1;
-    position: relative;
-    overflow: hidden;
-  }
+  #screens { flex: 1; position: relative; overflow: hidden; }
 
   .screen {
     position: absolute; inset: 0;
     display: flex; flex-direction: column;
-    padding: 0 22px 28px;
-    opacity: 0;
-    pointer-events: none;
+    padding: 0 20px 24px;
+    opacity: 0; pointer-events: none;
     transition: transform 0.55s cubic-bezier(0.16,1,0.3,1), opacity 0.4s ease;
     will-change: transform, opacity;
   }
-  .screen.active   { opacity: 1; pointer-events: all; transform: translateX(0); }
-  .screen.left     { transform: translateX(-100%); opacity: 0; }
-  .screen.right    { transform: translateX(100%); opacity: 0; }
+  .screen.active { opacity: 1; pointer-events: all; transform: translateX(0); }
+  .screen.left   { transform: translateX(-100%); opacity: 0; }
+  .screen.right  { transform: translateX(100%); opacity: 0; }
 
   /* ── Header ── */
   .header {
-    padding: 52px 0 20px;
+    padding: 48px 0 16px;
     display: flex; align-items: center; justify-content: space-between;
     flex-shrink: 0;
   }
+
+  /* Logo: styled "f" like the icon */
   .logo {
+    display: flex; align-items: center; gap: 10px;
+  }
+  .logo-icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: radial-gradient(ellipse at 40% 35%, #1a4a5a 0%, #0a1e2a 100%);
+    border: 1px solid rgba(80,220,255,0.25);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 18px rgba(80,220,255,0.15), inset 0 1px 0 rgba(80,220,255,0.15);
+    flex-shrink: 0;
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 21px; font-weight: 600; letter-spacing: -0.8px;
-    background: linear-gradient(135deg, var(--blue) 0%, var(--violet) 100%);
+    font-size: 20px; font-weight: 500;
+    color: var(--cyan);
+    letter-spacing: -1px;
+    text-shadow: 0 0 14px rgba(80,220,255,0.7), 0 2px 4px rgba(0,0,0,0.5);
+    transform: rotate(-4deg);
+    line-height: 1;
+    padding-bottom: 2px;
+  }
+  .logo-text {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 22px; font-weight: 500; letter-spacing: -0.8px;
+    background: linear-gradient(135deg, var(--cyan) 0%, var(--teal2) 100%);
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     background-clip: text;
   }
+
   .date-chip {
-    font-size: 11px; color: var(--text-dim); letter-spacing: 0.4px;
+    font-size: 11px; color: var(--text-dim); letter-spacing: 0.3px;
     background: var(--glass); border: 1px solid var(--glass-border);
     border-radius: 20px; padding: 5px 12px;
     backdrop-filter: blur(12px);
   }
-  .header-actions { display: flex; align-items: center; gap: 8px; }
 
   /* ── Glass Card ── */
   .glass-card {
@@ -130,21 +142,19 @@
     border-radius: 24px;
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
-    padding: 22px;
-    position: relative;
-    overflow: hidden;
+    padding: 20px;
+    position: relative; overflow: hidden;
   }
   .glass-card::before {
     content: '';
     position: absolute; top: 0; left: 0; right: 0; height: 50%;
-    background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, transparent 100%);
-    border-radius: inherit;
-    pointer-events: none;
+    background: linear-gradient(180deg, rgba(80,220,255,0.04) 0%, transparent 100%);
+    border-radius: inherit; pointer-events: none;
   }
 
   /* ── DASHBOARD ── */
   #dash .sliders-row {
-    display: flex; gap: 14px; margin-bottom: 18px;
+    display: flex; gap: 14px; margin-bottom: 16px;
     flex-shrink: 0;
   }
 
@@ -154,24 +164,24 @@
     border: 1px solid var(--glass-border);
     border-radius: 28px;
     backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    padding: 18px 14px 18px;
+    padding: 16px 14px 16px;
     display: flex; flex-direction: column;
     align-items: center; gap: 10px;
     position: relative; overflow: hidden;
     cursor: ns-resize; user-select: none;
     transition: border-color 0.3s, box-shadow 0.3s;
-    min-height: 200px;
+    height: 280px; /* bigger slider */
+    flex-shrink: 0;
   }
   .slider-card::before {
     content: '';
     position: absolute; top: 0; left: 0; right: 0; height: 60%;
-    background: linear-gradient(180deg, rgba(255,255,255,0.06) 0%, transparent 100%);
+    background: linear-gradient(180deg, rgba(80,220,255,0.05) 0%, transparent 100%);
     border-radius: inherit; pointer-events: none;
   }
   .slider-card.dragging {
     border-color: var(--glass-border-strong);
-    box-shadow: 0 8px 40px rgba(74,158,255,0.12);
+    box-shadow: 0 8px 40px rgba(80,220,255,0.12);
   }
 
   .slider-label {
@@ -181,233 +191,188 @@
   }
 
   .liquid-slider {
-    flex: 1; width: 38px;
+    flex: 1; width: 44px;
     position: relative;
-    background: rgba(255,255,255,0.04);
-    border-radius: 20px;
+    background: rgba(80,220,255,0.04);
+    border-radius: 22px;
     overflow: hidden;
-    border: 1px solid rgba(255,255,255,0.06);
-    min-height: 80px;
+    border: 1px solid rgba(80,220,255,0.07);
+    min-height: 100px;
   }
   .liquid-fill {
     position: absolute; bottom: 0; left: 0; right: 0;
-    border-radius: 20px;
-    transition: height 0.06s linear;
+    border-radius: 22px;
+    transition: height 0.05s linear;
     overflow: hidden;
   }
-  /* Liquid surface shimmer */
   .liquid-fill::before {
     content: '';
     position: absolute; top: 0; left: 0; right: 0; height: 8px;
-    background: rgba(255,255,255,0.12);
-    border-radius: 50%;
-    filter: blur(2px);
+    background: rgba(255,255,255,0.18);
+    border-radius: 50%; filter: blur(2px);
     animation: liquidSurface 3s ease-in-out infinite;
   }
   .liquid-fill::after {
     content: '';
     position: absolute; inset: 0;
-    background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 30%);
+    background: linear-gradient(180deg, rgba(255,255,255,0.18) 0%, transparent 35%);
   }
   @keyframes liquidSurface {
-    0%, 100% { transform: scaleX(1) translateY(0); opacity: 0.7; }
-    50% { transform: scaleX(1.1) translateY(-1px); opacity: 1; }
+    0%,100% { transform: scaleX(1); opacity: 0.7; }
+    50%      { transform: scaleX(1.12) translateY(-1px); opacity: 1; }
   }
 
   .slider-value {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 26px; font-weight: 500; letter-spacing: -1.5px;
+    font-size: 28px; font-weight: 500; letter-spacing: -1.5px;
     background: linear-gradient(180deg, #fff 0%, rgba(255,255,255,0.55) 100%);
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    background-clip: text;
-    flex-shrink: 0;
-    line-height: 1;
+    background-clip: text; flex-shrink: 0; line-height: 1;
   }
-  #body-fill    { background: linear-gradient(180deg, #60B4FF, #7C5CE4); }
-  #emotion-fill { background: linear-gradient(180deg, #00E5A0, #4A9EFF); }
+  .mood-emoji { font-size: 16px; flex-shrink: 0; transition: transform 0.3s; }
 
-  /* Mood emoji indicator */
-  .mood-emoji {
-    font-size: 16px; flex-shrink: 0;
-    transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
-    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.3));
-  }
+  #body-fill    { background: linear-gradient(180deg, var(--cyan), var(--teal)); }
+  #emotion-fill { background: linear-gradient(180deg, var(--teal2), var(--cyan)); }
 
   .save-btn {
     width: 100%; padding: 15px;
-    background: linear-gradient(135deg, #4A9EFF 0%, #7C5CE4 50%, #9B6BFF 100%);
+    background: linear-gradient(135deg, var(--deep) 0%, var(--teal) 50%, var(--cyan) 100%);
     background-size: 200% 200%;
     border: none; border-radius: 20px; cursor: pointer;
     font-family: 'Space Grotesk', sans-serif;
     font-size: 14px; font-weight: 500; color: white;
     letter-spacing: 0.5px;
-    transition: opacity 0.2s, transform 0.15s, background-position 0.4s;
-    margin-bottom: 16px;
-    position: relative; overflow: hidden;
+    transition: opacity 0.2s, transform 0.15s;
+    margin-bottom: 14px; position: relative; overflow: hidden;
     flex-shrink: 0;
-    animation: gradientShift 4s ease infinite;
+    animation: gradientShift 5s ease infinite;
   }
   @keyframes gradientShift {
-    0%, 100% { background-position: 0% 50%; }
-    50%       { background-position: 100% 50%; }
+    0%,100% { background-position: 0% 50%; }
+    50%      { background-position: 100% 50%; }
   }
   .save-btn::after {
     content: '';
     position: absolute; inset: 0;
-    background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 60%);
+    background: linear-gradient(180deg, rgba(255,255,255,0.16) 0%, transparent 60%);
     border-radius: inherit;
   }
   .save-btn:active { opacity: 0.82; transform: scale(0.98); }
 
   /* Tags */
   .tags-section {
-    flex: 1; overflow: hidden;
     background: var(--glass);
     border: 1px solid var(--glass-border);
     border-radius: 24px;
     backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    padding: 18px 18px 14px;
+    padding: 14px 14px 10px;
     position: relative;
-    overflow: hidden;
+    display: flex; flex-direction: column;
+    flex-shrink: 0;
   }
   .tags-section::before {
     content: '';
     position: absolute; top: 0; left: 0; right: 0; height: 50%;
-    background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, transparent 100%);
+    background: linear-gradient(180deg, rgba(80,220,255,0.04) 0%, transparent 100%);
     border-radius: inherit; pointer-events: none;
   }
   .tags-label {
     font-size: 9px; letter-spacing: 1.8px; text-transform: uppercase;
-    color: var(--text-dim); margin-bottom: 12px;
-    flex-shrink: 0;
+    color: var(--text-dim); margin-bottom: 8px; flex-shrink: 0;
   }
   .tags-grid {
-    display: flex; flex-wrap: wrap; gap: 7px;
-    overflow-y: auto; max-height: calc(100% - 28px);
+    display: flex; flex-wrap: wrap; gap: 6px;
+    align-content: flex-start;
   }
-  .tags-grid::-webkit-scrollbar { display: none; }
   .tag {
-    padding: 7px 13px;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.07);
+    padding: 6px 11px;
+    background: rgba(80,220,255,0.04);
+    border: 1px solid rgba(80,220,255,0.09);
     border-radius: 20px; font-size: 12px; color: var(--text-dim);
     cursor: pointer; transition: all 0.28s cubic-bezier(0.16,1,0.3,1);
     backdrop-filter: blur(10px); user-select: none;
     -webkit-tap-highlight-color: transparent;
-    font-weight: 300;
+    font-weight: 300; flex-shrink: 0;
+    white-space: nowrap;
   }
-  .tag:hover { border-color: rgba(255,255,255,0.15); color: var(--text); }
   .tag.active {
-    background: linear-gradient(135deg, rgba(74,158,255,0.18), rgba(155,107,255,0.18));
-    border-color: rgba(155,107,255,0.45);
-    color: rgba(255,255,255,0.9);
-    box-shadow: 0 0 18px rgba(155,107,255,0.14), inset 0 1px 0 rgba(255,255,255,0.1);
+    background: linear-gradient(135deg, rgba(0,136,170,0.22), rgba(0,229,208,0.18));
+    border-color: rgba(80,220,255,0.4);
+    color: var(--cyan);
+    box-shadow: 0 0 18px rgba(80,220,255,0.12), inset 0 1px 0 rgba(80,220,255,0.1);
   }
   .tag:active { transform: scale(0.93); }
 
   /* ── INSIGHTS ── */
-  #insights .section-title {
+  .section-title {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 30px; font-weight: 300; letter-spacing: -1.2px;
+    font-size: 28px; font-weight: 300; letter-spacing: -1.2px;
     margin-bottom: 4px; margin-top: 2px;
-    background: linear-gradient(135deg, var(--text) 0%, rgba(255,255,255,0.4) 100%);
+    background: linear-gradient(135deg, var(--text) 0%, rgba(80,220,255,0.5) 100%);
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     background-clip: text;
   }
   .section-sub {
-    font-size: 12px; color: var(--text-dim); margin-bottom: 20px;
-    letter-spacing: 0.2px; font-weight: 300;
+    font-size: 12px; color: var(--text-dim); margin-bottom: 18px;
+    font-weight: 300;
   }
 
-  .wave-chart {
-    width: 100%; height: 110px; margin-bottom: 16px;
-  }
-  .wave-chart svg { width: 100%; height: 100%; overflow: visible; }
-
-  /* Week day labels for wave */
-  .wave-days {
-    display: flex; justify-content: space-between;
-    padding: 0 2px; margin-top: -4px; margin-bottom: 12px;
-  }
-  .wave-day-lbl {
-    font-size: 9px; color: var(--text-faint);
-    letter-spacing: 0.5px; text-transform: uppercase;
-    text-align: center; flex: 1;
-  }
-
-  .correlation-list { display: flex; flex-direction: column; gap: 9px; }
-  .corr-item {
-    display: flex; align-items: center; gap: 12px;
-    background: var(--glass); border: 1px solid var(--glass-border);
-    border-radius: 18px; padding: 13px 15px;
-    backdrop-filter: blur(10px);
-    transition: border-color 0.25s, transform 0.25s;
-  }
-  .corr-item:hover { border-color: var(--glass-border-strong); transform: translateX(2px); }
-  .corr-dot {
-    width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0;
-  }
-  .corr-name { flex: 1; font-size: 13px; color: var(--text); font-weight: 300; }
-  .corr-bar-wrap {
-    width: 72px; height: 3px;
-    background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden;
-  }
-  .corr-bar {
-    height: 100%; border-radius: 2px;
-    transition: width 1.2s cubic-bezier(0.16,1,0.3,1);
-  }
-  .corr-pct {
-    font-size: 11px; color: var(--text-dim);
-    width: 30px; text-align: right;
-    font-family: 'Space Grotesk', sans-serif;
-    letter-spacing: -0.3px;
-  }
-
-  .stats-row { display: flex; gap: 10px; margin-bottom: 18px; }
+  .stats-row { display: flex; gap: 10px; margin-bottom: 16px; }
   .stat-pill {
     flex: 1;
     background: var(--glass); border: 1px solid var(--glass-border);
-    border-radius: 20px; padding: 14px 12px;
+    border-radius: 20px; padding: 14px 10px;
     text-align: center; backdrop-filter: blur(10px);
     position: relative; overflow: hidden;
   }
   .stat-pill::before {
     content: '';
     position: absolute; top: 0; left: 0; right: 0; height: 50%;
-    background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, transparent 100%);
+    background: linear-gradient(180deg, rgba(80,220,255,0.04) 0%, transparent 100%);
     border-radius: inherit; pointer-events: none;
   }
   .stat-num {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 30px; font-weight: 400; letter-spacing: -1.5px;
-    background: linear-gradient(135deg, var(--blue), var(--violet));
+    font-size: 28px; font-weight: 400; letter-spacing: -1.5px;
+    background: linear-gradient(135deg, var(--cyan), var(--teal2));
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     background-clip: text; display: block;
   }
   .stat-label { font-size: 9px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-dim); margin-top: 3px; }
 
-  /* Streak badge */
   .streak-badge {
     display: inline-flex; align-items: center; gap: 5px;
-    background: linear-gradient(135deg, rgba(255,179,71,0.15), rgba(255,107,157,0.15));
-    border: 1px solid rgba(255,179,71,0.3);
+    background: linear-gradient(135deg, rgba(80,220,255,0.1), rgba(0,196,204,0.1));
+    border: 1px solid rgba(80,220,255,0.25);
     border-radius: 14px; padding: 5px 10px;
-    font-size: 11px; color: var(--amber);
+    font-size: 11px; color: var(--cyan);
     font-family: 'Space Grotesk', sans-serif;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
   }
+
+  .wave-chart { width: 100%; height: 100px; margin-bottom: 8px; }
+  .wave-chart svg { width: 100%; height: 100%; overflow: visible; }
+  .wave-days {
+    display: flex; justify-content: space-between;
+    padding: 0 2px; margin-bottom: 12px;
+  }
+  .wave-day-lbl { font-size: 9px; color: var(--text-faint); letter-spacing: 0.5px; text-transform: uppercase; text-align: center; flex: 1; }
+
+  .correlation-list { display: flex; flex-direction: column; gap: 8px; }
+  .corr-item {
+    display: flex; align-items: center; gap: 12px;
+    background: var(--glass); border: 1px solid var(--glass-border);
+    border-radius: 16px; padding: 12px 14px;
+    backdrop-filter: blur(10px);
+    transition: border-color 0.25s;
+  }
+  .corr-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .corr-name { flex: 1; font-size: 13px; color: var(--text); font-weight: 300; }
+  .corr-bar-wrap { width: 70px; height: 3px; background: rgba(80,220,255,0.07); border-radius: 2px; overflow: hidden; }
+  .corr-bar { height: 100%; border-radius: 2px; transition: width 1.2s cubic-bezier(0.16,1,0.3,1); }
+  .corr-pct { font-size: 11px; color: var(--text-dim); width: 30px; text-align: right; font-family: 'Space Grotesk', sans-serif; }
 
   /* ── CALENDAR ── */
-  #calendar .section-title {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 30px; font-weight: 300; letter-spacing: -1.2px;
-    margin-bottom: 4px; margin-top: 2px;
-    background: linear-gradient(135deg, var(--text) 0%, rgba(255,255,255,0.4) 100%);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
   .month-nav {
     display: flex; align-items: center; justify-content: space-between;
     margin-bottom: 4px;
@@ -417,16 +382,14 @@
     background: var(--glass); border: 1px solid var(--glass-border);
     color: var(--text-dim); cursor: pointer; font-size: 14px;
     display: flex; align-items: center; justify-content: center;
-    transition: all 0.2s;
-    backdrop-filter: blur(10px);
+    transition: all 0.2s; backdrop-filter: blur(10px);
     -webkit-tap-highlight-color: transparent;
   }
-  .month-nav-btn:hover { border-color: var(--glass-border-strong); color: var(--text); }
   .month-nav-btn:active { transform: scale(0.9); }
 
   .month-grid {
-    display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px;
-    margin-top: 8px;
+    display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px;
+    margin-top: 6px; flex-shrink: 0;
   }
   .day-label {
     font-size: 8px; letter-spacing: 1px; text-transform: uppercase;
@@ -435,55 +398,57 @@
   .droplet-wrap {
     display: flex; flex-direction: column;
     align-items: center; justify-content: center;
-    aspect-ratio: 1; cursor: pointer;
-    gap: 3px;
+    aspect-ratio: 1; cursor: pointer; gap: 3px;
     -webkit-tap-highlight-color: transparent;
   }
   .droplet {
     border-radius: 50% 50% 50% 50% / 58% 58% 42% 42%;
-    transition: transform 0.35s cubic-bezier(0.16,1,0.3,1), box-shadow 0.35s, filter 0.35s;
-    position: relative;
-    flex-shrink: 0;
+    transition: transform 0.35s cubic-bezier(0.16,1,0.3,1), box-shadow 0.35s;
+    position: relative; flex-shrink: 0;
   }
   .droplet::after {
     content: '';
     position: absolute; top: 18%; left: 22%; width: 28%; height: 18%;
     background: rgba(255,255,255,0.28); border-radius: 50%;
-    transform: rotate(-18deg);
-    pointer-events: none;
+    transform: rotate(-18deg); pointer-events: none;
   }
   .droplet-wrap:hover .droplet { transform: scale(1.2) translateY(-2px); }
   .droplet-wrap.today .droplet {
-    box-shadow: 0 0 0 1.5px rgba(74,158,255,0.5), 0 0 20px rgba(74,158,255,0.3);
+    box-shadow: 0 0 0 1.5px rgba(80,220,255,0.55), 0 0 18px rgba(80,220,255,0.3);
   }
   .droplet-num {
     font-size: 8px; color: var(--text-faint);
     line-height: 1; text-align: center;
     font-family: 'Space Grotesk', sans-serif;
   }
-  .droplet-wrap.today .droplet-num { color: var(--blue); }
+  .droplet-wrap.today .droplet-num { color: var(--cyan); }
 
-  /* Legend */
-  .cal-legend {
-    display: flex; gap: 16px; margin-top: 12px;
-    padding: 10px 14px;
-    background: var(--glass); border: 1px solid var(--glass-border);
-    border-radius: 16px; backdrop-filter: blur(10px);
+  /* Multi-log dots on calendar */
+  .log-dots {
+    display: flex; gap: 2px; justify-content: center; margin-top: 1px;
+    height: 4px;
+  }
+  .log-dot {
+    width: 3px; height: 3px; border-radius: 50%;
+    background: rgba(80,220,255,0.5);
     flex-shrink: 0;
   }
-  .legend-item {
-    display: flex; align-items: center; gap: 6px;
-    font-size: 10px; color: var(--text-dim);
+
+  .cal-legend {
+    display: flex; gap: 14px; margin-top: 10px;
+    padding: 9px 13px;
+    background: var(--glass); border: 1px solid var(--glass-border);
+    border-radius: 14px; backdrop-filter: blur(10px);
+    flex-shrink: 0;
   }
-  .legend-dot {
-    width: 8px; height: 8px; border-radius: 50%;
-  }
+  .legend-item { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--text-dim); }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
 
   .day-detail {
-    margin-top: 12px;
-    padding: 15px 18px;
+    margin-top: 10px;
+    padding: 14px 16px;
     background: var(--glass); border: 1px solid var(--glass-border);
-    border-radius: 20px; backdrop-filter: blur(10px);
+    border-radius: 18px; backdrop-filter: blur(10px);
     font-size: 13px; color: var(--text-dim); line-height: 1.7;
     animation: fadeSlideUp 0.35s cubic-bezier(0.16,1,0.3,1);
     flex-shrink: 0;
@@ -493,24 +458,159 @@
     to   { opacity: 1; transform: translateY(0); }
   }
   .day-detail strong { color: var(--text); font-weight: 400; }
-  .day-detail-bars { display: flex; gap: 8px; margin-top: 10px; }
-  .detail-bar-wrap { flex: 1; }
-  .detail-bar-label { font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-faint); margin-bottom: 5px; }
-  .detail-bar-track { height: 4px; background: rgba(255,255,255,0.07); border-radius: 2px; overflow: hidden; }
-  .detail-bar-fill { height: 100%; border-radius: 2px; transition: width 0.8s cubic-bezier(0.16,1,0.3,1); }
+
+  /* Log entry row in day detail */
+  .log-entry-row {
+    display: flex; flex-direction: column; gap: 6px;
+    padding: 12px 0; border-bottom: 1px solid rgba(80,220,255,0.07);
+  }
+  .log-entry-row:last-child { border-bottom: none; }
+  .log-entry-header {
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .log-time {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 12px; color: var(--cyan); letter-spacing: 0.5px;
+    font-weight: 600;
+  }
+  .log-tags-row { display: flex; flex-wrap: wrap; gap: 4px; }
+  .mini-tag {
+    font-size: 10px; background: rgba(80,220,255,0.08);
+    border: 1px solid rgba(80,220,255,0.18);
+    border-radius: 10px; padding: 2px 8px; color: var(--cyan);
+  }
+  .log-metric-row {
+    display: flex; align-items: center; gap: 8px;
+  }
+  .log-metric-label {
+    font-size: 9px; color: var(--text-dim); letter-spacing: 1px;
+    text-transform: uppercase; width: 54px; flex-shrink: 0;
+  }
+  .mini-bar-track { flex: 1; height: 6px; background: rgba(80,220,255,0.07); border-radius: 3px; overflow: hidden; }
+  .mini-bar-fill-body { height: 100%; background: linear-gradient(90deg, #50DCFF, #00E5D0); border-radius: 3px; transition: width 0.4s ease; }
+  .mini-bar-fill-emo  { height: 100%; background: linear-gradient(90deg, #00C4CC, #7AE8FF); border-radius: 3px; transition: width 0.4s ease; }
+  .log-metric-val {
+    font-family: 'Space Grotesk', sans-serif; font-size: 11px;
+    color: var(--text); width: 32px; text-align: right; flex-shrink: 0;
+  }
+
+  /* Swipe-to-delete on log entries */
+  .log-entry-row {
+    position: relative;
+    overflow: hidden;
+    touch-action: pan-y;
+  }
+  .swipe-delete-bg {
+    position: absolute; right: 0; top: 0; bottom: 0;
+    width: 80px;
+    background: linear-gradient(90deg, transparent, rgba(255,60,90,0.18) 40%, rgba(255,60,90,0.32));
+    display: flex; align-items: center; justify-content: flex-end;
+    padding-right: 14px;
+    color: rgba(255,100,120,0.75); font-size: 16px;
+    pointer-events: none; opacity: 0;
+    transition: opacity 0.15s ease;
+    border-radius: 0 0 0 0;
+  }
+  .log-entry-row.swiping .swipe-delete-bg { opacity: 1; }
+  .log-entry-inner {
+    position: relative;
+    transition: transform 0.25s cubic-bezier(0.16,1,0.3,1);
+    background: transparent;
+    will-change: transform;
+  }
+
+  /* Day detail close hint */
+  .detail-close-hint {
+    font-size: 10px; color: var(--text-faint); text-align: center;
+    margin-top: 10px; letter-spacing: 0.3px; opacity: 0.7;
+  }
+
+  /* Animations for new entries */
+  @keyframes entrySlideIn {
+    from { opacity: 0; transform: translateX(-10px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  .log-entry-row {
+    animation: entrySlideIn 0.32s cubic-bezier(0.16,1,0.3,1) both;
+  }
+  .log-entry-row:nth-child(2) { animation-delay: 0.06s; }
+  .log-entry-row:nth-child(3) { animation-delay: 0.12s; }
+  .log-entry-row:nth-child(4) { animation-delay: 0.18s; }
+
+  /* Calendar droplet click pulse */
+  @keyframes dropletPulse {
+    0%   { transform: scale(1); }
+    40%  { transform: scale(1.35) translateY(-3px); }
+    70%  { transform: scale(0.95) translateY(0); }
+    100% { transform: scale(1.1) translateY(-1px); }
+  }
+  .droplet-wrap.selected .droplet {
+    animation: dropletPulse 0.45s cubic-bezier(0.16,1,0.3,1) forwards;
+    box-shadow: 0 0 0 2px rgba(80,220,255,0.6), 0 0 20px rgba(80,220,255,0.35) !important;
+  }
+
+  /* Stat pill count-up shimmer */
+  @keyframes statShimmer {
+    from { opacity: 0.3; transform: translateY(4px); }
+    to   { opacity: 1;   transform: translateY(0); }
+  }
+  .stat-num.updated {
+    animation: statShimmer 0.4s cubic-bezier(0.16,1,0.3,1);
+  }
+
+  /* Save button success pulse */
+  @keyframes savePulse {
+    0%   { box-shadow: 0 0 0 0 rgba(80,220,255,0.5); }
+    60%  { box-shadow: 0 0 0 18px rgba(80,220,255,0); }
+    100% { box-shadow: 0 0 0 0 rgba(80,220,255,0); }
+  }
+  .save-btn.pulsed { animation: savePulse 0.7s ease-out; }
+
+  /* Day detail animated entry */
+  @keyframes detailReveal {
+    from { opacity: 0; transform: translateY(12px) scaleY(0.95); transform-origin: top; }
+    to   { opacity: 1; transform: translateY(0) scaleY(1); }
+  }
+  .day-detail.visible {
+    animation: detailReveal 0.38s cubic-bezier(0.16,1,0.3,1);
+  }
+
+  /* Droplet wave animation on calendar build */
+  @keyframes dropletFadeIn {
+    from { opacity: 0; transform: scale(0.5) translateY(6px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  .droplet-wrap { animation: dropletFadeIn 0.35s cubic-bezier(0.16,1,0.3,1) both; }
+
+  /* Correlation bar pulse */
+  @keyframes corrPulse {
+    0%,100% { opacity: 1; }
+    50%      { opacity: 0.65; }
+  }
 
   /* ── Gesture Hints ── */
   .gesture-hint {
     text-align: center; font-size: 10px; color: var(--text-faint);
-    letter-spacing: 0.3px; padding: 10px 0 0;
-    flex-shrink: 0;
+    letter-spacing: 0.3px; padding: 8px 0 0; flex-shrink: 0;
   }
 
-  /* ── Nav Dots ── */
+  /* ── Nav ── */
+  .nav-labels {
+    display: flex; justify-content: center; align-items: center;
+    padding: 0 0 2px; flex-shrink: 0;
+  }
+  .nav-label {
+    flex: 1; text-align: center;
+    font-size: 9px; letter-spacing: 1.2px; text-transform: uppercase;
+    color: var(--text-faint); transition: color 0.3s; cursor: pointer;
+    padding: 0 4px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .nav-label.active { color: var(--cyan); }
+
   .nav-dots {
     display: flex; justify-content: center; align-items: center; gap: 6px;
-    padding: 10px 0 6px;
-    flex-shrink: 0;
+    padding: 8px 0 6px; flex-shrink: 0;
   }
   .dot {
     width: 5px; height: 5px; border-radius: 50%;
@@ -518,135 +618,106 @@
     cursor: pointer; -webkit-tap-highlight-color: transparent;
   }
   .dot.active {
-    background: var(--blue); width: 20px; border-radius: 3px;
-    box-shadow: 0 0 10px rgba(74,158,255,0.5);
+    background: var(--cyan); width: 20px; border-radius: 3px;
+    box-shadow: 0 0 10px rgba(80,220,255,0.5);
   }
-
-  /* ── Screen Nav labels ── */
-  .nav-labels {
-    display: flex; justify-content: center; align-items: center;
-    gap: 0; padding: 0 0 2px;
-    flex-shrink: 0;
-  }
-  .nav-label {
-    flex: 1; text-align: center;
-    font-size: 9px; letter-spacing: 1.2px; text-transform: uppercase;
-    color: var(--text-faint); transition: color 0.3s; cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-    padding: 0 4px;
-  }
-  .nav-label.active { color: var(--blue); }
 
   /* ── Toast ── */
   #toast {
-    position: fixed; bottom: 76px; left: 50%;
+    position: fixed; bottom: 72px; left: 50%;
     transform: translateX(-50%) translateY(12px);
-    background: rgba(15,15,28,0.92);
-    border: 1px solid rgba(74,158,255,0.25);
+    background: rgba(5,18,30,0.94); border: 1px solid rgba(80,220,255,0.2);
     border-radius: 22px; padding: 11px 22px;
     font-size: 13px; color: var(--text);
     opacity: 0; transition: all 0.38s cubic-bezier(0.16,1,0.3,1);
     pointer-events: none; z-index: 100;
-    backdrop-filter: blur(24px);
-    white-space: nowrap;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-    max-width: 90vw;
+    backdrop-filter: blur(24px); white-space: nowrap;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4); max-width: 90vw;
   }
   #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-  /* Scrollable area */
   .scroll-content {
-    overflow-y: auto; flex: 1;
-    /* momentum scrolling */
+    overflow-y: auto; flex: 1; min-height: 0;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
-    padding-right: 2px;
   }
+  .scroll-content.slider-active { overflow-y: hidden; }
   .scroll-content::-webkit-scrollbar { display: none; }
 
   /* ── Ripple ── */
   .ripple {
     position: absolute; border-radius: 50%;
-    background: rgba(255,255,255,0.25);
+    background: rgba(80,220,255,0.2);
     transform: scale(0); animation: ripple 0.65s ease-out forwards;
     pointer-events: none;
   }
-  @keyframes ripple {
-    to { transform: scale(4); opacity: 0; }
-  }
+  @keyframes ripple { to { transform: scale(4); opacity: 0; } }
 
-  /* ── Reminder Modal ── */
+  /* ── Save Overlay ── */
+  #save-overlay {
+    position: fixed; inset: 0; z-index: 300;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity 0.4s;
+  }
+  #save-overlay.show { opacity: 1; }
+  .save-ring {
+    width: 80px; height: 80px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--deep), var(--teal), var(--cyan));
+    display: flex; align-items: center; justify-content: center; font-size: 28px;
+    box-shadow: 0 0 60px rgba(80,220,255,0.4), 0 0 120px rgba(0,196,204,0.25);
+    animation: ringPop 0.5s cubic-bezier(0.16,1,0.3,1);
+  }
+  @keyframes ringPop { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+  /* ── Modals ── */
   .modal-overlay {
     position: fixed; inset: 0; z-index: 200;
-    background: rgba(0,0,0,0.65);
-    backdrop-filter: blur(10px);
+    background: rgba(0,0,0,0.65); backdrop-filter: blur(10px);
     display: flex; align-items: flex-end; justify-content: center;
-    opacity: 0; pointer-events: none;
-    transition: opacity 0.35s;
+    opacity: 0; pointer-events: none; transition: opacity 0.35s;
   }
   .modal-overlay.open { opacity: 1; pointer-events: all; }
   .modal-sheet {
     width: 100%; max-width: 430px;
-    background: rgba(10,10,20,0.96);
-    border: 1px solid var(--glass-border);
-    border-bottom: none;
-    border-radius: 32px 32px 0 0; padding: 24px 24px 44px;
-    transform: translateY(100%);
-    transition: transform 0.48s cubic-bezier(0.16,1,0.3,1);
+    background: rgba(3,12,22,0.97); border: 1px solid var(--glass-border);
+    border-bottom: none; border-radius: 32px 32px 0 0;
+    padding: 22px 22px 44px;
+    transform: translateY(100%); transition: transform 0.48s cubic-bezier(0.16,1,0.3,1);
   }
   .modal-overlay.open .modal-sheet { transform: translateY(0); }
-  .modal-handle {
-    width: 36px; height: 4px; background: rgba(255,255,255,0.12);
-    border-radius: 2px; margin: 0 auto 22px;
-  }
-  .modal-title {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 20px; font-weight: 400;
-    margin-bottom: 6px; letter-spacing: -0.5px;
-  }
-  .modal-sub {
-    font-size: 12px; color: var(--text-dim); margin-bottom: 20px;
-  }
+  .modal-handle { width: 36px; height: 4px; background: rgba(80,220,255,0.15); border-radius: 2px; margin: 0 auto 20px; }
+  .modal-title { font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 400; margin-bottom: 6px; letter-spacing: -0.5px; }
+  .modal-sub { font-size: 12px; color: var(--text-dim); margin-bottom: 18px; }
+
   .time-input {
-    width: 100%; background: var(--glass);
-    border: 1px solid var(--glass-border);
+    width: 100%; background: var(--glass); border: 1px solid var(--glass-border);
     border-radius: 16px; padding: 14px 18px;
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 32px; color: var(--text);
-    text-align: center; letter-spacing: 3px;
-    margin-bottom: 14px; outline: none;
-    -webkit-appearance: none;
+    font-family: 'Space Grotesk', sans-serif; font-size: 32px; color: var(--text);
+    text-align: center; letter-spacing: 3px; margin-bottom: 14px; outline: none;
     transition: border-color 0.25s;
   }
-  .time-input:focus { border-color: rgba(74,158,255,0.35); }
+  .time-input:focus { border-color: rgba(80,220,255,0.35); }
 
-  /* reminder days checkboxes */
-  .reminder-days {
-    display: flex; gap: 6px; margin-bottom: 16px; justify-content: center;
-  }
+  .reminder-days { display: flex; gap: 6px; margin-bottom: 14px; justify-content: center; }
   .day-toggle {
     width: 36px; height: 36px; border-radius: 50%;
     background: var(--glass); border: 1px solid var(--glass-border);
     color: var(--text-dim); cursor: pointer; font-size: 10px;
     display: flex; align-items: center; justify-content: center;
-    transition: all 0.25s; font-weight: 400; letter-spacing: 0;
-    font-family: 'Inter', sans-serif;
+    transition: all 0.25s; font-family: 'Inter', sans-serif;
     -webkit-tap-highlight-color: transparent;
   }
   .day-toggle.active {
-    background: linear-gradient(135deg, rgba(74,158,255,0.2), rgba(155,107,255,0.2));
-    border-color: rgba(155,107,255,0.4);
-    color: var(--text);
+    background: linear-gradient(135deg, rgba(0,136,170,0.2), rgba(0,229,208,0.18));
+    border-color: rgba(80,220,255,0.4); color: var(--cyan);
   }
   .modal-close-btn {
     width: 100%; padding: 15px;
-    background: linear-gradient(135deg, var(--blue), var(--violet));
+    background: linear-gradient(135deg, var(--deep), var(--teal));
     border: none; border-radius: 18px; cursor: pointer;
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 14px; font-weight: 500; color: white;
-    letter-spacing: 0.4px;
-    transition: opacity 0.2s, transform 0.15s;
-    position: relative; overflow: hidden;
+    font-size: 14px; font-weight: 500; color: white; letter-spacing: 0.4px;
+    transition: opacity 0.2s, transform 0.15s; position: relative; overflow: hidden;
   }
   .modal-close-btn::after {
     content: '';
@@ -657,73 +728,138 @@
   .modal-close-btn:active { opacity: 0.85; transform: scale(0.98); }
   input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(1) opacity(0.4); }
 
+  /* Firebase status */
+  .firebase-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 10px; color: var(--text-dim); letter-spacing: 0.3px;
+  }
+  .fb-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #ccc; transition: background 0.3s;
+  }
+  .fb-dot.connected { background: #00D4AA; box-shadow: 0 0 6px rgba(0,212,170,0.6); }
+  .fb-dot.error { background: #FF6B9D; }
+
   /* Reminder FAB */
   .reminder-fab {
-    width: 34px; height: 34px; border-radius: 50%;
+    width: 32px; height: 32px; border-radius: 50%;
     background: var(--glass); border: 1px solid var(--glass-border);
     display: flex; align-items: center; justify-content: center;
-    cursor: pointer; font-size: 14px;
+    cursor: pointer; font-size: 13px;
     transition: transform 0.2s, border-color 0.2s;
-    backdrop-filter: blur(10px);
-    -webkit-tap-highlight-color: transparent;
+    backdrop-filter: blur(10px); -webkit-tap-highlight-color: transparent;
   }
-  .reminder-fab:hover { border-color: var(--glass-border-strong); }
   .reminder-fab:active { transform: scale(0.88); }
-  .reminder-fab.set { border-color: rgba(74,158,255,0.4); }
-
-  /* ── Entry success animation overlay ── */
-  #save-overlay {
-    position: fixed; inset: 0; z-index: 300;
-    display: flex; align-items: center; justify-content: center;
-    opacity: 0; pointer-events: none;
-    transition: opacity 0.4s;
-  }
-  #save-overlay.show { opacity: 1; }
-  .save-ring {
-    width: 80px; height: 80px; border-radius: 50%;
-    background: linear-gradient(135deg, var(--blue), var(--violet));
-    display: flex; align-items: center; justify-content: center;
-    font-size: 28px;
-    box-shadow: 0 0 60px rgba(74,158,255,0.4), 0 0 120px rgba(155,107,255,0.25);
-    animation: ringPop 0.5s cubic-bezier(0.16,1,0.3,1);
-  }
-  @keyframes ringPop {
-    from { transform: scale(0.5); opacity: 0; }
-    to   { transform: scale(1); opacity: 1; }
-  }
-
-  /* ── Transitions ── */
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
-  }
+  .reminder-fab.set { border-color: rgba(80,220,255,0.4); }
 </style>
 </head>
 <body>
 
-<!-- Ambient Background -->
-<div class="ambient" id="ambient">
+<div class="ambient">
   <div class="orb orb1"></div>
   <div class="orb orb2"></div>
   <div class="orb orb3"></div>
-  <div class="orb4 orb"></div>
 </div>
 
-<!-- App -->
+<!-- ══ AUTH SCREEN ══ -->
+<div id="auth-screen" style="
+  display:none; position:fixed; inset:0; z-index:999;
+  background:linear-gradient(160deg,#0a0e1a 0%,#0d1526 60%,#0a1020 100%);
+  flex-direction:column; align-items:center; justify-content:center;
+  padding:24px;
+">
+  <div style="width:100%;max-width:340px;">
+    <!-- Logo -->
+    <div style="text-align:center;margin-bottom:36px;">
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:32px;font-weight:700;
+        background:linear-gradient(135deg,#50DCFF,#00E5D0);-webkit-background-clip:text;
+        -webkit-text-fill-color:transparent;letter-spacing:-1px;">flux</div>
+      <div style="font-size:11px;color:rgba(180,210,255,0.4);letter-spacing:2px;margin-top:4px;">ENERGIE-TAGEBUCH</div>
+    </div>
+
+    <!-- Card -->
+    <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(80,220,255,0.12);
+      border-radius:20px;padding:28px 24px;backdrop-filter:blur(20px);">
+
+      <div id="auth-title" style="font-family:'Space Grotesk',sans-serif;font-size:18px;
+        font-weight:600;color:#e8f4ff;margin-bottom:20px;text-align:center;">
+        Willkommen zurück
+      </div>
+
+      <!-- Name (nur bei Registrierung) -->
+      <div id="auth-name-row" style="display:none;flex-direction:column;gap:6px;margin-bottom:14px;">
+        <label style="font-size:11px;color:rgba(180,210,255,0.5);letter-spacing:1px;text-transform:uppercase;">Name (optional)</label>
+        <input id="auth-name" type="text" placeholder="Dein Name" style="
+          background:rgba(80,220,255,0.06);border:1px solid rgba(80,220,255,0.15);
+          border-radius:12px;padding:12px 14px;color:#e8f4ff;font-size:14px;
+          outline:none;width:100%;box-sizing:border-box;
+          font-family:'Space Grotesk',sans-serif;
+        ">
+      </div>
+
+      <!-- Email -->
+      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;">
+        <label style="font-size:11px;color:rgba(180,210,255,0.5);letter-spacing:1px;text-transform:uppercase;">E-Mail</label>
+        <input id="auth-email" type="email" placeholder="deine@email.de" autocomplete="email" style="
+          background:rgba(80,220,255,0.06);border:1px solid rgba(80,220,255,0.15);
+          border-radius:12px;padding:12px 14px;color:#e8f4ff;font-size:14px;
+          outline:none;width:100%;box-sizing:border-box;
+          font-family:'Space Grotesk',sans-serif;
+        ">
+      </div>
+
+      <!-- Passwort -->
+      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:20px;">
+        <label style="font-size:11px;color:rgba(180,210,255,0.5);letter-spacing:1px;text-transform:uppercase;">Passwort</label>
+        <input id="auth-password" type="password" placeholder="••••••••" autocomplete="current-password" style="
+          background:rgba(80,220,255,0.06);border:1px solid rgba(80,220,255,0.15);
+          border-radius:12px;padding:12px 14px;color:#e8f4ff;font-size:14px;
+          outline:none;width:100%;box-sizing:border-box;
+          font-family:'Space Grotesk',sans-serif;
+        ">
+      </div>
+
+      <!-- Fehler -->
+      <div id="auth-error" style="display:none;background:rgba(255,80,120,0.1);
+        border:1px solid rgba(255,80,120,0.25);border-radius:10px;
+        padding:10px 14px;color:#FF8FAB;font-size:12px;margin-bottom:14px;line-height:1.5;">
+      </div>
+
+      <!-- Button -->
+      <button id="auth-btn" style="
+        width:100%;padding:14px;border:none;border-radius:14px;
+        background:linear-gradient(135deg,#50DCFF,#00E5D0);
+        color:#0a0e1a;font-size:14px;font-weight:700;cursor:pointer;
+        font-family:'Space Grotesk',sans-serif;letter-spacing:0.3px;
+        transition:opacity 0.2s;
+      ">Anmelden</button>
+
+      <!-- Switch -->
+      <div id="auth-switch-text" style="text-align:center;margin-top:16px;font-size:13px;color:rgba(180,210,255,0.45);">
+        Noch kein Konto? <button id="auth-switch-btn" style="background:none;border:none;color:#50DCFF;cursor:pointer;font-size:13px;padding:0;">Registrieren</button>
+      </div>
+    </div>
+
+    <div style="text-align:center;margin-top:16px;font-size:10px;color:rgba(180,210,255,0.2);letter-spacing:0.5px;">
+      Deine Daten bleiben privat und verschlüsselt.
+    </div>
+  </div>
+</div>
+
 <div id="app">
   <div id="screens">
 
-    <!-- ══ INSIGHTS (left) ══ -->
+    <!-- ══ INSIGHTS ══ -->
     <div class="screen left" id="insights">
       <div class="header">
-        <div class="logo">flux</div>
+        <div class="logo-text">flux</div>
         <div class="date-chip" id="insights-date"></div>
       </div>
       <div class="scroll-content">
         <div class="section-title">Einblicke</div>
-        <div class="section-sub">Was gibt dir Energie?</div>
+        <div class="section-sub">Deine persönlichen Energie-Muster</div>
 
-        <!-- Streak -->
-        <div class="streak-badge" id="streak-badge">🔥 <span id="streak-days">0</span> Tage in Folge</div>
+        <div class="streak-badge">🔥 <span id="streak-days">0</span> Tage in Folge</div>
 
         <div class="stats-row">
           <div class="stat-pill">
@@ -740,761 +876,1155 @@
           </div>
         </div>
 
-        <!-- Wave Chart -->
-        <div class="glass-card" style="margin-bottom: 14px; padding: 18px 14px 14px;">
+        <div class="glass-card" style="margin-bottom:14px;padding:16px 14px 12px;">
           <div style="font-size:9px;letter-spacing:1.8px;text-transform:uppercase;color:var(--text-dim);margin-bottom:12px;">7-Tage-Verlauf</div>
+          <div id="wave-empty" style="display:none;text-align:center;padding:20px 0 8px;color:var(--text-dim);font-size:12px;opacity:0.6;">Noch keine Einträge – fang heute an!</div>
           <div class="wave-chart">
             <svg id="wave-svg" viewBox="0 0 320 100" preserveAspectRatio="none">
               <defs>
-                <linearGradient id="gradBlue" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stop-color="#4A9EFF" stop-opacity="0.75"/>
-                  <stop offset="100%" stop-color="#4A9EFF" stop-opacity="0"/>
+                <linearGradient id="gradCyan" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#50DCFF" stop-opacity="0.7"/>
+                  <stop offset="100%" stop-color="#50DCFF" stop-opacity="0"/>
                 </linearGradient>
                 <linearGradient id="gradTeal" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stop-color="#00D4AA" stop-opacity="0.55"/>
-                  <stop offset="100%" stop-color="#00D4AA" stop-opacity="0"/>
+                  <stop offset="0%" stop-color="#00E5D0" stop-opacity="0.5"/>
+                  <stop offset="100%" stop-color="#00E5D0" stop-opacity="0"/>
                 </linearGradient>
-                <filter id="glow">
-                  <feGaussianBlur stdDeviation="2" result="blur"/>
-                  <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-                </filter>
               </defs>
-              <path id="wave-body-fill" fill="url(#gradBlue)" opacity="0.65"/>
-              <path id="wave-body-line" fill="none" stroke="#4A9EFF" stroke-width="1.8" stroke-linecap="round" filter="url(#glow)"/>
-              <path id="wave-emotion-fill" fill="url(#gradTeal)" opacity="0.45"/>
-              <path id="wave-emotion-line" fill="none" stroke="#00D4AA" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="5 4" opacity="0.85"/>
+              <path id="wave-body-fill" fill="url(#gradCyan)" opacity="0.75"/>
+              <path id="wave-body-line" fill="none" stroke="#50DCFF" stroke-width="1.5" stroke-linecap="round"/>
+              <path id="wave-emotion-fill" fill="url(#gradTeal)" opacity="0.55"/>
+              <path id="wave-emotion-line" fill="none" stroke="#00E5D0" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="4 3"/>
               <g id="wave-dots"></g>
             </svg>
           </div>
           <div class="wave-days" id="wave-days"></div>
-          <div style="display:flex;gap:16px;margin-top:4px;">
-            <div style="display:flex;align-items:center;gap:6px;font-size:10px;color:var(--text-dim);">
-              <div style="width:16px;height:2px;background:#4A9EFF;border-radius:1px;box-shadow:0 0 4px #4A9EFF;"></div>Körper
+          <div style="display:flex;gap:16px;">
+            <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-dim);">
+              <div style="width:12px;height:2px;background:#50DCFF;border-radius:1px;"></div>Körper
             </div>
-            <div style="display:flex;align-items:center;gap:6px;font-size:10px;color:var(--text-dim);">
-              <div style="width:16px;height:2px;background:#00D4AA;border-radius:1px;opacity:0.8;"></div>Emotion
+            <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-dim);">
+              <div style="width:12px;height:2px;background:#00E5D0;border-radius:1px;"></div>Emotion
             </div>
           </div>
         </div>
 
-        <!-- Correlations -->
-        <div style="font-size:9px;letter-spacing:1.8px;text-transform:uppercase;color:var(--text-dim);margin-bottom:10px;">Energie-Korrelationen</div>
+        <div style="font-size:9px;letter-spacing:1.8px;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px;">Energie-Korrelationen</div>
+        <div style="font-size:11px;color:var(--text-dim);opacity:0.6;margin-bottom:10px;">Ø Körper-Energie pro Tätigkeit</div>
         <div class="correlation-list" id="corr-list"></div>
 
-        <div class="gesture-hint" style="margin-top:20px;margin-bottom:4px;">← swipe für Kalender · doppeltippen → Dashboard</div>
+        <div style="height:8px;"></div>
+        <div class="gesture-hint">Einblicke &nbsp;|&nbsp; Dashboard →</div>
+        <div style="height:8px;"></div>
       </div>
     </div>
 
-    <!-- ══ DASHBOARD (center) ══ -->
+    <!-- ══ DASHBOARD ══ -->
     <div class="screen active" id="dash">
       <div class="header">
-        <div class="logo">flux</div>
-        <div class="date-chip" id="dash-date"></div>
-      </div>
-
-      <!-- Sliders -->
-      <div class="sliders-row">
-        <!-- Body Slider -->
-        <div class="slider-card" id="body-slider-card">
-          <div class="mood-emoji" id="body-emoji">💪</div>
-          <div class="slider-label">Körper<br>Energie</div>
-          <div class="liquid-slider" id="body-track">
-            <div class="liquid-fill" id="body-fill" style="height:72%"></div>
+        <div class="logo-text">flux<span id="fb-dot-inline" style="display:inline-block;width:6px;height:6px;border-radius:50%;background:rgba(80,220,255,0.25);margin-left:5px;vertical-align:middle;transition:background 0.3s;"></span></div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div class="date-chip" id="dash-date"></div>
+          <!-- Avatar / Profil -->
+          <div id="user-avatar" style="display:none;position:relative;">
+            <div id="avatar-btn" style="
+              width:30px;height:30px;border-radius:50%;
+              background:linear-gradient(135deg,#50DCFF33,#00E5D033);
+              border:1px solid rgba(80,220,255,0.25);
+              display:flex;align-items:center;justify-content:center;
+              cursor:pointer;font-size:13px;user-select:none;
+            ">👤</div>
+            <!-- Dropdown -->
+            <div id="avatar-dropdown" style="
+              display:none;position:absolute;top:38px;right:0;
+              background:#0d1526;border:1px solid rgba(80,220,255,0.15);
+              border-radius:14px;padding:8px;min-width:160px;
+              box-shadow:0 8px 32px rgba(0,0,0,0.5);z-index:100;
+            ">
+              <div id="avatar-name" style="font-size:12px;color:rgba(180,210,255,0.5);padding:6px 10px 10px;border-bottom:1px solid rgba(80,220,255,0.08);margin-bottom:6px;"></div>
+              <button id="auth-logout-btn" style="
+                width:100%;text-align:left;background:none;border:none;
+                color:#FF8FAB;font-size:13px;padding:8px 10px;cursor:pointer;
+                border-radius:8px;font-family:'Space Grotesk',sans-serif;
+              ">🚪 Abmelden</button>
+            </div>
           </div>
-          <div class="slider-value" id="body-val">72</div>
         </div>
-        <!-- Emotion Slider -->
-        <div class="slider-card" id="emotion-slider-card">
-          <div class="mood-emoji" id="emotion-emoji">😌</div>
-          <div class="slider-label">Emotionales<br>Befinden</div>
-          <div class="liquid-slider" id="emotion-track">
-            <div class="liquid-fill" id="emotion-fill" style="height:65%"></div>
+      </div>
+
+      <div class="scroll-content">
+        <div class="sliders-row">
+          <div class="slider-card" id="body-slider-card">
+            <div class="mood-emoji" id="body-emoji">💪</div>
+            <div class="slider-label">Körper<br>Energie</div>
+            <div class="liquid-slider" id="body-track">
+              <div class="liquid-fill" id="body-fill" style="height:72%"></div>
+            </div>
+            <div class="slider-value" id="body-val">72</div>
+            <div style="font-size:9px;color:var(--text-dim);letter-spacing:0.3px;opacity:0.6;">%</div>
           </div>
-          <div class="slider-value" id="emotion-val">65</div>
+          <div class="slider-card" id="emotion-slider-card">
+            <div class="mood-emoji" id="emotion-emoji">😊</div>
+            <div class="slider-label">Emotionales<br>Befinden</div>
+            <div class="liquid-slider" id="emotion-track">
+              <div class="liquid-fill" id="emotion-fill" style="height:65%"></div>
+            </div>
+            <div class="slider-value" id="emotion-val">65</div>
+            <div style="font-size:9px;color:var(--text-dim);letter-spacing:0.3px;opacity:0.6;">%</div>
+          </div>
         </div>
+
+        <!-- Tätigkeiten Hinweis -->
+        <div style="font-size:11px;color:var(--text-dim);letter-spacing:0.3px;margin-bottom:6px;opacity:0.7;">
+          Was hast du heute gemacht? (optional)
+        </div>
+
+        <div class="tags-section" style="margin-bottom:14px;">
+          <div class="tags-label">Tätigkeiten auswählen</div>
+          <div class="tags-grid" id="tags-grid"></div>
+        </div>
+
+        <button class="save-btn" id="save-btn">Moment festhalten ✦</button>
+
+        <div class="gesture-hint">← Einblicke &nbsp;|&nbsp; Dashboard &nbsp;|&nbsp; Kalender →</div>
       </div>
-
-      <button class="save-btn" id="save-btn">Moment festhalten ✦</button>
-
-      <div class="tags-section">
-        <div class="tags-label">Tätigkeiten</div>
-        <div class="tags-grid" id="tags-grid"></div>
-      </div>
-
-      <div class="gesture-hint" style="margin-top:12px;">swipe rechts → Einblicke · swipe links → Kalender</div>
     </div>
 
-    <!-- ══ CALENDAR (right) ══ -->
+    <!-- ══ CALENDAR ══ -->
     <div class="screen right" id="calendar">
       <div class="header">
-        <div class="logo">flux</div>
-        <div class="header-actions">
+        <div class="logo-text">flux</div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div class="reminder-fab" id="reminder-btn">🔔</div>
           <div class="date-chip" id="cal-date"></div>
-          <div class="reminder-fab" id="reminder-btn" title="Erinnerung setzen">🔔</div>
         </div>
       </div>
 
-      <div class="month-nav">
-        <div class="section-title" id="cal-month-label" style="margin:0;">Juni 2025</div>
-        <div style="display:flex;gap:6px;">
-          <div class="month-nav-btn" id="cal-prev">‹</div>
-          <div class="month-nav-btn" id="cal-next">›</div>
+      <div class="scroll-content">
+        <div class="month-nav">
+          <button class="month-nav-btn" id="cal-prev">‹</button>
+          <div class="section-title" id="cal-month-label" style="margin:0;font-size:22px;"></div>
+          <button class="month-nav-btn" id="cal-next">›</button>
         </div>
+        <div class="month-grid" id="cal-grid"></div>
+
+        <div class="cal-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:linear-gradient(135deg,#00E5D0,#50DCFF);"></div>Hoch</div>
+          <div class="legend-item"><div class="legend-dot" style="background:linear-gradient(135deg,#50DCFF,#0088AA);"></div>Mittel</div>
+          <div class="legend-item"><div class="legend-dot" style="background:linear-gradient(135deg,#0088AA,#004455);"></div>Niedrig</div>
+          <div class="legend-item" style="margin-left:auto;">
+            <div style="display:flex;gap:2px;">
+              <div class="legend-dot" style="width:4px;height:4px;background:rgba(80,220,255,0.5);border-radius:50%;"></div>
+              <div class="legend-dot" style="width:4px;height:4px;background:rgba(80,220,255,0.5);border-radius:50%;"></div>
+            </div>Logs
+          </div>
+        </div>
+
+        <div class="day-detail" id="day-detail" style="display:none;"></div>
+
+        <div class="gesture-hint" style="margin-top:12px;padding-bottom:4px;">← Einblicke &nbsp;|&nbsp; Kalender</div>
       </div>
-      <div class="section-sub" style="margin-bottom:12px;">Energy-Timeline</div>
-
-      <div class="month-grid" id="cal-grid"></div>
-
-      <div class="cal-legend">
-        <div class="legend-item">
-          <div class="legend-dot" style="background:linear-gradient(135deg,#00D4AA,#4A9EFF);"></div>
-          Hoch
-        </div>
-        <div class="legend-item">
-          <div class="legend-dot" style="background:linear-gradient(135deg,#4A9EFF,#9B6BFF);"></div>
-          Mittel
-        </div>
-        <div class="legend-item">
-          <div class="legend-dot" style="background:linear-gradient(135deg,#9B6BFF,#FF6B9D);"></div>
-          Niedrig
-        </div>
-        <div class="legend-item" style="margin-left:auto;">
-          <div class="legend-dot" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.1);"></div>
-          Kein Eintrag
-        </div>
-      </div>
-
-      <div class="day-detail" id="day-detail" style="display:none"></div>
-
-      <div class="gesture-hint" style="margin-top:auto;padding-top:8px;">swipe rechts → Dashboard · doppeltippen → Dashboard</div>
     </div>
 
   </div>
 
-  <!-- Nav Labels + Dots -->
   <div class="nav-labels">
-    <div class="nav-label" id="lbl-0" onclick="goTo(0)">Einblicke</div>
-    <div class="nav-label active" id="lbl-1" onclick="goTo(1)">Heute</div>
-    <div class="nav-label" id="lbl-2" onclick="goTo(2)">Kalender</div>
+    <div class="nav-label" id="nav-0" onclick="goTo(0)">Einblicke</div>
+    <div class="nav-label active" id="nav-1" onclick="goTo(1)">Dashboard</div>
+    <div class="nav-label" id="nav-2" onclick="goTo(2)">Kalender</div>
   </div>
   <div class="nav-dots">
-    <div class="dot" id="dot-0"></div>
-    <div class="dot active" id="dot-1"></div>
-    <div class="dot" id="dot-2"></div>
+    <div class="dot" id="dot-0" onclick="goTo(0)"></div>
+    <div class="dot active" id="dot-1" onclick="goTo(1)"></div>
+    <div class="dot" id="dot-2" onclick="goTo(2)"></div>
   </div>
 </div>
 
-<!-- Toast -->
 <div id="toast"></div>
-
-<!-- Save overlay -->
-<div id="save-overlay">
-  <div class="save-ring">✦</div>
-</div>
+<div id="save-overlay"><div class="save-ring">✦</div></div>
 
 <!-- Reminder Modal -->
 <div class="modal-overlay" id="reminder-modal">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
-    <div class="modal-title">Erinnerung setzen</div>
-    <div class="modal-sub">Wann möchtest du dein Energie-Tagebuch führen?</div>
-    <input type="time" class="time-input" id="reminder-time" value="20:00">
-    <div class="reminder-days" id="reminder-days">
-      <div class="day-toggle active" data-d="1">Mo</div>
-      <div class="day-toggle active" data-d="2">Di</div>
-      <div class="day-toggle active" data-d="3">Mi</div>
-      <div class="day-toggle active" data-d="4">Do</div>
-      <div class="day-toggle active" data-d="5">Fr</div>
+    <div class="modal-title">Erinnerung</div>
+    <div class="modal-sub">An welchen Tagen soll flux dich erinnern?</div>
+    <div class="reminder-days">
+      <div class="day-toggle" data-d="1">Mo</div>
+      <div class="day-toggle" data-d="2">Di</div>
+      <div class="day-toggle" data-d="3">Mi</div>
+      <div class="day-toggle" data-d="4">Do</div>
+      <div class="day-toggle" data-d="5">Fr</div>
       <div class="day-toggle" data-d="6">Sa</div>
       <div class="day-toggle" data-d="0">So</div>
     </div>
+    <input type="time" class="time-input" id="reminder-time" value="20:00">
     <button class="modal-close-btn" id="modal-save">Erinnerung aktivieren</button>
   </div>
 </div>
 
-<script>
-(function() {
-  'use strict';
+<script type="module">
+// ══════════════════════════════════════════════
+// FIREBASE CONFIG – hier deine Konfiguration eintragen
+// ══════════════════════════════════════════════
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyCw8bB4VzBmOc5EmXYvZn_lrNZ4YBSDBqs",
+  authDomain: "vokabel-7c9b9.firebaseapp.com",
+  projectId: "vokabel-7c9b9",
+  storageBucket: "vokabel-7c9b9.firebasestorage.app",
+  messagingSenderId: "383435621753",
+  appId: "1:383435621753:web:d8183359df0cf1b4a19ba8"
+};
 
-  // ── State ──
-  const state = {
-    current: 1,
-    bodyVal: 72,
-    emotionVal: 65,
-    activeTags: new Set(),
-    entries: JSON.parse(localStorage.getItem('flux_entries') || '[]'),
-    reminder: localStorage.getItem('flux_reminder') || null,
-    reminderDays: JSON.parse(localStorage.getItem('flux_reminder_days') || '[1,2,3,4,5]'),
-    viewMonth: new Date().getMonth(),
-    viewYear: new Date().getFullYear(),
+const IS_CONFIGURED = FIREBASE_CONFIG.apiKey !== 'DEIN_API_KEY';
+
+// ══════════════════════════════════════════════
+// FIREBASE GLOBALS
+// ══════════════════════════════════════════════
+let db = null, auth = null, currentUser = null;
+let fbConnected = false;
+
+// ══════════════════════════════════════════════
+// AUTH UI HELPERS
+// ══════════════════════════════════════════════
+function showAuthScreen() {
+  document.getElementById('auth-screen').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+}
+function hideAuthScreen() {
+  document.getElementById('auth-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+}
+
+function setAuthError(msg) {
+  const el = document.getElementById('auth-error');
+  el.textContent = msg;
+  el.style.display = msg ? 'block' : 'none';
+}
+function setAuthLoading(on) {
+  document.getElementById('auth-btn').disabled = on;
+  document.getElementById('auth-btn').textContent = on ? 'Bitte warten…' : authMode === 'login' ? 'Anmelden' : 'Konto erstellen';
+}
+
+let authMode = 'login'; // 'login' | 'register'
+
+function switchAuthMode(mode) {
+  authMode = mode;
+  setAuthError('');
+  document.getElementById('auth-name-row').style.display = mode === 'register' ? 'flex' : 'none';
+  document.getElementById('auth-title').textContent = mode === 'login' ? 'Willkommen zurück' : 'Konto erstellen';
+  document.getElementById('auth-btn').textContent = mode === 'login' ? 'Anmelden' : 'Konto erstellen';
+  document.getElementById('auth-switch-text').innerHTML = mode === 'login'
+    ? 'Noch kein Konto? <button id="auth-switch-btn" style="background:none;border:none;color:#50DCFF;cursor:pointer;font-size:13px;padding:0;">Registrieren</button>'
+    : 'Schon ein Konto? <button id="auth-switch-btn" style="background:none;border:none;color:#50DCFF;cursor:pointer;font-size:13px;padding:0;">Anmelden</button>';
+  document.getElementById('auth-switch-btn').onclick = () => switchAuthMode(mode === 'login' ? 'register' : 'login');
+}
+
+async function handleAuth() {
+  if (!auth) return;
+  const email = document.getElementById('auth-email').value.trim();
+  const password = document.getElementById('auth-password').value;
+  if (!email || !password) { setAuthError('Bitte E-Mail und Passwort eingeben.'); return; }
+  setAuthError(''); setAuthLoading(true);
+  try {
+    const { signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } =
+      await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
+    if (authMode === 'login') {
+      await signInWithEmailAndPassword(auth, email, password);
+    } else {
+      const name = document.getElementById('auth-name').value.trim();
+      const cred = await createUserWithEmailAndPassword(auth, email, password);
+      if (name) await updateProfile(cred.user, { displayName: name });
+    }
+    // onAuthStateChanged handles the rest
+  } catch(e) {
+    const msgs = {
+      'auth/invalid-email': 'Ungültige E-Mail-Adresse.',
+      'auth/user-not-found': 'Kein Konto mit dieser E-Mail.',
+      'auth/wrong-password': 'Falsches Passwort.',
+      'auth/email-already-in-use': 'E-Mail bereits registriert.',
+      'auth/weak-password': 'Passwort muss mindestens 6 Zeichen haben.',
+      'auth/too-many-requests': 'Zu viele Versuche. Kurz warten.',
+      'auth/network-request-failed': 'Keine Internetverbindung.',
+    };
+    setAuthError(msgs[e.code] || e.message);
+    setAuthLoading(false);
+  }
+}
+
+async function handleLogout() {
+  if (!auth) return;
+  const { signOut } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
+  await signOut(auth);
+}
+
+// ══════════════════════════════════════════════
+// FIREBASE INIT
+// ══════════════════════════════════════════════
+
+function setFbDot(state) {
+  const dot = document.getElementById('fb-dot-inline');
+  if (!dot) return;
+  if (state === 'connected') { dot.style.background = '#00D4AA'; dot.style.boxShadow = '0 0 6px rgba(0,212,170,0.5)'; }
+  else if (state === 'error')  { dot.style.background = '#FF6B9D'; dot.style.boxShadow = 'none'; }
+  else                         { dot.style.background = 'rgba(80,220,255,0.2)'; dot.style.boxShadow = 'none'; }
+}
+
+function setUserAvatar(user) {
+  const av = document.getElementById('user-avatar');
+  if (!av) return;
+  if (user) {
+    av.style.display = 'block';
+    const name = user.displayName || user.email.split('@')[0];
+    document.getElementById('avatar-name').textContent = name;
+    // Initiale als Avatar-Text
+    document.querySelector('#avatar-btn').textContent = name.charAt(0).toUpperCase();
+  } else {
+    av.style.display = 'none';
+  }
+}
+
+// Avatar-Dropdown toggle
+document.addEventListener('click', e => {
+  const btn = document.getElementById('avatar-btn');
+  const drop = document.getElementById('avatar-dropdown');
+  if (!btn || !drop) return;
+  if (btn.contains(e.target)) {
+    drop.style.display = drop.style.display === 'none' ? 'block' : 'none';
+  } else if (!drop.contains(e.target)) {
+    drop.style.display = 'none';
+  }
+});
+
+async function initFirebase() {
+  if (!IS_CONFIGURED) {
+    hideAuthScreen();
+    setFbDot('error');
+    return;
+  }
+
+  try {
+    const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
+    const { getFirestore, collection, getDocs, addDoc, query, orderBy, where } =
+      await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+    const { getAuth, onAuthStateChanged } =
+      await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
+
+    const app = initializeApp(FIREBASE_CONFIG);
+    db = getFirestore(app);
+    auth = getAuth(app);
+
+    document.getElementById('auth-btn').onclick = handleAuth;
+    document.getElementById('auth-logout-btn').onclick = () => { document.getElementById('avatar-dropdown').style.display='none'; handleLogout(); };
+    document.getElementById('auth-switch-btn').onclick = () => switchAuthMode('register');
+
+    document.getElementById('auth-password').addEventListener('keydown', e => {
+      if (e.key === 'Enter') handleAuth();
+    });
+
+    onAuthStateChanged(auth, async user => {
+      currentUser = user;
+      if (user) {
+        hideAuthScreen();
+        setFbDot('connected');
+        setUserAvatar(user);
+        fbConnected = true;
+
+        try {
+          const q = query(collection(db, 'logs'), where('uid','==',user.uid), orderBy('ts','desc'));
+          const snap = await getDocs(q);
+          const remote = snap.docs.map(d => d.data());
+          const localTs = new Set(state.entries.map(e => e.ts));
+          remote.forEach(e => { if (!localTs.has(e.ts)) state.entries.push(e); });
+          state.entries.sort((a,b) => b.ts - a.ts);
+          saveLocal(); updateInsights(); buildCalendar();
+          showToast('☁️ Cloud synchronisiert');
+        } catch(e) { console.warn('Firestore load failed:', e); }
+
+      } else {
+        fbConnected = false;
+        setFbDot('off');
+        setUserAvatar(null);
+        showAuthScreen();
+      }
+    });
+
+  } catch(e) {
+    console.warn('Firebase not configured:', e.message);
+    hideAuthScreen();
+    setFbDot('error');
+  }
+}
+
+async function saveToFirestore(entry) {
+  if (!fbConnected || !db || !currentUser) return;
+  try {
+    const { getFirestore, collection, addDoc } =
+      await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+    await addDoc(collection(db, 'logs'), { ...entry, uid: currentUser.uid });
+  } catch(e) { console.warn('Firestore write failed:', e); }
+}
+
+// ══════════════════════════════════════════════
+// APP STATE
+// ══════════════════════════════════════════════
+const state = {
+  current: 1,
+  bodyVal: 72,
+  emotionVal: 65,
+  activeTags: new Set(),
+  entries: JSON.parse(localStorage.getItem('flux_entries') || '[]'),
+  reminder: localStorage.getItem('flux_reminder') || null,
+  reminderDays: JSON.parse(localStorage.getItem('flux_reminder_days') || '[1,2,3,4,5]'),
+  viewYear: new Date().getFullYear(),
+  viewMonth: new Date().getMonth(),
+};
+
+function saveLocal() {
+  localStorage.setItem('flux_entries', JSON.stringify(state.entries));
+}
+
+const tags = [
+  { id:'sport',      label:'🏃 Sport' },
+  { id:'arbeit',     label:'💻 Arbeit' },
+  { id:'schlaf',     label:'🌙 Schlaf' },
+  { id:'freunde',    label:'👥 Freunde' },
+  { id:'natur',      label:'🌿 Natur' },
+  { id:'kreativ',    label:'🎨 Kreativ' },
+  { id:'ernährung',  label:'🥗 Ernährung' },
+  { id:'meditation', label:'🧘 Meditation' },
+  { id:'musik',      label:'🎵 Musik' },
+  { id:'lesen',      label:'📖 Lesen' },
+  { id:'stress',     label:'😤 Stress' },
+  { id:'reise',      label:'✈️ Reise' },
+  { id:'periode',    label:'🩸 Periode' },
+];
+
+// ── Date ──
+const fmtDate = d => d.toLocaleDateString('de-DE',{weekday:'short',day:'numeric',month:'short'});
+const now = new Date();
+['dash-date','insights-date','cal-date'].forEach(id => {
+  document.getElementById(id).textContent = fmtDate(now);
+});
+
+// ── Tags ──
+const tagsGrid = document.getElementById('tags-grid');
+tags.forEach(t => {
+  const el = document.createElement('div');
+  el.className = 'tag'; el.textContent = t.label; el.dataset.id = t.id;
+  el.addEventListener('click', () => {
+    if (state.activeTags.has(t.id)) state.activeTags.delete(t.id);
+    else state.activeTags.add(t.id);
+    el.classList.toggle('active', state.activeTags.has(t.id));
+  });
+  tagsGrid.appendChild(el);
+});
+
+// ── Emoji helpers ──
+function bodyEmoji(v)   { return v>=80?'🔥':v>=60?'💪':v>=40?'😐':'😴'; }
+function emotionEmoji(v){ return v>=80?'✨':v>=60?'😊':v>=40?'😐':'😔'; }
+
+// ── Sliders ──
+function initSlider(cardId, fillId, valId, emojiId, stateKey, emojiFn) {
+  const card = document.getElementById(cardId);
+  let dragging = false, startY = 0, startVal = state[stateKey];
+
+  function update(pct) {
+    pct = Math.max(2, Math.min(100, pct));
+    state[stateKey] = Math.round(pct);
+    document.getElementById(fillId).style.height = pct + '%';
+    document.getElementById(valId).textContent = Math.round(pct);
+    document.getElementById(emojiId).textContent = emojiFn(pct);
+  }
+
+  // touch-action: none verhindert, dass der Browser den Touch als Scroll interpretiert
+  card.style.touchAction = 'none';
+
+  const scrollEl = card.closest('.scroll-content');
+
+  card.addEventListener('pointerdown', e => {
+    dragging = true; startY = e.clientY; startVal = state[stateKey];
+    card.classList.add('dragging');
+    if (scrollEl) scrollEl.classList.add('slider-active');
+    card.setPointerCapture(e.pointerId);
+    e.preventDefault();
+    e.stopPropagation();
+  }, { passive: false });
+
+  card.addEventListener('pointermove', e => {
+    if (!dragging) return;
+    e.preventDefault();   // ← verhindert Scrollen während Drag
+    e.stopPropagation();
+    const track = document.getElementById(cardId.replace('-card','') + '-track');
+    const h = track ? track.clientHeight : card.clientHeight * 0.6;
+    const delta = -(e.clientY - startY);
+    update(startVal + (delta / h) * 100);
+  }, { passive: false });
+
+  const endDrag = () => {
+    dragging = false;
+    card.classList.remove('dragging');
+    if (scrollEl) scrollEl.classList.remove('slider-active');
+  };
+  card.addEventListener('pointerup', endDrag);
+  card.addEventListener('pointercancel', endDrag);
+}
+
+initSlider('body-slider-card',    'body-fill',    'body-val',    'body-emoji',    'bodyVal',    bodyEmoji);
+initSlider('emotion-slider-card', 'emotion-fill', 'emotion-val', 'emotion-emoji', 'emotionVal', emotionEmoji);
+
+// ── Save entry ──
+document.getElementById('save-btn').addEventListener('click', async function(e) {
+  // Ripple
+  const r = document.createElement('div'); r.className = 'ripple';
+  const rect = this.getBoundingClientRect();
+  const size = Math.max(rect.width, rect.height);
+  r.style.cssText = `width:${size}px;height:${size}px;left:${e.offsetX-size/2}px;top:${e.offsetY-size/2}px`;
+  this.appendChild(r); setTimeout(() => r.remove(), 700);
+
+  const ts = Date.now();
+  const dateObj = new Date(ts);
+  const entry = {
+    ts,
+    date: dateObj.toISOString().slice(0,10),
+    time: dateObj.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'}),
+    body: state.bodyVal,
+    emotion: state.emotionVal,
+    tags: [...state.activeTags],
   };
 
-  // ── Tags ──
-  const tags = [
-    { id: 'sport',      label: '🏃 Sport' },
-    { id: 'arbeit',     label: '💻 Arbeit' },
-    { id: 'schlaf',     label: '🌙 Guter Schlaf' },
-    { id: 'freunde',    label: '👥 Freunde' },
-    { id: 'natur',      label: '🌿 Natur' },
-    { id: 'kreativ',    label: '🎨 Kreativ' },
-    { id: 'ernährung',  label: '🥗 Gut gegessen' },
-    { id: 'meditation', label: '🧘 Meditation' },
-    { id: 'musik',      label: '🎵 Musik' },
-    { id: 'lesen',      label: '📚 Lesen' },
-    { id: 'stress',     label: '😰 Stress' },
-    { id: 'krank',      label: '🤒 Krank' },
-  ];
+  state.entries.unshift(entry);
+  saveLocal();
+  await saveToFirestore(entry);
 
-  // Body emoji map
-  function bodyEmoji(v) {
-    if (v >= 85) return '⚡';
-    if (v >= 70) return '💪';
-    if (v >= 50) return '😐';
-    if (v >= 30) return '🥱';
-    return '😴';
+  // Reset tags
+  state.activeTags.clear();
+  document.querySelectorAll('.tag.active').forEach(t => t.classList.remove('active'));
+
+  // Flash overlay
+  const ov = document.getElementById('save-overlay');
+  ov.classList.add('show');
+  setTimeout(() => ov.classList.remove('show'), 800);
+
+  // Pulse the save button
+  const btn = document.getElementById('save-btn');
+  btn.classList.add('pulsed');
+  setTimeout(() => btn.classList.remove('pulsed'), 700);
+
+  updateInsights(); buildCalendar();
+  showToast(`Log gespeichert · ${entry.time} ✦`);
+});
+
+// ── Toast ──
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+// ── Navigation ──
+window.goTo = function(idx) {
+  if (idx === state.current) return;
+  ['insights','dash','calendar'].forEach((id, i) => {
+    const el = document.getElementById(id);
+    el.className = 'screen';
+    if (i < idx) el.classList.add('left');
+    else if (i > idx) el.classList.add('right');
+    else el.classList.add('active');
+  });
+  [0,1,2].forEach(i => {
+    document.getElementById(`dot-${i}`).classList.toggle('active', i===idx);
+    document.getElementById(`nav-${i}`).classList.toggle('active', i===idx);
+  });
+  state.current = idx;
+  if (idx===0) updateInsights();
+  if (idx===2) buildCalendar();
+};
+
+// Swipe gesture
+let tx=0,ty=0,tt=0,lastTap=0;
+document.addEventListener('touchstart', e => { tx=e.touches[0].clientX; ty=e.touches[0].clientY; tt=Date.now(); },{passive:true});
+document.addEventListener('touchend', e => {
+  const dx=e.changedTouches[0].clientX-tx, dy=e.changedTouches[0].clientY-ty, dt=Date.now()-tt;
+  const adx=Math.abs(dx), ady=Math.abs(dy);
+  // double tap
+  const n=Date.now();
+  if(adx<15&&ady<15&&dt<300){
+    if(n-lastTap<360){goTo(1);lastTap=0;return;} lastTap=n;
   }
-  function emotionEmoji(v) {
-    if (v >= 85) return '🌟';
-    if (v >= 70) return '😊';
-    if (v >= 50) return '😌';
-    if (v >= 30) return '😔';
-    return '😢';
+  if(adx>55&&adx>ady*1.5&&dt<420){
+    if(dx<0&&state.current<2) goTo(state.current+1);
+    if(dx>0&&state.current>0) goTo(state.current-1);
+  }
+},{passive:true});
+
+// Mouse swipe (desktop)
+let mx=0;
+document.addEventListener('mousedown', e=>{ mx=e.clientX; });
+document.addEventListener('mouseup', e=>{
+  const dx=e.clientX-mx;
+  if(Math.abs(dx)>90){
+    if(dx<0&&state.current<2)goTo(state.current+1);
+    if(dx>0&&state.current>0)goTo(state.current-1);
+  }
+});
+
+// ── Insights ──
+// Tag-Farben für Korrelationen
+const tagColors = {
+  sport:'#50DCFF', natur:'#00E5D0', meditation:'#00C4CC',
+  musik:'#7AE8FF', arbeit:'#004466', schlaf:'#5588AA',
+  freunde:'#00B4CC', kreativ:'#80EEFF', ernährung:'#00D4B0',
+  lesen:'#60CCEE', stress:'#446688', reise:'#30AACC', periode:'#8899BB',
+};
+
+function updateInsights() {
+  const entries = state.entries;
+  document.getElementById('entry-count').textContent = entries.length;
+
+  if(entries.length>0){
+    const ab=Math.round(entries.reduce((s,e)=>s+e.body,0)/entries.length);
+    const ae=Math.round(entries.reduce((s,e)=>s+e.emotion,0)/entries.length);
+    const abEl = document.getElementById('avg-body');
+    const aeEl = document.getElementById('avg-emotion');
+    abEl.textContent=ab+'%'; abEl.classList.remove('updated'); void abEl.offsetWidth; abEl.classList.add('updated');
+    aeEl.textContent=ae+'%'; aeEl.classList.remove('updated'); void aeEl.offsetWidth; aeEl.classList.add('updated');
+  } else {
+    document.getElementById('avg-body').textContent='–';
+    document.getElementById('avg-emotion').textContent='–';
   }
 
-  // ── Date setup ──
-  const now = new Date();
-  const fmtDate = d => d.toLocaleDateString('de-DE', { weekday: 'short', day: 'numeric', month: 'short' });
-  document.getElementById('dash-date').textContent = fmtDate(now);
-  document.getElementById('insights-date').textContent = fmtDate(now);
-  document.getElementById('cal-date').textContent = fmtDate(now);
+  // Streak
+  let streak=0, d=new Date();
+  const dates=new Set(entries.map(e=>e.date));
+  while(true){
+    const ds=d.toISOString().slice(0,10);
+    if(dates.has(ds)){streak++;d.setDate(d.getDate()-1);}else break;
+    if(streak>365)break;
+  }
+  document.getElementById('streak-days').textContent=streak;
 
-  // ── Tags ──
-  const tagsGrid = document.getElementById('tags-grid');
-  tags.forEach(t => {
-    const el = document.createElement('div');
-    el.className = 'tag';
-    el.textContent = t.label;
-    el.dataset.id = t.id;
-    el.addEventListener('click', () => {
-      if (state.activeTags.has(t.id)) state.activeTags.delete(t.id);
-      else state.activeTags.add(t.id);
-      el.classList.toggle('active', state.activeTags.has(t.id));
+  // Korrelation: nur aus echten Daten berechnen
+  const tagCount={}, tagTotal={};
+  entries.forEach(e=>{
+    e.tags.forEach(t=>{
+      tagCount[t]=(tagCount[t]||0)+1;
+      tagTotal[t]=(tagTotal[t]||0)+e.body;
     });
-    tagsGrid.appendChild(el);
   });
 
-  // ── Liquid Sliders ──
-  function initSlider(cardId, fillId, valId, emojiId, stateKey, emojiFn) {
-    const card = document.getElementById(cardId);
-    const fill = document.getElementById(fillId);
-    const valEl = document.getElementById(valId);
-    const emojiEl = emojiId ? document.getElementById(emojiId) : null;
-    let dragging = false, startY = 0, startVal = state[stateKey];
+  const list=document.getElementById('corr-list');
+  list.innerHTML='';
 
-    function update(pct) {
-      pct = Math.max(0, Math.min(100, pct));
-      state[stateKey] = Math.round(pct);
-      fill.style.height = pct + '%';
-      valEl.textContent = Math.round(pct);
-      if (emojiEl) emojiEl.textContent = emojiFn(pct);
-    }
+  const tagIds=Object.keys(tagCount).sort((a,b)=>(tagTotal[b]/tagCount[b])-(tagTotal[a]/tagCount[a]));
 
-    function getY(e) {
-      return e.touches ? e.touches[0].clientY : e.clientY;
-    }
-
-    card.addEventListener('pointerdown', e => {
-      dragging = true;
-      startY = getY(e);
-      startVal = state[stateKey];
-      card.setPointerCapture(e.pointerId);
-      card.classList.add('dragging');
-      e.preventDefault();
-    }, { passive: false });
-
-    card.addEventListener('pointermove', e => {
-      if (!dragging) return;
-      const track = card.querySelector('.liquid-slider');
-      const h = track ? track.clientHeight : 120;
-      const delta = -(getY(e) - startY);
-      const dpct = (delta / h) * 100;
-      update(startVal + dpct);
-    });
-
-    card.addEventListener('pointerup', () => {
-      dragging = false;
-      card.classList.remove('dragging');
-    });
-
-    card.addEventListener('pointercancel', () => {
-      dragging = false;
-      card.classList.remove('dragging');
-    });
-
-    // Init display
-    update(state[stateKey]);
-  }
-
-  initSlider('body-slider-card',    'body-fill',    'body-val',    'body-emoji',    'bodyVal',    bodyEmoji);
-  initSlider('emotion-slider-card', 'emotion-fill', 'emotion-val', 'emotion-emoji', 'emotionVal', emotionEmoji);
-
-  // ── Save entry ──
-  document.getElementById('save-btn').addEventListener('click', function(e) {
-    // Ripple
-    const r = document.createElement('div');
-    r.className = 'ripple';
-    const rect = this.getBoundingClientRect();
-    const size = Math.max(rect.width, rect.height);
-    r.style.cssText = `width:${size}px;height:${size}px;left:${e.offsetX - size/2}px;top:${e.offsetY - size/2}px`;
-    this.appendChild(r);
-    setTimeout(() => r.remove(), 700);
-
-    const entry = {
-      ts: Date.now(),
-      date: new Date().toISOString().slice(0, 10),
-      body: state.bodyVal,
-      emotion: state.emotionVal,
-      tags: [...state.activeTags],
-    };
-    state.entries.push(entry);
-    localStorage.setItem('flux_entries', JSON.stringify(state.entries));
-
-    // Reset tags
-    state.activeTags.clear();
-    document.querySelectorAll('.tag.active').forEach(t => t.classList.remove('active'));
-
-    // Success overlay
-    const overlay = document.getElementById('save-overlay');
-    overlay.classList.add('show');
-    setTimeout(() => overlay.classList.remove('show'), 900);
-
-    showToast('Moment festgehalten ✦');
-    updateInsights();
-    buildCalendar();
-  });
-
-  // ── Toast ──
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2400);
-  }
-
-  // ── Navigation ──
-  function goTo(idx) {
-    if (idx === state.current) return;
-    const screenIds = ['insights', 'dash', 'calendar'];
-    screenIds.forEach((id, i) => {
-      const el = document.getElementById(id);
-      el.className = 'screen';
-      if (i < idx) el.classList.add('left');
-      else if (i > idx) el.classList.add('right');
-      else el.classList.add('active');
-    });
-    document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === idx));
-    document.querySelectorAll('.nav-label').forEach((d, i) => d.classList.toggle('active', i === idx));
-    state.current = idx;
-
-    if (idx === 0) updateInsights();
-    if (idx === 2) buildCalendar();
-  }
-  window.goTo = goTo;
-
-  // ── Gesture / Swipe ──
-  let touchStartX = 0, touchStartY = 0, touchStartTime = 0, lastTap = 0;
-
-  document.getElementById('screens').addEventListener('touchstart', e => {
-    touchStartX = e.touches[0].clientX;
-    touchStartY = e.touches[0].clientY;
-    touchStartTime = Date.now();
-  }, { passive: true });
-
-  document.getElementById('screens').addEventListener('touchend', e => {
-    const dx = e.changedTouches[0].clientX - touchStartX;
-    const dy = e.changedTouches[0].clientY - touchStartY;
-    const dt = Date.now() - touchStartTime;
-    const absDx = Math.abs(dx), absDy = Math.abs(dy);
-
-    // Double tap
-    const nowMs = Date.now();
-    if (absDx < 18 && absDy < 18 && dt < 280) {
-      if (nowMs - lastTap < 340) { goTo(1); lastTap = 0; return; }
-      lastTap = nowMs;
-    }
-
-    // Swipe (must be mostly horizontal, fast enough)
-    if (absDx > 48 && absDx > absDy * 1.6 && dt < 400) {
-      if (dx < 0 && state.current < 2) goTo(state.current + 1);
-      if (dx > 0 && state.current > 0) goTo(state.current - 1);
-    }
-  }, { passive: true });
-
-  // Mouse swipe support
-  let mouseStartX = 0;
-  document.getElementById('screens').addEventListener('mousedown', e => { mouseStartX = e.clientX; });
-  document.getElementById('screens').addEventListener('mouseup', e => {
-    const dx = e.clientX - mouseStartX;
-    if (Math.abs(dx) > 80) {
-      if (dx < 0 && state.current < 2) goTo(state.current + 1);
-      if (dx > 0 && state.current > 0) goTo(state.current - 1);
-    }
-  });
-
-  // Nav dot clicks
-  document.querySelectorAll('.dot').forEach((d, i) => {
-    d.addEventListener('click', () => goTo(i));
-  });
-
-  // ── Insights ──
-  const correlationData = [
-    { tag: '🏃 Sport',      pct: 88, color: '#4A9EFF' },
-    { tag: '🌿 Natur',      pct: 76, color: '#00D4AA' },
-    { tag: '🧘 Meditation', pct: 71, color: '#9B6BFF' },
-    { tag: '🎵 Musik',      pct: 65, color: '#FFB347' },
-    { tag: '📚 Lesen',      pct: 58, color: '#00E5A0' },
-    { tag: '💻 Arbeit',     pct: 38, color: '#FF6B9D' },
-  ];
-
-  function calcStreak() {
-    if (!state.entries.length) return 0;
-    const dates = [...new Set(state.entries.map(e => e.date))].sort().reverse();
-    let streak = 0;
-    let check = new Date();
-    check.setHours(0, 0, 0, 0);
-    for (const d of dates) {
-      const entryDate = new Date(d);
-      const diff = Math.round((check - entryDate) / 86400000);
-      if (diff === 0 || diff === streak) { streak++; check = new Date(entryDate); check.setDate(check.getDate() - 1); }
-      else break;
-    }
-    return streak;
-  }
-
-  function updateInsights() {
-    const entries = state.entries;
-    const count = entries.length;
-    document.getElementById('entry-count').textContent = count;
-
-    if (count > 0) {
-      const avgB = Math.round(entries.reduce((s, e) => s + e.body, 0) / count);
-      const avgE = Math.round(entries.reduce((s, e) => s + e.emotion, 0) / count);
-      document.getElementById('avg-body').textContent = avgB;
-      document.getElementById('avg-emotion').textContent = avgE;
-    } else {
-      document.getElementById('avg-body').textContent = '–';
-      document.getElementById('avg-emotion').textContent = '–';
-    }
-
-    const streak = calcStreak();
-    document.getElementById('streak-days').textContent = streak;
-
-    // Correlation list (computed from real tags if enough data, else demo)
-    const list = document.getElementById('corr-list');
-    list.innerHTML = '';
-
-    // Build real correlations from data
-    let corrSource = correlationData;
-    if (count >= 3) {
-      const tagEnergy = {};
-      entries.forEach(e => {
-        (e.tags || []).forEach(tag => {
-          if (!tagEnergy[tag]) tagEnergy[tag] = { sum: 0, n: 0 };
-          tagEnergy[tag].sum += (e.body + e.emotion) / 2;
-          tagEnergy[tag].n++;
-        });
-      });
-      const tagIds = Object.keys(tagEnergy).filter(t => tagEnergy[t].n >= 2);
-      if (tagIds.length >= 2) {
-        const colors = ['#4A9EFF','#00D4AA','#9B6BFF','#FFB347','#00E5A0','#FF6B9D'];
-        corrSource = tagIds
-          .map((t, i) => {
-            const tag = tags.find(tg => tg.id === t);
-            return {
-              tag: tag ? tag.label : t,
-              pct: Math.round(tagEnergy[t].sum / tagEnergy[t].n),
-              color: colors[i % colors.length],
-            };
-          })
-          .sort((a, b) => b.pct - a.pct)
-          .slice(0, 6);
-      }
-    }
-
-    corrSource.forEach(c => {
-      const div = document.createElement('div');
-      div.className = 'corr-item';
-      div.innerHTML = `
-        <div class="corr-dot" style="background:${c.color};box-shadow:0 0 8px ${c.color}55;"></div>
-        <div class="corr-name">${c.tag}</div>
-        <div class="corr-bar-wrap"><div class="corr-bar" style="width:0%;background:${c.color};"></div></div>
-        <div class="corr-pct">${c.pct}%</div>
+  if(tagIds.length===0){
+    // Leerer Zustand
+    list.innerHTML=`<div style="text-align:center;padding:24px 0;color:var(--text-dim);font-size:13px;line-height:1.7;">
+      Noch keine Daten vorhanden.<br>
+      <span style="font-size:11px;opacity:0.6;">Trag deinen ersten Moment auf dem<br>Dashboard ein – dann erscheinen hier<br>deine persönlichen Korrelationen.</span>
+    </div>`;
+  } else {
+    tagIds.forEach(t=>{
+      const avg=Math.round(tagTotal[t]/tagCount[t]);
+      const color=tagColors[t]||'#50DCFF';
+      const found=tags.find(tg=>tg.id===t);
+      const label=found?found.label:t;
+      const div=document.createElement('div'); div.className='corr-item';
+      div.innerHTML=`
+        <div class="corr-dot" style="background:${color};box-shadow:0 0 8px ${color}66;"></div>
+        <div class="corr-name">${label}</div>
+        <div class="corr-bar-wrap"><div class="corr-bar" style="width:0%;background:${color};"></div></div>
+        <div class="corr-pct">${avg}%</div>
       `;
       list.appendChild(div);
-      requestAnimationFrame(() => {
-        setTimeout(() => { div.querySelector('.corr-bar').style.width = c.pct + '%'; }, 80);
-      });
+      requestAnimationFrame(()=>setTimeout(()=>{ div.querySelector('.corr-bar').style.width=avg+'%'; },60));
     });
-
-    drawWave();
   }
 
-  function drawWave() {
-    const W = 320, H = 100;
-    const dayNames = ['Mo','Di','Mi','Do','Fr','Sa','So'];
+  drawWave();
+}
 
-    // Last 7 days
-    const days = [];
-    for (let i = 6; i >= 0; i--) {
-      const d = new Date();
-      d.setDate(d.getDate() - i);
-      days.push(d.toISOString().slice(0, 10));
+function drawWave() {
+  const W=320, H=100;
+  // Last 7 unique dates – nur echte Einträge
+  const dateMap={};
+  state.entries.forEach(e=>{ if(!dateMap[e.date]){ dateMap[e.date]={body:e.body,emotion:e.emotion}; } });
+  const days=Object.keys(dateMap).sort().slice(-7);
+  const waveEmpty=document.getElementById('wave-empty');
+  const waveChart=document.querySelector('.wave-chart');
+  const waveDays=document.getElementById('wave-days');
+  if(days.length<2){
+    if(waveEmpty) waveEmpty.style.display='block';
+    if(waveChart) waveChart.style.display='none';
+    if(waveDays) waveDays.style.display='none';
+    ['wave-body-fill','wave-body-line','wave-emotion-fill','wave-emotion-line'].forEach(id=>document.getElementById(id).setAttribute('d',''));
+    document.getElementById('wave-dots').innerHTML='';
+    return;
+  }
+  if(waveEmpty) waveEmpty.style.display='none';
+  if(waveChart) waveChart.style.display='block';
+  if(waveDays) waveDays.style.display='flex';
+  const bd=days.map(d=>dateMap[d].body);
+  const ed=days.map(d=>dateMap[d].emotion);
+
+  function curve(data,fill){
+    const n=data.length;
+    const pts=data.map((v,i)=>[i*(W/(n-1)),H-(v/100)*H]);
+    let d=`M ${pts[0][0]} ${pts[0][1]}`;
+    for(let i=1;i<pts.length;i++){
+      const cx=(pts[i-1][0]+pts[i][0])/2;
+      d+=` C ${cx} ${pts[i-1][1]} ${cx} ${pts[i][1]} ${pts[i][0]} ${pts[i][1]}`;
+    }
+    if(fill) d+=` L ${pts[n-1][0]} ${H} L 0 ${H} Z`;
+    return d;
+  }
+
+  document.getElementById('wave-body-fill').setAttribute('d',curve(bd,true));
+  document.getElementById('wave-body-line').setAttribute('d',curve(bd,false));
+  document.getElementById('wave-emotion-fill').setAttribute('d',curve(ed,true));
+  document.getElementById('wave-emotion-line').setAttribute('d',curve(ed,false));
+
+  const dotsG=document.getElementById('wave-dots'); dotsG.innerHTML='';
+  bd.forEach((v,i)=>{
+    const x=i*(W/(bd.length-1)), y=H-(v/100)*H;
+    const c=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    c.setAttribute('cx',x); c.setAttribute('cy',y); c.setAttribute('r','3.5');
+    c.setAttribute('fill','#50DCFF'); c.setAttribute('filter','drop-shadow(0 0 5px #50DCFF88)');
+    dotsG.appendChild(c);
+  });
+
+  const dayNames=['Mo','Di','Mi','Do','Fr','Sa','So'];
+  const wd=document.getElementById('wave-days'); wd.innerHTML='';
+  days.forEach(d=>{
+    const date=new Date(d+'T12:00:00');
+    const span=document.createElement('div'); span.className='wave-day-lbl';
+    span.textContent=dayNames[date.getDay()===0?6:date.getDay()-1];
+    wd.appendChild(span);
+  });
+}
+
+// ── Calendar ──
+const monthNames=['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+
+// Keine Beispieldaten – Kalender zeigt nur echte Einträge
+
+function energyColor(emotion) {
+  if(emotion>=75) return 'linear-gradient(135deg,#00E5D0,#50DCFF)';
+  if(emotion>=50) return 'linear-gradient(135deg,#50DCFF,#0088AA)';
+  if(emotion>=30) return 'linear-gradient(135deg,#0088AA,#004455)';
+  return 'linear-gradient(135deg,#222,#333)';
+}
+
+function buildCalendar() {
+  const grid=document.getElementById('cal-grid');
+  grid.innerHTML='';
+
+  const y=state.viewYear, m=state.viewMonth;
+  document.getElementById('cal-month-label').textContent=`${monthNames[m]} ${y}`;
+
+  ['Mo','Di','Mi','Do','Fr','Sa','So'].forEach(d=>{
+    const el=document.createElement('div'); el.className='day-label'; el.textContent=d; grid.appendChild(el);
+  });
+
+  const firstDow=new Date(y,m,1).getDay();
+  const startOffset=firstDow===0?6:firstDow-1;
+  const daysInMonth=new Date(y,m+1,0).getDate();
+  const todayDate=new Date();
+
+  // Build entry map: date → array of logs (nur echte Einträge)
+  const allData={};
+  state.entries.forEach(e=>{
+    if(!allData[e.date]) allData[e.date]=[];
+    allData[e.date].push(e);
+  });
+
+  for(let i=0;i<startOffset;i++) grid.appendChild(document.createElement('div'));
+
+  for(let day=1;day<=daysInMonth;day++){
+    const dateStr=`${y}-${String(m+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+    const wrap=document.createElement('div'); wrap.className='droplet-wrap';
+    // Staggered animation delay
+    wrap.style.animationDelay = `${(startOffset + day - 1) * 0.018}s`;
+
+    const isToday=y===todayDate.getFullYear()&&m===todayDate.getMonth()&&day===todayDate.getDate();
+    if(isToday) wrap.classList.add('today');
+
+    const logs=allData[dateStr]||null;
+    const drop=document.createElement('div'); drop.className='droplet';
+
+    if(logs&&logs.length>0){
+      // Use last/best log for size+color
+      const avg=logs.reduce((s,e)=>({body:s.body+e.body,emotion:s.emotion+e.emotion}),{body:0,emotion:0});
+      const avgBody=Math.round(avg.body/logs.length);
+      const avgEmo=Math.round(avg.emotion/logs.length);
+      const size=14+(avgBody/100)*18;
+      drop.style.cssText=`width:${size}px;height:${size}px;background:${energyColor(avgEmo)};box-shadow:0 2px 10px rgba(0,0,0,0.35);`;
+      wrap.addEventListener('click',()=>showDayDetail(day,m,y,logs));
+      wrap.style.cursor='pointer';
+    } else {
+      drop.style.cssText=`width:10px;height:10px;background:rgba(80,220,255,0.05);border:1px solid rgba(80,220,255,0.08);`;
     }
 
-    const bodyData   = days.map(d => {
-      const e = [...state.entries].reverse().find(e => e.date === d);
-      return e ? e.body : null;
-    });
-    const emotionData = days.map(d => {
-      const e = [...state.entries].reverse().find(e => e.date === d);
-      return e ? e.emotion : null;
-    });
+    const num=document.createElement('span'); num.className='droplet-num'; num.textContent=day;
 
-    // Fill nulls with smooth interpolation / fallback
-    const fillGaps = arr => {
-      const base = [58, 65, 72, 60, 80, 74, 68];
-      return arr.map((v, i) => v !== null ? v : base[i]);
-    };
-    const bd = fillGaps(bodyData);
-    const ed = fillGaps(emotionData);
-
-    function toPath(data, filled) {
-      const n = data.length;
-      const pts = data.map((v, i) => [i * (W / (n - 1)), H - (v / 100) * H]);
-      let d = `M ${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)}`;
-      for (let i = 1; i < pts.length; i++) {
-        const cx = (pts[i - 1][0] + pts[i][0]) / 2;
-        d += ` C ${cx.toFixed(1)} ${pts[i-1][1].toFixed(1)} ${cx.toFixed(1)} ${pts[i][1].toFixed(1)} ${pts[i][0].toFixed(1)} ${pts[i][1].toFixed(1)}`;
+    // Multi-log dots
+    const logDotsEl=document.createElement('div'); logDotsEl.className='log-dots';
+    if(logs&&logs.length>1){
+      const count=Math.min(logs.length,4);
+      for(let i=0;i<count;i++){
+        const ld=document.createElement('div'); ld.className='log-dot'; logDotsEl.appendChild(ld);
       }
-      if (filled) d += ` L ${pts[n-1][0]} ${H} L ${pts[0][0]} ${H} Z`;
-      return d;
     }
 
-    document.getElementById('wave-body-fill').setAttribute('d',    toPath(bd, true));
-    document.getElementById('wave-body-line').setAttribute('d',    toPath(bd, false));
-    document.getElementById('wave-emotion-fill').setAttribute('d', toPath(ed, true));
-    document.getElementById('wave-emotion-line').setAttribute('d', toPath(ed, false));
-
-    // Dots
-    const dotsG = document.getElementById('wave-dots');
-    dotsG.innerHTML = '';
-    bd.forEach((v, i) => {
-      const x = i * (W / (bd.length - 1));
-      const y = H - (v / 100) * H;
-      const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-      c.setAttribute('cx', x); c.setAttribute('cy', y); c.setAttribute('r', '3.5');
-      c.setAttribute('fill', '#4A9EFF');
-      c.setAttribute('filter', 'drop-shadow(0 0 5px #4A9EFF88)');
-      dotsG.appendChild(c);
-    });
-
-    // Day labels
-    const wdContainer = document.getElementById('wave-days');
-    wdContainer.innerHTML = '';
-    days.forEach(d => {
-      const date = new Date(d + 'T12:00:00');
-      const span = document.createElement('div');
-      span.className = 'wave-day-lbl';
-      span.textContent = dayNames[date.getDay() === 0 ? 6 : date.getDay() - 1];
-      wdContainer.appendChild(span);
-    });
+    wrap.appendChild(drop);
+    wrap.appendChild(num);
+    wrap.appendChild(logDotsEl);
+    grid.appendChild(wrap);
   }
+}
 
-  // ── Calendar ──
-  function energyColor(emotion) {
-    if (emotion >= 75) return 'linear-gradient(135deg, #00D4AA, #4A9EFF)';
-    if (emotion >= 50) return 'linear-gradient(135deg, #4A9EFF, #9B6BFF)';
-    if (emotion >= 30) return 'linear-gradient(135deg, #9B6BFF, #FF6B9D)';
-    return 'linear-gradient(135deg, #555, #777)';
+// Track which date is currently shown in detail
+let selectedDetailKey = null;
+
+function formatTime(e) {
+  // If time field exists and looks correct, use it; otherwise rebuild from ts
+  if (e.time && /^\d{1,2}:\d{2}$/.test(e.time)) return e.time;
+  if (e.ts) {
+    const d = new Date(e.ts);
+    return d.toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit'});
   }
+  return '–';
+}
 
-  const monthNames = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
-  const sampleData = {
-    '2025-06-01': {body:80,emotion:75,tags:['sport']},
-    '2025-06-03': {body:60,emotion:55,tags:['arbeit']},
-    '2025-06-05': {body:85,emotion:80,tags:['sport','natur']},
-    '2025-06-08': {body:70,emotion:65,tags:['freunde']},
-    '2025-06-10': {body:55,emotion:40,tags:['stress','arbeit']},
-    '2025-06-12': {body:90,emotion:85,tags:['sport','meditation']},
-    '2025-06-15': {body:65,emotion:70,tags:['musik','kreativ']},
-    '2025-06-17': {body:72,emotion:65,tags:[]},
-    '2025-06-20': {body:78,emotion:72,tags:['natur','lesen']},
-  };
+function renderDayDetail(day, month, year, logs) {
+  const detail = document.getElementById('day-detail');
+  const header = `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+    <div style="font-size:11px;color:var(--text-dim);letter-spacing:0.5px;">
+      <strong style="color:var(--text);font-size:13px;">${day}. ${monthNames[month]} ${year}</strong>
+      <span style="margin-left:8px;">— ${logs.length} Log${logs.length>1?'s':''}</span>
+    </div>
+  </div>`;
 
-  function buildCalendar() {
-    const grid = document.getElementById('cal-grid');
-    grid.innerHTML = '';
-
-    const y = state.viewYear, m = state.viewMonth;
-    document.getElementById('cal-month-label').textContent = `${monthNames[m]} ${y}`;
-
-    const dayLabels = ['Mo','Di','Mi','Do','Fr','Sa','So'];
-    dayLabels.forEach(d => {
-      const el = document.createElement('div');
-      el.className = 'day-label';
-      el.textContent = d;
-      grid.appendChild(el);
-    });
-
-    // Day of week for 1st (0=Sun)
-    const firstDow = new Date(y, m, 1).getDay();
-    const startOffset = firstDow === 0 ? 6 : firstDow - 1; // Mon-based
-    const daysInMonth = new Date(y, m + 1, 0).getDate();
-    const todayDate = new Date();
-
-    // Entry map
-    const entryMap = {};
-    state.entries.forEach(e => {
-      if (!entryMap[e.date] || e.ts > entryMap[e.date].ts) entryMap[e.date] = e;
-    });
-
-    for (let i = 0; i < startOffset; i++) grid.appendChild(document.createElement('div'));
-
-    for (let day = 1; day <= daysInMonth; day++) {
-      const dateStr = `${y}-${String(m+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
-      const wrap = document.createElement('div');
-      wrap.className = 'droplet-wrap';
-
-      const isToday = y === todayDate.getFullYear() && m === todayDate.getMonth() && day === todayDate.getDate();
-      if (isToday) wrap.classList.add('today');
-
-      const data = entryMap[dateStr] || sampleData[dateStr] || null;
-      const drop = document.createElement('div');
-      drop.className = 'droplet';
-
-      if (data) {
-        const size = 16 + (data.body / 100) * 18;
-        drop.style.cssText = `width:${size}px;height:${size}px;background:${energyColor(data.emotion)};box-shadow:0 2px 10px rgba(0,0,0,0.35);`;
-        wrap.addEventListener('click', () => showDayDetail(day, m, y, data));
-        wrap.style.cursor = 'pointer';
-      } else {
-        drop.style.cssText = `width:11px;height:11px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.07);`;
-      }
-
-      const num = document.createElement('span');
-      num.className = 'droplet-num';
-      num.textContent = day;
-      wrap.appendChild(drop);
-      wrap.appendChild(num);
-      grid.appendChild(wrap);
-    }
-  }
-
-  function showDayDetail(day, month, year, data) {
-    const detail = document.getElementById('day-detail');
-    detail.style.display = 'block';
-    const tagLabels = (data.tags || []).map(t => {
+  const rows = logs.map((e, idx) => {
+    const tagLabels = (e.tags||[]).map(t => {
       const found = tags.find(tg => tg.id === t);
       return found ? found.label : t;
     });
+    const tagsHtml = tagLabels.length
+      ? `<div class="log-tags-row">${tagLabels.map(t=>`<span class="mini-tag">${t}</span>`).join('')}</div>`
+      : `<span style="font-size:10px;color:var(--text-faint);opacity:0.5;">keine Tätigkeit</span>`;
 
-    detail.innerHTML = `
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-        <strong>${day}. ${monthNames[month]} ${year}</strong>
-        <span style="font-size:10px;letter-spacing:0.5px;color:var(--text-faint);">${emotionEmoji(data.emotion)} ${bodyEmoji(data.body)}</span>
-      </div>
-      ${tagLabels.length ? `<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;">${tagLabels.map(t => `<span style="font-size:11px;background:var(--glass);border:1px solid var(--glass-border);border-radius:12px;padding:3px 9px;color:var(--text-dim);">${t}</span>`).join('')}</div>` : ''}
-      <div class="day-detail-bars">
-        <div class="detail-bar-wrap">
-          <div class="detail-bar-label">Körper</div>
-          <div class="detail-bar-track"><div class="detail-bar-fill" id="db-body" style="width:0%;background:linear-gradient(90deg,#4A9EFF,#9B6BFF);"></div></div>
-          <div style="font-size:11px;color:var(--text-dim);margin-top:4px;font-family:'Space Grotesk',sans-serif;">${data.body}%</div>
+    return `<div class="log-entry-row" data-ts="${e.ts}" style="animation-delay:${idx*0.07}s;">
+      <div class="swipe-delete-bg">🗑</div>
+      <div class="log-inner">
+        <div class="log-entry-header">
+          <div class="log-time">${formatTime(e)} Uhr</div>
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;flex:1;margin-left:8px;">
+            ${tagsHtml}
+          </div>
         </div>
-        <div class="detail-bar-wrap">
-          <div class="detail-bar-label">Emotion</div>
-          <div class="detail-bar-track"><div class="detail-bar-fill" id="db-emotion" style="width:0%;background:linear-gradient(90deg,#00D4AA,#4A9EFF);"></div></div>
-          <div style="font-size:11px;color:var(--text-dim);margin-top:4px;font-family:'Space Grotesk',sans-serif;">${data.emotion}%</div>
+        <div class="log-metric-row">
+          <div class="log-metric-label">💪 Körper</div>
+          <div class="mini-bar-track"><div class="mini-bar-fill-body" style="width:${e.body}%;"></div></div>
+          <div class="log-metric-val">${e.body}%</div>
+        </div>
+        <div class="log-metric-row">
+          <div class="log-metric-label">😊 Emotion</div>
+          <div class="mini-bar-track"><div class="mini-bar-fill-emo" style="width:${e.emotion}%;"></div></div>
+          <div class="log-metric-val">${e.emotion}%</div>
         </div>
       </div>
-    `;
-    requestAnimationFrame(() => {
-      setTimeout(() => {
-        const bb = document.getElementById('db-body');
-        const be = document.getElementById('db-emotion');
-        if (bb) bb.style.width = data.body + '%';
-        if (be) be.style.width = data.emotion + '%';
-      }, 60);
+    </div>`;
+  }).join('');
+
+  const closeHint = `<div class="detail-close-hint">↑ Nochmal klicken zum Ausblenden · ← Eintrag wischen zum Löschen</div>`;
+  detail.innerHTML = header + rows + closeHint;
+
+  // Attach swipe-to-delete handlers
+  detail.querySelectorAll('.log-entry-row').forEach(row => {
+    const inner = row.querySelector('.log-inner');
+    const ts = parseInt(row.dataset.ts);
+    let startX = 0, startY = 0, curX = 0, swiping = false, locked = false;
+    const THRESHOLD = 72; // px needed to confirm delete
+
+    row.addEventListener('touchstart', e => {
+      if (locked) return;
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      curX = 0; swiping = false;
+      inner.style.transition = 'none';
+    }, { passive: true });
+
+    row.addEventListener('touchmove', e => {
+      if (locked) return;
+      const dx = e.touches[0].clientX - startX;
+      const dy = Math.abs(e.touches[0].clientY - startY);
+      // Only left-swipe, and only if mostly horizontal
+      if (!swiping && Math.abs(dx) > 8 && dy < 20) swiping = true;
+      if (!swiping) return;
+      if (dx >= 0) { inner.style.transform = 'translateX(0)'; return; }
+      curX = Math.max(dx, -THRESHOLD - 24); // allow slight overscroll
+      inner.style.transform = `translateX(${curX}px)`;
+      row.classList.toggle('swiping', curX < -18);
+    }, { passive: true });
+
+    row.addEventListener('touchend', () => {
+      if (locked || !swiping) { inner.style.transition = ''; return; }
+      inner.style.transition = 'transform 0.3s cubic-bezier(0.16,1,0.3,1)';
+      if (curX < -THRESHOLD) {
+        // Confirm delete: slide fully out
+        locked = true;
+        inner.style.transform = `translateX(-110%)`;
+        row.classList.add('swiping');
+        setTimeout(() => deleteEntry(ts, day, month, year), 300);
+      } else {
+        // Snap back
+        inner.style.transform = 'translateX(0)';
+        row.classList.remove('swiping');
+      }
+      swiping = false;
     });
+  });
+}
+
+function showDayDetail(day, month, year, logs) {
+  const detail = document.getElementById('day-detail');
+  const key = `${year}-${month}-${day}`;
+
+  // Toggle: if same day clicked again, hide
+  if (selectedDetailKey === key && detail.style.display !== 'none') {
+    detail.style.opacity = '0';
+    detail.style.transform = 'translateY(8px)';
+    detail.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
+    setTimeout(() => {
+      detail.style.display = 'none';
+      detail.style.opacity = '';
+      detail.style.transform = '';
+      detail.style.transition = '';
+    }, 250);
+    selectedDetailKey = null;
+    // Remove selected state from all droplets
+    document.querySelectorAll('.droplet-wrap.selected').forEach(w => w.classList.remove('selected'));
+    return;
   }
 
-  // Month navigation
-  document.getElementById('cal-prev').addEventListener('click', () => {
-    state.viewMonth--;
-    if (state.viewMonth < 0) { state.viewMonth = 11; state.viewYear--; }
-    document.getElementById('day-detail').style.display = 'none';
-    buildCalendar();
-  });
-  document.getElementById('cal-next').addEventListener('click', () => {
-    state.viewMonth++;
-    if (state.viewMonth > 11) { state.viewMonth = 0; state.viewYear++; }
-    document.getElementById('day-detail').style.display = 'none';
-    buildCalendar();
-  });
+  selectedDetailKey = key;
+  detail.style.display = 'block';
+  detail.classList.remove('visible');
+  void detail.offsetWidth; // force reflow
+  detail.classList.add('visible');
 
-  // ── Reminder Modal ──
-  const reminderDayToggles = document.querySelectorAll('.day-toggle');
-  const activeDays = new Set(state.reminderDays);
-
-  reminderDayToggles.forEach(t => {
-    const d = parseInt(t.dataset.d);
-    t.classList.toggle('active', activeDays.has(d));
-    t.addEventListener('click', () => {
-      if (activeDays.has(d)) activeDays.delete(d);
-      else activeDays.add(d);
-      t.classList.toggle('active', activeDays.has(d));
-    });
+  // Mark selected droplet
+  document.querySelectorAll('.droplet-wrap.selected').forEach(w => w.classList.remove('selected'));
+  // Find the clicked droplet
+  const grid = document.getElementById('cal-grid');
+  grid.querySelectorAll('.droplet-wrap').forEach(wrap => {
+    const numEl = wrap.querySelector('.droplet-num');
+    if (numEl && parseInt(numEl.textContent) === day) {
+      wrap.classList.add('selected');
+    }
   });
 
-  document.getElementById('reminder-btn').addEventListener('click', () => {
-    document.getElementById('reminder-modal').classList.add('open');
-  });
+  renderDayDetail(day, month, year, logs);
+}
 
-  document.getElementById('reminder-modal').addEventListener('click', e => {
-    if (e.target === e.currentTarget) e.currentTarget.classList.remove('open');
-  });
+async function deleteEntry(ts, day, month, year) {
+  const idx = state.entries.findIndex(e => e.ts === ts);
+  if (idx === -1) return;
 
-  document.getElementById('modal-save').addEventListener('click', () => {
-    const t = document.getElementById('reminder-time').value;
-    state.reminder = t;
-    state.reminderDays = [...activeDays];
-    localStorage.setItem('flux_reminder', t);
-    localStorage.setItem('flux_reminder_days', JSON.stringify([...activeDays]));
-    document.getElementById('reminder-modal').classList.remove('open');
-    document.getElementById('reminder-btn').classList.add('set');
-    showToast(`Erinnerung um ${t} Uhr gesetzt 🔔`);
-  });
+  // Animate out the row (swipe-left direction)
+  const row = document.querySelector(`.log-entry-row[data-ts="${ts}"]`);
+  if (row) {
+    const inner = row.querySelector('.log-inner') || row;
+    row.style.transition = 'max-height 0.38s ease, padding 0.38s ease, border 0.38s ease';
+    row.style.maxHeight = row.scrollHeight + 'px';
+    row.style.overflow = 'hidden';
+    await new Promise(r => setTimeout(r, 50));
+    row.style.maxHeight = '0';
+    row.style.paddingTop = '0';
+    row.style.paddingBottom = '0';
+    row.style.borderBottomWidth = '0';
+    await new Promise(r => setTimeout(r, 400));
+  }
 
-  // ── Init ──
+  state.entries.splice(idx, 1);
+  saveLocal();
+
+  // Also delete from Firestore if connected
+  if (fbConnected && db && currentUser) {
+    try {
+      const { getFirestore, collection, query: fsQuery, where, getDocs, deleteDoc } =
+        await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+      const q = fsQuery(collection(db,'logs'), where('uid','==',currentUser.uid), where('ts','==',ts));
+      const snap = await getDocs(q);
+      snap.forEach(d => deleteDoc(d.ref));
+    } catch(e) { console.warn('Firestore delete failed:', e); }
+  }
+
   updateInsights();
   buildCalendar();
 
-  // Fade in orbs after load
+  // Refresh detail or hide if no logs left
+  const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+  const remaining = state.entries.filter(e => e.date === dateStr);
+  const detail = document.getElementById('day-detail');
+  if (remaining.length > 0) {
+    renderDayDetail(day, month, year, remaining);
+  } else {
+    detail.style.display = 'none';
+    selectedDetailKey = null;
+  }
+
+  showToast('Eintrag gelöscht ✓');
+}
+
+// Month nav
+document.getElementById('cal-prev').addEventListener('click',()=>{
+  state.viewMonth--;
+  if(state.viewMonth<0){state.viewMonth=11;state.viewYear--;}
+  document.getElementById('day-detail').style.display='none';
+  selectedDetailKey = null;
+  buildCalendar();
+});
+document.getElementById('cal-next').addEventListener('click',()=>{
+  state.viewMonth++;
+  if(state.viewMonth>11){state.viewMonth=0;state.viewYear++;}
+  document.getElementById('day-detail').style.display='none';
+  selectedDetailKey = null;
+  buildCalendar();
+});
+
+// ── Reminder ──
+const activeDays=new Set(state.reminderDays);
+document.querySelectorAll('.day-toggle').forEach(t=>{
+  const d=parseInt(t.dataset.d);
+  t.classList.toggle('active',activeDays.has(d));
+  t.addEventListener('click',()=>{
+    if(activeDays.has(d)) activeDays.delete(d); else activeDays.add(d);
+    t.classList.toggle('active',activeDays.has(d));
+  });
+});
+document.getElementById('reminder-btn').addEventListener('click',()=>{
+  document.getElementById('reminder-modal').classList.add('open');
+});
+document.getElementById('reminder-modal').addEventListener('click',e=>{
+  if(e.target===e.currentTarget) e.currentTarget.classList.remove('open');
+});
+document.getElementById('modal-save').addEventListener('click',()=>{
+  const t=document.getElementById('reminder-time').value;
+  state.reminder=t; state.reminderDays=[...activeDays];
+  localStorage.setItem('flux_reminder',t);
+  localStorage.setItem('flux_reminder_days',JSON.stringify([...activeDays]));
+  document.getElementById('reminder-modal').classList.remove('open');
+  document.getElementById('reminder-btn').classList.add('set');
+  showToast(`Erinnerung um ${t} Uhr gesetzt 🔔`);
+});
+
+// ── PWA Install Prompt ──
+let deferredInstallPrompt = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  // Show install banner after a short delay
+  setTimeout(showInstallBanner, 3500);
+});
+
+function showInstallBanner() {
+  if (!deferredInstallPrompt) return;
+  if (localStorage.getItem('flux_install_dismissed')) return;
+  const banner = document.createElement('div');
+  banner.id = 'install-banner';
+  banner.style.cssText = `
+    position:fixed;bottom:72px;left:50%;transform:translateX(-50%) translateY(20px);
+    background:rgba(5,18,30,0.97);border:1px solid rgba(80,220,255,0.25);
+    border-radius:20px;padding:12px 16px;z-index:150;
+    display:flex;align-items:center;gap:12px;
+    box-shadow:0 8px 32px rgba(0,0,0,0.5);backdrop-filter:blur(20px);
+    opacity:0;transition:all 0.4s cubic-bezier(0.16,1,0.3,1);
+    max-width:340px;width:calc(100% - 40px);
+  `;
+  banner.innerHTML = `
+    <span style="font-size:20px;">📲</span>
+    <div style="flex:1;">
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:500;color:#e8f4ff;">Flux als App installieren</div>
+      <div style="font-size:11px;color:rgba(180,210,255,0.5);margin-top:2px;">Für den schnellen Zugriff vom Homescreen</div>
+    </div>
+    <button id="install-yes" style="
+      background:linear-gradient(135deg,#0088AA,#00E5D0);border:none;border-radius:12px;
+      color:#fff;font-size:12px;font-weight:600;padding:7px 14px;cursor:pointer;
+      font-family:'Space Grotesk',sans-serif;white-space:nowrap;flex-shrink:0;
+    ">Installieren</button>
+    <button id="install-no" style="
+      background:none;border:none;color:rgba(180,210,255,0.35);font-size:16px;
+      cursor:pointer;padding:4px;line-height:1;flex-shrink:0;
+    ">✕</button>
+  `;
+  document.body.appendChild(banner);
   requestAnimationFrame(() => {
-    setTimeout(() => {
-      document.querySelectorAll('.orb').forEach(o => o.classList.add('loaded'));
-    }, 200);
+    banner.style.opacity = '1';
+    banner.style.transform = 'translateX(-50%) translateY(0)';
   });
 
-  // Update date chip every minute
-  setInterval(() => {
-    const n = new Date();
-    const f = fmtDate(n);
-    document.getElementById('dash-date').textContent = f;
-    document.getElementById('insights-date').textContent = f;
-    document.getElementById('cal-date').textContent = f;
-  }, 60000);
+  document.getElementById('install-yes').onclick = async () => {
+    deferredInstallPrompt.prompt();
+    const { outcome } = await deferredInstallPrompt.userChoice;
+    deferredInstallPrompt = null;
+    banner.remove();
+    if (outcome === 'accepted') showToast('Flux wurde installiert ✦');
+  };
+  document.getElementById('install-no').onclick = () => {
+    localStorage.setItem('flux_install_dismissed','1');
+    banner.style.opacity = '0';
+    banner.style.transform = 'translateX(-50%) translateY(20px)';
+    setTimeout(() => banner.remove(), 400);
+  };
+}
 
-})();
+// iOS: show manual install hint since iOS doesn't support beforeinstallprompt
+const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.navigator.standalone;
+if (isIOS && !localStorage.getItem('flux_install_dismissed')) {
+  setTimeout(() => {
+    const banner = document.createElement('div');
+    banner.style.cssText = `
+      position:fixed;bottom:72px;left:50%;transform:translateX(-50%) translateY(20px);
+      background:rgba(5,18,30,0.97);border:1px solid rgba(80,220,255,0.25);
+      border-radius:20px;padding:12px 16px;z-index:150;
+      display:flex;align-items:center;gap:12px;
+      box-shadow:0 8px 32px rgba(0,0,0,0.5);backdrop-filter:blur(20px);
+      opacity:0;transition:all 0.4s cubic-bezier(0.16,1,0.3,1);
+      max-width:340px;width:calc(100% - 40px);
+    `;
+    banner.innerHTML = `
+      <span style="font-size:20px;">📲</span>
+      <div style="flex:1;">
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:500;color:#e8f4ff;">Zum Homescreen hinzufügen</div>
+        <div style="font-size:11px;color:rgba(180,210,255,0.5);margin-top:2px;">Tippe auf <strong style="color:rgba(80,220,255,0.7);">Teilen</strong> → <strong style="color:rgba(80,220,255,0.7);">Zum Homescreen</strong></div>
+      </div>
+      <button style="background:none;border:none;color:rgba(180,210,255,0.35);font-size:16px;cursor:pointer;padding:4px;line-height:1;flex-shrink:0;" onclick="localStorage.setItem('flux_install_dismissed','1');this.closest('div').style.opacity='0';setTimeout(()=>this.closest('div').remove(),400);">✕</button>
+    `;
+    document.body.appendChild(banner);
+    requestAnimationFrame(() => {
+      banner.style.opacity = '1';
+      banner.style.transform = 'translateX(-50%) translateY(0)';
+    });
+  }, 4000);
+}
+
+// Service Worker registration
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+
+
+buildCalendar();
+initFirebase();
+
+setInterval(()=>{
+  const n=new Date(), f=fmtDate(n);
+  ['dash-date','insights-date','cal-date'].forEach(id=>{ document.getElementById(id).textContent=f; });
+},60000);
+
 </script>
 </body>
 </html>
