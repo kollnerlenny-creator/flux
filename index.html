@@ -1116,6 +1116,10 @@ function showAuthScreen() {
 function hideAuthScreen() {
   document.getElementById('auth-screen').style.display = 'none';
   document.getElementById('app').style.display = 'flex';
+  // Show install banner now that the app is visible (once, if not dismissed)
+  if (!localStorage.getItem('flux_install_dismissed') && !isStandalone) {
+    setTimeout(showInstallBanner, 2000);
+  }
 }
 
 function setAuthError(msg) {
@@ -2032,10 +2036,6 @@ function showInstallBanner() {
 window.addEventListener('beforeinstallprompt', e => {
   e.preventDefault();
   deferredInstallPrompt = e;
-  // Show banner once automatically (unless user dismissed before)
-  if (!isStandalone && !localStorage.getItem('flux_install_dismissed')) {
-    setTimeout(showInstallBanner, 3000);
-  }
 });
 
 window.addEventListener('appinstalled', () => {
@@ -2080,10 +2080,7 @@ function showIOSHint() {
   setTimeout(() => { if (hint.parentNode) { hint.style.opacity='0'; setTimeout(()=>hint.remove(),350); } }, 8000);
 }
 
-// iOS: show banner once automatically
-if (isIOS && !localStorage.getItem('flux_install_dismissed')) {
-  setTimeout(showInstallBanner, 3000);
-}
+// iOS: banner shown after login via hideAuthScreen() above
 
 // Service Worker
 if ('serviceWorker' in navigator) {
