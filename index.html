@@ -750,6 +750,24 @@
   }
   .reminder-fab:active { transform: scale(0.88); }
   .reminder-fab.set { border-color: rgba(80,220,255,0.4); }
+
+  /* Install FAB */
+  .install-fab {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: linear-gradient(135deg, rgba(0,136,170,0.18), rgba(0,229,208,0.15));
+    border: 1px solid rgba(80,220,255,0.3);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s, opacity 0.35s, border-color 0.2s, box-shadow 0.2s;
+    backdrop-filter: blur(10px); -webkit-tap-highlight-color: transparent;
+    box-shadow: 0 0 12px rgba(80,220,255,0.1);
+  }
+  .install-fab:hover { box-shadow: 0 0 18px rgba(80,220,255,0.22); border-color: rgba(80,220,255,0.5); }
+  .install-fab:active { transform: scale(0.88); }
+  /* Hide in standalone (already installed) */
+  @media all and (display-mode: standalone) {
+    .install-fab { display: none !important; }
+  }
 </style>
 </head>
 <body>
@@ -852,7 +870,10 @@
     <div class="screen left" id="insights">
       <div class="header">
         <div class="logo-text">flux</div>
-        <div class="date-chip" id="insights-date"></div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div class="install-fab" id="install-fab-0" title="Als App installieren"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3v13M7 11l5 5 5-5" stroke="rgba(80,220,255,0.9)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 19h14" stroke="rgba(80,220,255,0.9)" stroke-width="2.2" stroke-linecap="round"/></svg></div>
+          <div class="date-chip" id="insights-date"></div>
+        </div>
       </div>
       <div class="scroll-content">
         <div class="section-title">Einblicke</div>
@@ -923,6 +944,7 @@
       <div class="header">
         <div class="logo-text">flux<span id="fb-dot-inline" style="display:inline-block;width:6px;height:6px;border-radius:50%;background:rgba(80,220,255,0.25);margin-left:5px;vertical-align:middle;transition:background 0.3s;"></span></div>
         <div style="display:flex;align-items:center;gap:8px;">
+          <div class="install-fab" id="install-fab-1" title="Als App installieren"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3v13M7 11l5 5 5-5" stroke="rgba(80,220,255,0.9)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 19h14" stroke="rgba(80,220,255,0.9)" stroke-width="2.2" stroke-linecap="round"/></svg></div>
           <div class="date-chip" id="dash-date"></div>
           <!-- Avatar / Profil -->
           <div id="user-avatar" style="display:none;position:relative;">
@@ -994,6 +1016,7 @@
       <div class="header">
         <div class="logo-text">flux</div>
         <div style="display:flex;align-items:center;gap:8px;">
+          <div class="install-fab" id="install-fab-2" title="Als App installieren"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3v13M7 11l5 5 5-5" stroke="rgba(80,220,255,0.9)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 19h14" stroke="rgba(80,220,255,0.9)" stroke-width="2.2" stroke-linecap="round"/></svg></div>
           <div class="reminder-fab" id="reminder-btn">🔔</div>
           <div class="date-chip" id="cal-date"></div>
         </div>
@@ -1920,22 +1943,47 @@ document.getElementById('modal-save').addEventListener('click',()=>{
   showToast(`Erinnerung um ${t} Uhr gesetzt 🔔`);
 });
 
-// ── PWA Install Prompt ──
+// ── PWA Install ──
 let deferredInstallPrompt = null;
-window.addEventListener('beforeinstallprompt', e => {
-  e.preventDefault();
-  deferredInstallPrompt = e;
-  // Show install banner after a short delay
-  setTimeout(showInstallBanner, 3500);
-});
+
+// All install FABs
+const installFabs = document.querySelectorAll('.install-fab');
+
+// Hide immediately if already running as installed PWA
+const isStandalone = window.navigator.standalone === true
+  || window.matchMedia('(display-mode: standalone)').matches;
+
+if (isStandalone) {
+  installFabs.forEach(f => f.style.display = 'none');
+}
+
+function triggerInstall() {
+  if (deferredInstallPrompt) {
+    deferredInstallPrompt.prompt();
+    deferredInstallPrompt.userChoice.then(({ outcome }) => {
+      if (outcome === 'accepted') {
+        installFabs.forEach(f => {
+          f.style.opacity = '0';
+          setTimeout(() => f.style.display = 'none', 350);
+        });
+        showToast('Flux wurde installiert ✦');
+      }
+      deferredInstallPrompt = null;
+    });
+  } else if (isIOS) {
+    showIOSHint();
+  }
+}
+
+installFabs.forEach(f => f.addEventListener('click', triggerInstall));
 
 function showInstallBanner() {
-  if (!deferredInstallPrompt) return;
-  if (localStorage.getItem('flux_install_dismissed')) return;
+  if (document.getElementById('install-banner')) return;
+  if (isStandalone) return;
   const banner = document.createElement('div');
   banner.id = 'install-banner';
   banner.style.cssText = `
-    position:fixed;bottom:72px;left:50%;transform:translateX(-50%) translateY(20px);
+    position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);
     background:rgba(5,18,30,0.97);border:1px solid rgba(80,220,255,0.25);
     border-radius:20px;padding:12px 16px;z-index:150;
     display:flex;align-items:center;gap:12px;
@@ -1947,7 +1995,7 @@ function showInstallBanner() {
     <span style="font-size:20px;">📲</span>
     <div style="flex:1;">
       <div style="font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:500;color:#e8f4ff;">Flux als App installieren</div>
-      <div style="font-size:11px;color:rgba(180,210,255,0.5);margin-top:2px;">Für den schnellen Zugriff vom Homescreen</div>
+      <div style="font-size:11px;color:rgba(180,210,255,0.5);margin-top:2px;">Schneller Zugriff vom Homescreen</div>
     </div>
     <button id="install-yes" style="
       background:linear-gradient(135deg,#0088AA,#00E5D0);border:none;border-radius:12px;
@@ -1965,52 +2013,82 @@ function showInstallBanner() {
     banner.style.transform = 'translateX(-50%) translateY(0)';
   });
 
-  document.getElementById('install-yes').onclick = async () => {
-    deferredInstallPrompt.prompt();
-    const { outcome } = await deferredInstallPrompt.userChoice;
-    deferredInstallPrompt = null;
-    banner.remove();
-    if (outcome === 'accepted') showToast('Flux wurde installiert ✦');
-  };
-  document.getElementById('install-no').onclick = () => {
-    localStorage.setItem('flux_install_dismissed','1');
+  const dismiss = () => {
     banner.style.opacity = '0';
     banner.style.transform = 'translateX(-50%) translateY(20px)';
     setTimeout(() => banner.remove(), 400);
   };
+
+  document.getElementById('install-yes').onclick = () => {
+    dismiss();
+    triggerInstall();
+  };
+  document.getElementById('install-no').onclick = () => {
+    localStorage.setItem('flux_install_dismissed', '1');
+    dismiss();
+  };
 }
 
-// iOS: show manual install hint since iOS doesn't support beforeinstallprompt
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  if (!isStandalone) {
+    installFabs.forEach(f => { f.style.display = ''; f.style.opacity = '1'; });
+    // Show banner once automatically (unless user dismissed before)
+    if (!localStorage.getItem('flux_install_dismissed')) {
+      setTimeout(showInstallBanner, 3000);
+    }
+  }
+});
+
+window.addEventListener('appinstalled', () => {
+  installFabs.forEach(f => {
+    f.style.opacity = '0';
+    setTimeout(() => f.style.display = 'none', 350);
+  });
+  showToast('Flux wurde installiert ✦');
+});
+
+// iOS
 const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.navigator.standalone;
-if (isIOS && !localStorage.getItem('flux_install_dismissed')) {
-  setTimeout(() => {
-    const banner = document.createElement('div');
-    banner.style.cssText = `
-      position:fixed;bottom:72px;left:50%;transform:translateX(-50%) translateY(20px);
-      background:rgba(5,18,30,0.97);border:1px solid rgba(80,220,255,0.25);
-      border-radius:20px;padding:12px 16px;z-index:150;
-      display:flex;align-items:center;gap:12px;
-      box-shadow:0 8px 32px rgba(0,0,0,0.5);backdrop-filter:blur(20px);
-      opacity:0;transition:all 0.4s cubic-bezier(0.16,1,0.3,1);
-      max-width:340px;width:calc(100% - 40px);
-    `;
-    banner.innerHTML = `
-      <span style="font-size:20px;">📲</span>
-      <div style="flex:1;">
-        <div style="font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:500;color:#e8f4ff;">Zum Homescreen hinzufügen</div>
-        <div style="font-size:11px;color:rgba(180,210,255,0.5);margin-top:2px;">Tippe auf <strong style="color:rgba(80,220,255,0.7);">Teilen</strong> → <strong style="color:rgba(80,220,255,0.7);">Zum Homescreen</strong></div>
-      </div>
-      <button style="background:none;border:none;color:rgba(180,210,255,0.35);font-size:16px;cursor:pointer;padding:4px;line-height:1;flex-shrink:0;" onclick="localStorage.setItem('flux_install_dismissed','1');this.closest('div').style.opacity='0';setTimeout(()=>this.closest('div').remove(),400);">✕</button>
-    `;
-    document.body.appendChild(banner);
-    requestAnimationFrame(() => {
-      banner.style.opacity = '1';
-      banner.style.transform = 'translateX(-50%) translateY(0)';
-    });
-  }, 4000);
+
+function showIOSHint() {
+  if (document.getElementById('ios-install-hint')) return;
+  const hint = document.createElement('div');
+  hint.id = 'ios-install-hint';
+  hint.style.cssText = `
+    position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(16px);
+    background:rgba(5,18,30,0.97);border:1px solid rgba(80,220,255,0.25);
+    border-radius:20px;padding:14px 18px;z-index:150;
+    box-shadow:0 8px 32px rgba(0,0,0,0.5);backdrop-filter:blur(20px);
+    opacity:0;transition:all 0.35s cubic-bezier(0.16,1,0.3,1);
+    max-width:300px;width:calc(100% - 40px);text-align:center;
+  `;
+  hint.innerHTML = `
+    <div style="font-size:22px;margin-bottom:8px;">📲</div>
+    <div style="font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:500;color:#e8f4ff;margin-bottom:5px;">Zum Homescreen hinzufügen</div>
+    <div style="font-size:12px;color:rgba(180,210,255,0.55);line-height:1.6;">
+      Tippe auf <span style="color:rgba(80,220,255,0.8);">Teilen</span> <span style="font-size:14px;">⎙</span><br>
+      dann <span style="color:rgba(80,220,255,0.8);">„Zum Home-Bildschirm"</span>
+    </div>
+    <button style="margin-top:12px;background:none;border:1px solid rgba(80,220,255,0.2);
+      border-radius:10px;color:rgba(180,210,255,0.45);font-size:12px;
+      padding:5px 14px;cursor:pointer;" onclick="this.closest('#ios-install-hint').remove();">OK</button>
+  `;
+  document.body.appendChild(hint);
+  requestAnimationFrame(() => {
+    hint.style.opacity = '1';
+    hint.style.transform = 'translateX(-50%) translateY(0)';
+  });
+  setTimeout(() => { if (hint.parentNode) { hint.style.opacity='0'; setTimeout(()=>hint.remove(),350); } }, 8000);
 }
 
-// Service Worker registration
+// iOS: show banner once automatically
+if (isIOS && !localStorage.getItem('flux_install_dismissed')) {
+  setTimeout(showInstallBanner, 3000);
+}
+
+// Service Worker
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(() => {});
 }
