@@ -120,8 +120,8 @@ html,body{
   flex:1;min-width:0;
   background:var(--card);border:1px solid var(--card-border);
   border-radius:28px;
-  padding:18px 10px;display:flex;flex-direction:column;
-  align-items:center;gap:10px;position:relative;overflow:hidden;
+  padding:16px 8px;display:flex;flex-direction:column;
+  align-items:center;gap:8px;position:relative;overflow:visible;
   cursor:ns-resize;user-select:none;-webkit-user-select:none;
   transition:border-color 0.3s,box-shadow 0.3s;
   height:clamp(200px,46vw,290px);flex-shrink:0;
@@ -143,10 +143,10 @@ html,body{
 #body-fill{background:linear-gradient(180deg,var(--accent),var(--teal));}
 #emotion-fill{background:linear-gradient(180deg,var(--accent3),var(--accent2));}
 .slider-value{
-  font-family:'Space Grotesk',sans-serif;font-size:30px;font-weight:500;letter-spacing:-1.5px;
-  color:var(--accent);flex-shrink:0;line-height:1;
+  font-family:'Space Grotesk',sans-serif;font-size:clamp(20px,5.5vw,30px);font-weight:600;letter-spacing:-1px;
+  color:var(--accent);flex-shrink:0;line-height:1;white-space:nowrap;
 }
-.slider-pct{font-size:14px;font-weight:400;letter-spacing:0;color:var(--text-dim);margin-left:1px;vertical-align:baseline;}
+.slider-pct{font-size:0.5em;font-weight:400;letter-spacing:0;color:var(--text-dim);margin-left:1px;vertical-align:middle;}
 .mood-emoji{width:26px;height:26px;flex-shrink:0;transition:transform 0.3s;display:flex;align-items:center;justify-content:center;}
 
 /* ── Cycle toggle on dashboard ── */
