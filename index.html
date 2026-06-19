@@ -121,14 +121,21 @@ html,body{
   background:var(--card);border:1px solid var(--card-border);
   border-radius:28px;
   padding:16px 8px;display:flex;flex-direction:column;
-  align-items:center;gap:8px;position:relative;overflow:visible;
+  align-items:center;gap:8px;position:relative;overflow:hidden;
   cursor:ns-resize;user-select:none;-webkit-user-select:none;
   transition:border-color 0.3s,box-shadow 0.3s;
   height:clamp(200px,46vw,290px);flex-shrink:0;
   box-shadow:0 2px 20px var(--shadow),0 0 0 0.5px var(--card-border);
   touch-action:none;
 }
-.slider-card.dragging{border-color:var(--card-border-strong);box-shadow:0 12px 40px var(--shadow-md);}
+.slider-card.dragging{
+  border-color:var(--card-border-strong);
+  box-shadow:0 8px 28px var(--shadow-md),0 0 0 1.5px rgba(124,92,191,0.25);
+  transition:box-shadow 0.2s ease,border-color 0.2s ease;
+}
+.slider-card:not(.dragging){
+  transition:box-shadow 0.3s ease,border-color 0.3s;
+}
 .slider-label{font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:var(--text-dim);font-weight:500;text-align:center;line-height:1.5;flex-shrink:0;}
 .liquid-slider{
   flex:1;width:clamp(40px,10vw,56px);position:relative;
@@ -136,17 +143,30 @@ html,body{
   border:1px solid rgba(155,127,232,0.15);min-height:100px;
   will-change:contents;
 }
-.liquid-fill{position:absolute;bottom:0;left:0;right:0;border-radius:28px;overflow:hidden;will-change:height;}
-.liquid-fill::before{content:'';position:absolute;top:0;left:0;right:0;height:7px;background:rgba(255,255,255,0.45);border-radius:50%;filter:blur(2px);animation:liquidSurface 3s ease-in-out infinite;}
-.liquid-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,0.35) 0%,transparent 40%);}
-@keyframes liquidSurface{0%,100%{transform:scaleX(1);opacity:0.8;}50%{transform:scaleX(1.1) translateY(-1px);opacity:1;}}
-#body-fill{background:linear-gradient(180deg,var(--accent),var(--teal));}
-#emotion-fill{background:linear-gradient(180deg,var(--accent3),var(--accent2));}
-.slider-value{
-  font-family:'Space Grotesk',sans-serif;font-size:clamp(20px,5.5vw,30px);font-weight:600;letter-spacing:-1px;
-  color:var(--accent);flex-shrink:0;line-height:1;white-space:nowrap;
+.liquid-fill{
+  position:absolute;bottom:0;left:0;right:0;border-radius:28px;overflow:hidden;will-change:height;
+  background-size:100% 300%;
+  animation:colorShift 6s ease infinite;
 }
-.slider-pct{font-size:0.5em;font-weight:400;letter-spacing:0;color:var(--text-dim);margin-left:1px;vertical-align:middle;}
+.liquid-fill::before{content:'';position:absolute;top:0;left:0;right:0;height:10px;background:rgba(255,255,255,0.5);border-radius:50%;filter:blur(3px);animation:liquidSurface 3s ease-in-out infinite;}
+.liquid-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,0.3) 0%,transparent 50%);}
+@keyframes liquidSurface{0%,100%{transform:scaleX(1);opacity:0.8;}50%{transform:scaleX(1.12) translateY(-2px);opacity:1;}}
+.slider-card.dragging .liquid-fill{animation:colorShiftFast 2s ease infinite;}
+.slider-card.dragging .liquid-fill::before{animation:liquidSurfaceFast 0.65s ease-in-out infinite;}
+@keyframes liquidSurfaceFast{0%,100%{transform:scaleX(1) translateY(0);opacity:0.9;}50%{transform:scaleX(1.22) translateY(-4px);opacity:1;}}
+#body-fill{background:linear-gradient(180deg,#9b7fe8,#5bbfbf,#7c5cbf,#5bbfbf,#9b7fe8);background-size:100% 400%;}
+#emotion-fill{background:linear-gradient(180deg,#e891c8,#b39ddb,#f0a8d8,#9b7fe8,#e891c8);background-size:100% 400%;}
+@keyframes colorShift{0%{background-position:0% 0%;}50%{background-position:0% 60%;}100%{background-position:0% 0%}}
+@keyframes colorShiftFast{0%{background-position:0% 0%;}50%{background-position:0% 80%;}100%{background-position:0% 0%}}
+.slider-value{
+  position:absolute;bottom:10px;left:50%;transform:translateX(-50%);
+  font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;letter-spacing:-0.3px;
+  color:#fff;line-height:1;white-space:nowrap;z-index:2;pointer-events:none;
+  text-shadow:0 1px 6px rgba(0,0,0,0.4),0 0 12px rgba(0,0,0,0.3);
+  background:rgba(0,0,0,0.18);border-radius:8px;padding:2px 5px;
+  backdrop-filter:blur(2px);
+}
+.slider-pct{font-size:0.75em;font-weight:500;margin-left:0.5px;}
 .mood-emoji{width:26px;height:26px;flex-shrink:0;transition:transform 0.3s;display:flex;align-items:center;justify-content:center;}
 
 /* ── Cycle toggle on dashboard ── */
@@ -676,24 +696,24 @@ input[type="date"]::-webkit-calendar-picker-indicator{opacity:0.4;}
 <!-- SVG icon defs (reusable) -->
 <svg width="0" height="0" style="position:absolute">
 <defs>
-  <!-- body/strength icon -->
+  <!-- body/person icon -->
   <symbol id="ic-body" viewBox="0 0 20 20" fill="none">
-    <circle cx="10" cy="5" r="2.2" stroke="currentColor" stroke-width="1.6"/>
-    <path d="M6 10h8M10 10v5.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+    <circle cx="10" cy="4.5" r="2" stroke="currentColor" stroke-width="1.6"/>
+    <path d="M6.5 9.5h7M10 9.5v5.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
     <path d="M7.5 15.5L10 13.5l2.5 2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
-    <path d="M6 12.5H4.5M13.5 12.5H15.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+    <path d="M6.5 11.5H5M13.5 11.5H15" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
   </symbol>
   <!-- emotion/heart icon -->
   <symbol id="ic-emotion" viewBox="0 0 20 20" fill="none">
-    <path d="M10 16s-7-4.5-7-8.5A4 4 0 0110 5.5 4 4 0 0117 7.5C17 11.5 10 16 10 16z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M10 15.5S3.5 11.5 3.5 7.5a3.5 3.5 0 016.5-1.8 3.5 3.5 0 016.5 1.8c0 4-6.5 8-6.5 8z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
   </symbol>
   <!-- period/drop icon -->
   <symbol id="ic-period" viewBox="0 0 20 20" fill="none">
-    <path d="M10 3C10 3 5 9.5 5 13a5 5 0 0010 0C15 9.5 10 3 10 3z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M10 3.5C10 3.5 5.5 9.5 5.5 13a4.5 4.5 0 009 0C14.5 9.5 10 3.5 10 3.5z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
   </symbol>
   <!-- migraine/lightning icon -->
   <symbol id="ic-migraine" viewBox="0 0 20 20" fill="none">
-    <path d="M11 3L6 11h5l-2 6 7-9h-5l2-5z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M11.5 3L6.5 11h5l-2.5 6 8-9.5H12l2-4.5z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/>
   </symbol>
   <!-- edit/pencil icon -->
   <symbol id="ic-edit" viewBox="0 0 20 20" fill="none">
@@ -726,6 +746,220 @@ input[type="date"]::-webkit-calendar-picker-indicator{opacity:0.4;}
   <!-- check icon -->
   <symbol id="ic-check" viewBox="0 0 20 20" fill="none">
     <path d="M4 10l4.5 4.5L16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <!-- sport / running -->
+  <symbol id="ic-sport" viewBox="0 0 20 20" fill="none">
+    <circle cx="12" cy="3.5" r="1.5" stroke="currentColor" stroke-width="1.5"/>
+    <path d="M10 6.5l-3 4 3 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M9.5 8.5l2 2.5 3 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M7 10.5l-1.5 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M11.5 11l1 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+  </symbol>
+  <!-- arbeit / laptop -->
+  <symbol id="ic-arbeit" viewBox="0 0 20 20" fill="none">
+    <rect x="4" y="5" width="12" height="8" rx="1.5" stroke="currentColor" stroke-width="1.5"/>
+    <path d="M2 15h16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M8 13v2M12 13v2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+  </symbol>
+  <!-- schlaf / moon -->
+  <symbol id="ic-schlaf" viewBox="0 0 20 20" fill="none">
+    <path d="M9 4a7 7 0 100 12 5 5 0 010-12z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+  </symbol>
+  <!-- freunde / two people -->
+  <symbol id="ic-freunde" viewBox="0 0 20 20" fill="none">
+    <circle cx="7.5" cy="5" r="2" stroke="currentColor" stroke-width="1.5"/>
+    <path d="M3 16c0-2.5 2-4 4.5-4s4.5 1.5 4.5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <circle cx="13.5" cy="5.5" r="1.7" stroke="currentColor" stroke-width="1.4"/>
+    <path d="M13.5 11.5c1.8 0 3.5 1.2 3.5 3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+  </symbol>
+  <!-- natur / leaf -->
+  <symbol id="ic-natur" viewBox="0 0 20 20" fill="none">
+    <path d="M10 16V9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M10 9C10 9 5 8 4.5 3.5 4.5 3.5 10 3 13 6c2 2 1.5 5 1.5 5S12 9.5 10 9z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+    <path d="M10 12C10 12 7 11.5 6 14" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+  </symbol>
+  <!-- kreativ / pen nib -->
+  <symbol id="ic-kreativ" viewBox="0 0 20 20" fill="none">
+    <path d="M10 14l-4 4h-1v-1l4-4" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+    <path d="M6 14l8-8 2 2-8 8-2-2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+    <path d="M14 6l1-3 2 2-3 1z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+  </symbol>
+  <!-- ernährung / bowl -->
+  <symbol id="ic-ernährung" viewBox="0 0 20 20" fill="none">
+    <path d="M4 9h12a6 6 0 01-12 0z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+    <path d="M10 15v2M7 17h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M8 7V5M10 6V4M12 7V5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+  </symbol>
+  <!-- meditation / lotus -->
+  <symbol id="ic-meditation" viewBox="0 0 20 20" fill="none">
+    <circle cx="10" cy="5" r="1.5" stroke="currentColor" stroke-width="1.4"/>
+    <path d="M6.5 12h7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M7 12c0-2 1-4 3-4s3 2 3 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+    <path d="M5 12c-1.5 0-2.5-1-2.5-2.5S4 7 5.5 8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+    <path d="M15 12c1.5 0 2.5-1 2.5-2.5S16 7 14.5 8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+  </symbol>
+  <!-- musik / note -->
+  <symbol id="ic-musik" viewBox="0 0 20 20" fill="none">
+    <path d="M8 15V6l8-2v9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="6" cy="15" r="2" stroke="currentColor" stroke-width="1.4"/>
+    <circle cx="14" cy="13" r="2" stroke="currentColor" stroke-width="1.4"/>
+  </symbol>
+  <!-- lesen / book -->
+  <symbol id="ic-lesen" viewBox="0 0 20 20" fill="none">
+    <path d="M4 5h5.5a2 2 0 012 2v9a2 2 0 00-2-2H4V5z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+    <path d="M16 5h-5.5a2 2 0 00-2 2v9a2 2 0 012-2H16V5z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+  </symbol>
+  <!-- stress / wave -->
+  <symbol id="ic-stress" viewBox="0 0 20 20" fill="none">
+    <path d="M3 10c1.5-3 3-3 4.5 0s3 3 4.5 0 3-3 4.5 0" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M3 14c1.5-2 3-2 4.5 0s3 2 4.5 0 3-2 4.5 0" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/>
+  </symbol>
+  <!-- reise / plane -->
+  <symbol id="ic-reise" viewBox="0 0 20 20" fill="none">
+    <path d="M3 13l3-1.5 2.5 2.5 6-8.5c.5-.7 1.5-.5 1.5.5L13 14l-3.5 1-1-2.5L6 14 4 13.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <!-- generic tag / custom -->
+  <symbol id="ic-tag" viewBox="0 0 20 20" fill="none">
+    <path d="M3.5 3.5h6l7 7a2 2 0 010 2.8l-3.2 3.2a2 2 0 01-2.8 0l-7-7v-6z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+    <circle cx="7.5" cy="7.5" r="1.2" fill="currentColor"/>
+  </symbol>
+  <!-- logout / door-arrow -->
+  <symbol id="ic-logout" viewBox="0 0 20 20" fill="none">
+    <path d="M8 4H5a1 1 0 00-1 1v10a1 1 0 001 1h3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M13 7l3 3-3 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M16 10H8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+  </symbol>
+  <!-- lock / privacy -->
+  <symbol id="ic-lock" viewBox="0 0 20 20" fill="none">
+    <rect x="4" y="9" width="12" height="8" rx="2" stroke="currentColor" stroke-width="1.5"/>
+    <path d="M7 9V6.5a3 3 0 016 0V9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <circle cx="10" cy="13" r="1.3" fill="currentColor"/>
+  </symbol>
+  <!-- phone / install to homescreen -->
+  <symbol id="ic-phone" viewBox="0 0 20 20" fill="none">
+    <rect x="5" y="2" width="10" height="16" rx="2" stroke="currentColor" stroke-width="1.5"/>
+    <circle cx="10" cy="15.5" r="0.9" fill="currentColor"/>
+    <path d="M8 4.5h4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+    <path d="M10 7v4M8 9.5l2 2 2-2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <!-- cloud / sync -->
+  <symbol id="ic-cloud" viewBox="0 0 20 20" fill="none">
+    <path d="M5.5 14A3.5 3.5 0 015 7.1a4 4 0 017.9-.6A3 3 0 0115 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M8 14l2 2 2-2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M10 16v-5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+  </symbol>
+  <!-- period/blood drop filled -->
+  <symbol id="ic-period-filled" viewBox="0 0 20 20" fill="none">
+    <path d="M10 3.5C10 3.5 5.5 9.5 5.5 13a4.5 4.5 0 009 0C14.5 9.5 10 3.5 10 3.5z" stroke="currentColor" stroke-width="1.6" fill="currentColor" fill-opacity="0.18" stroke-linejoin="round"/>
+  </symbol>
+  <!-- star / sparkle for save confirmation -->
+  <symbol id="ic-sparkle" viewBox="0 0 20 20" fill="none">
+    <path d="M10 3v2M10 15v2M3 10h2M15 10h2M5.1 5.1l1.4 1.4M13.5 13.5l1.4 1.4M14.9 5.1l-1.4 1.4M6.5 13.5l-1.4 1.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+    <circle cx="10" cy="10" r="2.5" fill="currentColor" fill-opacity="0.25" stroke="currentColor" stroke-width="1.4"/>
+  </symbol>
+  <!-- trash / swipe-delete -->
+  <symbol id="ic-trash-swipe" viewBox="0 0 20 20" fill="none">
+    <path d="M5 7h10l-1 9H6L5 7z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+    <path d="M3 7h14M8 7V5h4v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+  </symbol>
+  <!-- Yoga / wellness -->
+  <symbol id="ic-yoga" viewBox="0 0 20 20" fill="none">
+    <circle cx="10" cy="3.5" r="1.5" stroke="currentColor" stroke-width="1.4"/>
+    <path d="M10 5.5v3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+    <path d="M6 9h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M7 9l-2 4h2l1-2 2 2 2-2 1 2h2l-2-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M8 13v3.5M12 13v3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+  </symbol>
+  <!-- coffee / drink -->
+  <symbol id="ic-kaffee" viewBox="0 0 20 20" fill="none">
+    <path d="M4 8h9v5a4 4 0 01-4 4H8a4 4 0 01-4-4V8z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+    <path d="M13 9h1.5a2 2 0 010 4H13" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+    <path d="M7 5.5c0-1 1-1 1-2M10 5.5c0-1 1-1 1-2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+  </symbol>
+  <!-- shopping / bag -->
+  <symbol id="ic-einkauf" viewBox="0 0 20 20" fill="none">
+    <path d="M4 7h12l-1.5 9H5.5L4 7z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+    <path d="M7.5 7V5.5a2.5 2.5 0 015 0V7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+  </symbol>
+  <!-- cooking / pot -->
+  <symbol id="ic-kochen" viewBox="0 0 20 20" fill="none">
+    <path d="M4.5 9h11l-1 7h-9l-1-7z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+    <path d="M3 9h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M7.5 9V7.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+    <path d="M10 9V6.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+    <path d="M12.5 9V7.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+    <path d="M15 6a2 2 0 00-2-2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+  </symbol>
+  <!-- biking / cycling -->
+  <symbol id="ic-radfahren" viewBox="0 0 20 20" fill="none">
+    <circle cx="5" cy="13" r="3" stroke="currentColor" stroke-width="1.4"/>
+    <circle cx="15" cy="13" r="3" stroke="currentColor" stroke-width="1.4"/>
+    <path d="M5 13l4-6h3l3 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M10 7V5M8 5h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+    <circle cx="12" cy="4" r="1" stroke="currentColor" stroke-width="1.2"/>
+  </symbol>
+  <!-- swimming -->
+  <symbol id="ic-schwimmen" viewBox="0 0 20 20" fill="none">
+    <path d="M2 13c2-2 3-2 4 0s2 2 4 0 2-2 4 0 2 2 4 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M2 16c2-1.5 3-1.5 4 0s2 1.5 4 0 2-1.5 4 0 2 1.5 4 0" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity="0.5"/>
+    <circle cx="14" cy="5" r="1.5" stroke="currentColor" stroke-width="1.3"/>
+    <path d="M11 7l2-1.5 3 2.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M7 9.5l4-2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+  </symbol>
+  <!-- family / home -->
+  <symbol id="ic-familie" viewBox="0 0 20 20" fill="none">
+    <path d="M2 17l8-12 8 12H2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+    <path d="M7.5 17v-4h5v4" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+  </symbol>
+  <!-- cinema / film -->
+  <symbol id="ic-kino" viewBox="0 0 20 20" fill="none">
+    <rect x="3" y="5" width="14" height="10" rx="1.5" stroke="currentColor" stroke-width="1.5"/>
+    <path d="M3 8h14M3 12h14M7 5v2M10 5v2M13 5v2M7 12v2M10 12v2M13 12v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+  </symbol>
+  <!-- game controller -->
+  <symbol id="ic-gaming" viewBox="0 0 20 20" fill="none">
+    <path d="M4 10.5C3 15 5 17.5 7.5 16l2.5-1.5 2.5 1.5c2.5 1.5 4.5-1 3.5-5.5L15 7a3 3 0 00-3-2H8a3 3 0 00-3 2L4 10.5z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+    <path d="M8 8v3M6.5 9.5h3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+    <circle cx="12.5" cy="8.5" r="0.8" fill="currentColor"/>
+    <circle cx="14" cy="10" r="0.8" fill="currentColor"/>
+  </symbol>
+  <!-- phone call -->
+  <symbol id="ic-telefonieren" viewBox="0 0 20 20" fill="none">
+    <path d="M6.5 4.5c.5 1.5 1 3 .5 4L5.5 10c1 2 2.5 3.5 4.5 4.5l1.5-1.5c1-.5 2.5 0 4 .5.5 2-1 3.5-2.5 3.5C7 17.5 3 12.5 3 7c0-1.5 1.5-3 3.5-2.5z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+  </symbol>
+  <!-- writing / journal -->
+  <symbol id="ic-schreiben" viewBox="0 0 20 20" fill="none">
+    <path d="M5 14V6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H7a2 2 0 01-2-2z" stroke="currentColor" stroke-width="1.5"/>
+    <path d="M8 8h4M8 11h3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+  </symbol>
+  <!-- stretching / flex -->
+  <symbol id="ic-dehnen" viewBox="0 0 20 20" fill="none">
+    <circle cx="10" cy="3.5" r="1.5" stroke="currentColor" stroke-width="1.4"/>
+    <path d="M10 5.5L7 9l1.5 1 1.5-1.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M10 5.5L13 9l-1.5 1L10 8.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M8.5 10l-1 5M11.5 10l1 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+    <path d="M6 14.5h4M14 14.5h-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+  </symbol>
+  <!-- sun / outdoor -->
+  <symbol id="ic-draussen" viewBox="0 0 20 20" fill="none">
+    <circle cx="10" cy="10" r="3" stroke="currentColor" stroke-width="1.5"/>
+    <path d="M10 3v1.5M10 15.5V17M3 10h1.5M15.5 10H17M5.1 5.1l1.1 1.1M13.8 13.8l1.1 1.1M14.9 5.1l-1.1 1.1M6.2 13.8l-1.1 1.1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+  </symbol>
+  <!-- party / celebration -->
+  <symbol id="ic-feier" viewBox="0 0 20 20" fill="none">
+    <path d="M4 16l4-9 7 7-9 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+    <path d="M4 16l3.5-4.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+    <path d="M14 4l1 3M17 6l-3 1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+    <circle cx="12.5" cy="4.5" r="0.8" fill="currentColor"/>
+    <path d="M16 10l.5 2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+  </symbol>
+  <!-- sauna / heat / relax -->
+  <symbol id="ic-entspannen" viewBox="0 0 20 20" fill="none">
+    <path d="M5 14h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M7 14v-4a3 3 0 016 0v4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+    <path d="M7 7c0-1 .5-1.5 1-2s.5-1.5 0-2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+    <path d="M10 7c0-1 .5-1.5 1-2s.5-1.5 0-2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+    <path d="M13 7c0-1 .5-1.5 1-2s.5-1.5 0-2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
   </symbol>
 </defs>
 </svg>
@@ -763,7 +997,7 @@ input[type="date"]::-webkit-calendar-picker-indicator{opacity:0.4;}
         Noch kein Konto? <button id="auth-switch-btn">Registrieren</button>
       </div>
     </div>
-    <div class="auth-privacy">🔒 Deine Daten bleiben privat und verschlüsselt.</div>
+    <div class="auth-privacy" style="display:flex;align-items:center;justify-content:center;gap:5px;"><svg width="11" height="11" style="color:#c0b0d8;flex-shrink:0;opacity:0.8;"><use href="#ic-lock"/></svg> Deine Daten bleiben privat und verschlüsselt.</div>
   </div>
 </div>
 
@@ -803,8 +1037,8 @@ input[type="date"]::-webkit-calendar-picker-indicator{opacity:0.4;}
 
         <!-- Stats row 2: cycle/migraine -->
         <div class="stats-row" id="stats-row-extra">
-          <div class="stat-pill"><span class="stat-num" id="stat-cycle" style="font-size:22px;">–</span><div class="stat-label">🩸 Periode</div></div>
-          <div class="stat-pill"><span class="stat-num" id="stat-migraine" style="font-size:22px;">–</span><div class="stat-label">⚡ Migräne</div></div>
+          <div class="stat-pill"><span class="stat-num" id="stat-cycle" style="font-size:22px;">–</span><div class="stat-label" style="display:flex;align-items:center;gap:3px;justify-content:center;"><svg width="11" height="11" style="color:var(--rose);flex-shrink:0;"><use href="#ic-period"/></svg> Periode</div></div>
+          <div class="stat-pill"><span class="stat-num" id="stat-migraine" style="font-size:22px;">–</span><div class="stat-label" style="display:flex;align-items:center;gap:3px;justify-content:center;"><svg width="11" height="11" style="color:#b060d0;flex-shrink:0;"><use href="#ic-migraine"/></svg> Migräne</div></div>
         </div>
 
         <!-- Stats row 3: best/worst day & variability -->
@@ -869,7 +1103,7 @@ input[type="date"]::-webkit-calendar-picker-indicator{opacity:0.4;}
             <div id="avatar-btn" style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,rgba(155,127,232,0.2),rgba(232,164,208,0.2));border:1px solid rgba(155,127,232,0.3);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;user-select:none;color:var(--accent);font-weight:600;font-family:'Space Grotesk',sans-serif;">?</div>
             <div id="avatar-dropdown" style="display:none;position:absolute;top:38px;right:0;background:rgba(250,247,255,0.98);border:1px solid var(--card-border);border-radius:14px;padding:8px;min-width:160px;box-shadow:0 8px 28px var(--shadow-md);z-index:100;">
               <div id="avatar-name" style="font-size:12px;color:var(--text-dim);padding:6px 10px 10px;border-bottom:1px solid rgba(155,127,232,0.1);margin-bottom:6px;"></div>
-              <button id="auth-logout-btn" style="width:100%;text-align:left;background:none;border:none;color:#c04060;font-size:14px;padding:10px 10px;cursor:pointer;border-radius:8px;font-family:'Space Grotesk',sans-serif;min-height:44px;">🚪 Abmelden</button>
+              <button id="auth-logout-btn" style="width:100%;text-align:left;background:none;border:none;color:#c04060;font-size:14px;padding:10px 10px;cursor:pointer;border-radius:8px;font-family:'Space Grotesk',sans-serif;min-height:44px;display:flex;align-items:center;gap:7px;"><svg width="16" height="16" style="color:#c04060;flex-shrink:0;" aria-hidden="true"><use href="#ic-logout"/></svg> Abmelden</button>
             </div>
           </div>
         </div>
@@ -880,14 +1114,12 @@ input[type="date"]::-webkit-calendar-picker-indicator{opacity:0.4;}
           <div class="slider-card" id="body-slider-card">
             <div class="mood-emoji" id="body-emoji"><svg width="22" height="22" style="color:var(--accent);flex-shrink:0;" aria-hidden="true"><use href="#ic-body"/></svg></div>
             <div class="slider-label">Körper<br>Energie</div>
-            <div class="liquid-slider" id="body-track"><div class="liquid-fill" id="body-fill" style="height:72%"></div></div>
-            <div class="slider-value" id="body-val">72<span class="slider-pct">%</span></div>
+            <div class="liquid-slider" id="body-track"><div class="liquid-fill" id="body-fill" style="height:72%"></div><div class="slider-value" id="body-val">72<span class="slider-pct">%</span></div></div>
           </div>
           <div class="slider-card" id="emotion-slider-card">
             <div class="mood-emoji" id="emotion-emoji"><svg width="22" height="22" style="color:var(--accent3);flex-shrink:0;" aria-hidden="true"><use href="#ic-emotion"/></svg></div>
             <div class="slider-label">Emotionales<br>Befinden</div>
-            <div class="liquid-slider" id="emotion-track"><div class="liquid-fill" id="emotion-fill" style="height:65%"></div></div>
-            <div class="slider-value" id="emotion-val">65<span class="slider-pct">%</span></div>
+            <div class="liquid-slider" id="emotion-track"><div class="liquid-fill" id="emotion-fill" style="height:65%"></div><div class="slider-value" id="emotion-val">65<span class="slider-pct">%</span></div></div>
           </div>
         </div>
 
@@ -987,7 +1219,7 @@ input[type="date"]::-webkit-calendar-picker-indicator{opacity:0.4;}
 </div>
 
 <div id="toast"></div>
-<div id="save-overlay"><div class="save-ring">✦</div></div>
+<div id="save-overlay"><div class="save-ring"><svg width="32" height="32" style="color:white;" aria-hidden="true"><use href="#ic-sparkle"/></svg></div></div>
 
 <!-- Reminder Modal -->
 <div class="modal-overlay" id="reminder-modal">
@@ -1049,7 +1281,7 @@ input[type="date"]::-webkit-calendar-picker-indicator{opacity:0.4;}
     <div id="edit-tags-grid" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px;"></div>
     <div style="display:flex;gap:10px;">
       <button id="edit-cancel-btn" class="modal-btn-secondary">Abbrechen</button>
-      <button id="edit-save-btn" class="modal-btn-primary" style="flex:2;">Speichern ✦</button>
+      <button id="edit-save-btn" class="modal-btn-primary" style="flex:2;">Speichern</button>
     </div>
   </div>
 </div>
@@ -1061,11 +1293,13 @@ input[type="date"]::-webkit-calendar-picker-indicator{opacity:0.4;}
     <div class="modal-title">Tätigkeiten verwalten</div>
     <div class="modal-sub">Füge eigene Tätigkeiten hinzu oder lösche bestehende.</div>
     <div id="settings-tags-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;"></div>
-    <div style="display:flex;gap:8px;margin-bottom:16px;">
-      <input id="new-tag-emoji" type="text" placeholder="😀" class="modal-input" style="width:60px;text-align:center;flex-shrink:0;margin-bottom:0;">
-      <input id="new-tag-name" type="text" placeholder="Neue Tätigkeit…" class="modal-input" style="flex:1;margin-bottom:0;">
+    <div style="font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:var(--text-dim);font-weight:500;margin-bottom:8px;">Neue Tätigkeit</div>
+    <div style="display:flex;gap:8px;margin-bottom:10px;">
+      <input id="new-tag-name" type="text" placeholder="Name der Tätigkeit…" class="modal-input" style="flex:1;margin-bottom:0;">
     </div>
-    <button id="add-tag-btn" class="modal-btn-primary" style="margin-bottom:10px;">+ Tätigkeit hinzufügen</button>
+    <div style="font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:var(--text-dim);font-weight:500;margin-bottom:8px;">Icon wählen</div>
+    <div id="icon-catalog" style="display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:16px;padding:12px;background:rgba(155,127,232,0.04);border:1px solid rgba(155,127,232,0.14);border-radius:16px;"></div>
+    <button id="add-tag-btn" class="modal-btn-primary" style="margin-bottom:10px;">Tätigkeit hinzufügen</button>
     <button id="settings-close-btn" class="modal-btn-secondary" style="width:100%;">Fertig</button>
   </div>
 </div>
@@ -1110,18 +1344,18 @@ let db=null, auth=null, currentUser=null, fbConnected=false;
 // STATE
 // ══════════════════════════════════════════════
 const DEFAULT_TAGS = [
-  {id:'sport',label:'🏃 Sport'},
-  {id:'arbeit',label:'💻 Arbeit'},
-  {id:'schlaf',label:'🌙 Schlaf'},
-  {id:'freunde',label:'👥 Freunde'},
-  {id:'natur',label:'🌿 Natur'},
-  {id:'kreativ',label:'🎨 Kreativ'},
-  {id:'ernährung',label:'🥗 Ernährung'},
-  {id:'meditation',label:'🧘 Meditation'},
-  {id:'musik',label:'🎵 Musik'},
-  {id:'lesen',label:'📖 Lesen'},
-  {id:'stress',label:'😤 Stress'},
-  {id:'reise',label:'✈️ Reise'},
+  {id:'sport',      label:'Sport',      icon:'ic-sport'},
+  {id:'arbeit',     label:'Arbeit',     icon:'ic-arbeit'},
+  {id:'schlaf',     label:'Schlaf',     icon:'ic-schlaf'},
+  {id:'freunde',    label:'Freunde',    icon:'ic-freunde'},
+  {id:'natur',      label:'Natur',      icon:'ic-natur'},
+  {id:'kreativ',    label:'Kreativ',    icon:'ic-kreativ'},
+  {id:'ernährung',  label:'Ernährung',  icon:'ic-ernährung'},
+  {id:'meditation', label:'Meditation', icon:'ic-meditation'},
+  {id:'musik',      label:'Musik',      icon:'ic-musik'},
+  {id:'lesen',      label:'Lesen',      icon:'ic-lesen'},
+  {id:'stress',     label:'Stress',     icon:'ic-stress'},
+  {id:'reise',      label:'Reise',      icon:'ic-reise'},
 ];
 
 const state = {
@@ -1165,14 +1399,20 @@ function emotionEmoji(v) { const c=v>=80?'#e06090':v>=60?'var(--accent3)':v>=40?
 // ══════════════════════════════════════════════
 // TAGS GRID (Dashboard)
 // ══════════════════════════════════════════════
+function tagIconSvg(t, size=14) {
+  const iconId = t.icon || 'ic-tag';
+  return `<svg width="${size}" height="${size}" style="color:currentColor;flex-shrink:0;" aria-hidden="true"><use href="#${iconId}"/></svg>`;
+}
+
 function buildTagsGrid() {
   const grid = document.getElementById('tags-grid');
   grid.innerHTML = '';
   state.tags.forEach(t => {
     const el = document.createElement('div');
     el.className = 'tag';
-    el.textContent = t.label;
     el.dataset.id = t.id;
+    el.innerHTML = `${tagIconSvg(t)}<span>${t.label}</span>`;
+    el.style.cssText = 'display:flex;align-items:center;gap:5px;';
     el.addEventListener('click', () => {
       if(state.activeTags.has(t.id)) state.activeTags.delete(t.id);
       else state.activeTags.add(t.id);
@@ -1603,17 +1843,17 @@ function updateInsights() {
     const cEmo  = avgEmo(withCycle), nEmo = avgEmo(noCycle);
     cycleInner.innerHTML = `
       <div class="health-compare-row">
-        <div class="health-compare-label" style="font-size:11px;color:var(--rose);">🩸 Mit Periode</div>
+        <div class="health-compare-label" style="font-size:11px;color:var(--rose);display:flex;align-items:center;gap:4px;"><svg width="12" height="12" style="color:var(--rose);flex-shrink:0;"><use href="#ic-period"/></svg> Mit Periode</div>
         <div class="health-compare-bars">
-          <div class="health-bar-row"><div class="health-bar-icon" style="color:var(--accent);">💪</div><div class="health-bar-track"><div class="health-bar-fill" style="width:0%;background:var(--accent);" data-w="${cBody}"></div></div><div class="health-bar-val">${cBody}%</div></div>
-          <div class="health-bar-row"><div class="health-bar-icon" style="color:var(--accent3);">🫀</div><div class="health-bar-track"><div class="health-bar-fill" style="width:0%;background:var(--accent3);" data-w="${cEmo}"></div></div><div class="health-bar-val">${cEmo}%</div></div>
+          <div class="health-bar-row"><div class="health-bar-icon" style="color:var(--accent);display:flex;"><svg width="14" height="14"><use href="#ic-body"/></svg></div><div class="health-bar-track"><div class="health-bar-fill" style="width:0%;background:var(--accent);" data-w="${cBody}"></div></div><div class="health-bar-val">${cBody}%</div></div>
+          <div class="health-bar-row"><div class="health-bar-icon" style="color:var(--accent3);display:flex;"><svg width="14" height="14"><use href="#ic-emotion"/></svg></div><div class="health-bar-track"><div class="health-bar-fill" style="width:0%;background:var(--accent3);" data-w="${cEmo}"></div></div><div class="health-bar-val">${cEmo}%</div></div>
         </div>
       </div>
       <div class="health-compare-row">
         <div class="health-compare-label" style="font-size:11px;color:var(--text-dim);">Ohne Periode</div>
         <div class="health-compare-bars">
-          <div class="health-bar-row"><div class="health-bar-icon" style="color:var(--accent);">💪</div><div class="health-bar-track"><div class="health-bar-fill" style="width:0%;background:var(--accent);" data-w="${nBody}"></div></div><div class="health-bar-val">${nBody}%</div></div>
-          <div class="health-bar-row"><div class="health-bar-icon" style="color:var(--accent3);">🫀</div><div class="health-bar-track"><div class="health-bar-fill" style="width:0%;background:var(--accent3);" data-w="${nEmo}"></div></div><div class="health-bar-val">${nEmo}%</div></div>
+          <div class="health-bar-row"><div class="health-bar-icon" style="color:var(--accent);display:flex;"><svg width="14" height="14"><use href="#ic-body"/></svg></div><div class="health-bar-track"><div class="health-bar-fill" style="width:0%;background:var(--accent);" data-w="${nBody}"></div></div><div class="health-bar-val">${nBody}%</div></div>
+          <div class="health-bar-row"><div class="health-bar-icon" style="color:var(--accent3);display:flex;"><svg width="14" height="14"><use href="#ic-emotion"/></svg></div><div class="health-bar-track"><div class="health-bar-fill" style="width:0%;background:var(--accent3);" data-w="${nEmo}"></div></div><div class="health-bar-val">${nEmo}%</div></div>
         </div>
       </div>`;
     cycleCard.style.display = 'block';
@@ -1634,17 +1874,17 @@ function updateInsights() {
     const mEmo  = avgEmo(withMig), nmEmo = avgEmo(noMig);
     migInner.innerHTML = `
       <div class="health-compare-row">
-        <div class="health-compare-label" style="font-size:11px;color:#b060d0;">⚡ Mit Migräne</div>
+        <div class="health-compare-label" style="font-size:11px;color:#b060d0;display:flex;align-items:center;gap:4px;"><svg width="12" height="12" style="color:#b060d0;flex-shrink:0;"><use href="#ic-migraine"/></svg> Mit Migräne</div>
         <div class="health-compare-bars">
-          <div class="health-bar-row"><div class="health-bar-icon" style="color:var(--accent);">💪</div><div class="health-bar-track"><div class="health-bar-fill" style="width:0%;background:var(--accent);" data-w="${mBody}"></div></div><div class="health-bar-val">${mBody}%</div></div>
-          <div class="health-bar-row"><div class="health-bar-icon" style="color:var(--accent3);">🫀</div><div class="health-bar-track"><div class="health-bar-fill" style="width:0%;background:var(--accent3);" data-w="${mEmo}"></div></div><div class="health-bar-val">${mEmo}%</div></div>
+          <div class="health-bar-row"><div class="health-bar-icon" style="color:var(--accent);display:flex;"><svg width="14" height="14"><use href="#ic-body"/></svg></div><div class="health-bar-track"><div class="health-bar-fill" style="width:0%;background:var(--accent);" data-w="${mBody}"></div></div><div class="health-bar-val">${mBody}%</div></div>
+          <div class="health-bar-row"><div class="health-bar-icon" style="color:var(--accent3);display:flex;"><svg width="14" height="14"><use href="#ic-emotion"/></svg></div><div class="health-bar-track"><div class="health-bar-fill" style="width:0%;background:var(--accent3);" data-w="${mEmo}"></div></div><div class="health-bar-val">${mEmo}%</div></div>
         </div>
       </div>
       <div class="health-compare-row">
         <div class="health-compare-label" style="font-size:11px;color:var(--text-dim);">Ohne Migräne</div>
         <div class="health-compare-bars">
-          <div class="health-bar-row"><div class="health-bar-icon" style="color:var(--accent);">💪</div><div class="health-bar-track"><div class="health-bar-fill" style="width:0%;background:var(--accent);" data-w="${nmBody}"></div></div><div class="health-bar-val">${nmBody}%</div></div>
-          <div class="health-bar-row"><div class="health-bar-icon" style="color:var(--accent3);">🫀</div><div class="health-bar-track"><div class="health-bar-fill" style="width:0%;background:var(--accent3);" data-w="${nmEmo}"></div></div><div class="health-bar-val">${nmEmo}%</div></div>
+          <div class="health-bar-row"><div class="health-bar-icon" style="color:var(--accent);display:flex;"><svg width="14" height="14"><use href="#ic-body"/></svg></div><div class="health-bar-track"><div class="health-bar-fill" style="width:0%;background:var(--accent);" data-w="${nmBody}"></div></div><div class="health-bar-val">${nmBody}%</div></div>
+          <div class="health-bar-row"><div class="health-bar-icon" style="color:var(--accent3);display:flex;"><svg width="14" height="14"><use href="#ic-emotion"/></svg></div><div class="health-bar-track"><div class="health-bar-fill" style="width:0%;background:var(--accent3);" data-w="${nmEmo}"></div></div><div class="health-bar-val">${nmEmo}%</div></div>
         </div>
       </div>`;
     migCard.style.display = 'block';
@@ -1671,8 +1911,9 @@ function updateInsights() {
       const color = tagColor(t);
       const found = state.tags.find(tg => tg.id === t);
       const label = found ? found.label : t;
+      const iconHtml = found ? tagIconSvg(found, 12) : '';
       const div = document.createElement('div'); div.className='corr-item';
-      div.innerHTML = `<div class="corr-dot" style="background:${color};box-shadow:0 0 7px ${color}88;"></div><div class="corr-name">${label}</div><div class="corr-bar-wrap"><div class="corr-bar" style="width:0%;background:${color};"></div></div><div class="corr-pct">${avg}%</div>`;
+      div.innerHTML = `<div class="corr-dot" style="background:${color};box-shadow:0 0 7px ${color}88;"></div><div class="corr-name" style="display:flex;align-items:center;gap:4px;">${iconHtml}${label}</div><div class="corr-bar-wrap"><div class="corr-bar" style="width:0%;background:${color};"></div></div><div class="corr-pct">${avg}%</div>`;
       list.appendChild(div);
       requestAnimationFrame(() => setTimeout(() => { div.querySelector('.corr-bar').style.width = avg + '%'; }, 60));
     });
@@ -1858,9 +2099,9 @@ function renderDayDetail(day,month,year,logs){
   </div>`;
 
   const rows=logs.map((e,idx)=>{
-    const tagLabels=(e.tags||[]).map(t=>{const found=state.tags.find(tg=>tg.id===t);return found?found.label:t;});
-    const tagsHtml=tagLabels.length
-      ?`<div class="log-tags-row">${tagLabels.map(t=>`<span class="mini-tag">${t}</span>`).join('')}</div>`
+    const tagObjs=(e.tags||[]).map(t=>state.tags.find(tg=>tg.id===t)).filter(Boolean);
+    const tagsHtml=tagObjs.length
+      ?`<div class="log-tags-row">${tagObjs.map(t=>`<span class="mini-tag" style="display:inline-flex;align-items:center;gap:3px;">${tagIconSvg(t,10)}<span>${t.label}</span></span>`).join('')}</div>`
       :`<span style="font-size:10px;color:var(--text-faint);">keine Tätigkeit</span>`;
     const cycleHtml=e.cycle?`<svg width="12" height="12" style="color:var(--rose);margin-left:4px;vertical-align:middle;" aria-label="Periode"><use href="#ic-period"/></svg>`:'';
     const migraineHtml=e.migraine?`<svg width="12" height="12" style="color:#b060d0;margin-left:4px;vertical-align:middle;" aria-label="Migräne"><use href="#ic-migraine"/></svg>`:'';
@@ -2010,7 +2251,9 @@ function buildEditTagsGrid(selectedTags=[]){
   state.tags.forEach(t=>{
     const el=document.createElement('div');
     el.className='tag'+(editActiveTags.has(t.id)?' active':'');
-    el.textContent=t.label;el.dataset.id=t.id;
+    el.dataset.id=t.id;
+    el.innerHTML=`${tagIconSvg(t)}<span>${t.label}</span>`;
+    el.style.cssText='display:flex;align-items:center;gap:5px;';
     el.addEventListener('click',()=>{
       if(editActiveTags.has(t.id))editActiveTags.delete(t.id);else editActiveTags.add(t.id);
       el.classList.toggle('active',editActiveTags.has(t.id));
@@ -2113,7 +2356,7 @@ function buildSettingsTagsList(){
   state.tags.forEach((t,i)=>{
     const row=document.createElement('div');
     row.style.cssText='display:flex;align-items:center;gap:10px;padding:8px 12px;background:rgba(155,127,232,0.07);border:1px solid rgba(155,127,232,0.18);border-radius:12px;';
-    row.innerHTML=`<span style="font-size:15px;flex-shrink:0;">${t.label.split(' ')[0]}</span><span style="flex:1;font-size:13px;color:var(--text);">${t.label.substring(t.label.indexOf(' ')+1)}</span><button data-del-idx="${i}" style="background:none;border:none;cursor:pointer;color:rgba(200,80,80,0.55);font-size:14px;padding:2px 6px;border-radius:6px;line-height:1;">✕</button>`;
+    row.innerHTML=`<span style="flex-shrink:0;color:var(--accent);display:flex;">${tagIconSvg(t,16)}</span><span style="flex:1;font-size:13px;color:var(--text);">${t.label}</span><button data-del-idx="${i}" style="background:none;border:none;cursor:pointer;color:rgba(200,80,80,0.55);font-size:14px;padding:2px 6px;border-radius:6px;line-height:1;">✕</button>`;
     list.appendChild(row);
   });
   list.querySelectorAll('[data-del-idx]').forEach(btn=>{
@@ -2125,22 +2368,84 @@ function buildSettingsTagsList(){
   });
 }
 
+// ── Icon catalog for new activities ──
+const ICON_CATALOG = [
+  {id:'ic-sport',       label:'Sport'},
+  {id:'ic-radfahren',   label:'Radfahren'},
+  {id:'ic-schwimmen',   label:'Schwimmen'},
+  {id:'ic-dehnen',      label:'Dehnen'},
+  {id:'ic-yoga',        label:'Yoga'},
+  {id:'ic-arbeit',      label:'Arbeit'},
+  {id:'ic-schlaf',      label:'Schlaf'},
+  {id:'ic-freunde',     label:'Freunde'},
+  {id:'ic-familie',     label:'Familie'},
+  {id:'ic-natur',       label:'Natur'},
+  {id:'ic-draussen',    label:'Draußen'},
+  {id:'ic-kreativ',     label:'Kreativ'},
+  {id:'ic-schreiben',   label:'Schreiben'},
+  {id:'ic-ernährung',   label:'Ernährung'},
+  {id:'ic-kochen',      label:'Kochen'},
+  {id:'ic-kaffee',      label:'Kaffee'},
+  {id:'ic-einkauf',     label:'Einkauf'},
+  {id:'ic-meditation',  label:'Meditation'},
+  {id:'ic-entspannen',  label:'Entspannen'},
+  {id:'ic-musik',       label:'Musik'},
+  {id:'ic-lesen',       label:'Lesen'},
+  {id:'ic-gaming',      label:'Gaming'},
+  {id:'ic-kino',        label:'Kino'},
+  {id:'ic-stress',      label:'Stress'},
+  {id:'ic-reise',       label:'Reise'},
+  {id:'ic-feier',       label:'Feier'},
+  {id:'ic-telefonieren',label:'Telefonieren'},
+  {id:'ic-tag',         label:'Sonstiges'},
+];
+
+let selectedIconId = 'ic-tag';
+
+function buildIconCatalog() {
+  const grid = document.getElementById('icon-catalog');
+  grid.innerHTML = '';
+  ICON_CATALOG.forEach(ic => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.title = ic.label;
+    btn.dataset.iconId = ic.id;
+    btn.style.cssText = `width:100%;aspect-ratio:1;border-radius:12px;border:1.5px solid rgba(155,127,232,0.18);background:rgba(155,127,232,0.05);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;transition:all 0.18s;padding:4px 2px;`;
+    btn.innerHTML = `<svg width="18" height="18" style="color:var(--accent);flex-shrink:0;"><use href="#${ic.id}"/></svg><span style="font-size:7px;color:var(--text-dim);line-height:1;text-align:center;letter-spacing:0.2px;">${ic.label}</span>`;
+    if (ic.id === selectedIconId) {
+      btn.style.background = 'linear-gradient(135deg,rgba(124,92,191,0.18),rgba(179,157,219,0.18))';
+      btn.style.borderColor = 'rgba(124,92,191,0.55)';
+    }
+    btn.addEventListener('click', () => {
+      selectedIconId = ic.id;
+      grid.querySelectorAll('button').forEach(b => {
+        b.style.background = 'rgba(155,127,232,0.05)';
+        b.style.borderColor = 'rgba(155,127,232,0.18)';
+      });
+      btn.style.background = 'linear-gradient(135deg,rgba(124,92,191,0.18),rgba(179,157,219,0.18))';
+      btn.style.borderColor = 'rgba(124,92,191,0.55)';
+    });
+    grid.appendChild(btn);
+  });
+}
+
 document.getElementById('manage-tags-btn').addEventListener('click',()=>{
+  selectedIconId = 'ic-tag';
   buildSettingsTagsList();
-  document.getElementById('new-tag-emoji').value='';
+  buildIconCatalog();
   document.getElementById('new-tag-name').value='';
   document.getElementById('settings-modal').classList.add('open');
 });
 
 document.getElementById('add-tag-btn').addEventListener('click',()=>{
-  const emoji=document.getElementById('new-tag-emoji').value.trim()||'✨';
   const name=document.getElementById('new-tag-name').value.trim();
   if(!name){showToast('Bitte einen Namen eingeben.');return;}
   const id='custom_'+Date.now();
-  state.tags.push({id,label:`${emoji} ${name}`});
-  saveLocal();buildSettingsTagsList();buildTagsGrid();
-  document.getElementById('new-tag-emoji').value='';document.getElementById('new-tag-name').value='';
-  showToast(`„${emoji} ${name}" hinzugefügt ✦`);
+  state.tags.push({id,label:name,icon:selectedIconId||'ic-tag'});
+  saveLocal();buildSettingsTagsList();buildTagsGrid();buildIconCatalog();
+  document.getElementById('new-tag-name').value='';
+  selectedIconId='ic-tag';
+  showToast(`„${name}" hinzugefügt`);
 });
 
 document.getElementById('settings-close-btn').addEventListener('click',()=>document.getElementById('settings-modal').classList.remove('open'));
@@ -2174,7 +2479,7 @@ document.getElementById('modal-save').addEventListener('click',()=>{
   localStorage.setItem('flux_reminder',t);localStorage.setItem('flux_reminder_days',JSON.stringify([...activeDays]));
   document.getElementById('reminder-modal').classList.remove('open');
   document.getElementById('reminder-btn').classList.add('set');
-  showToast(`Erinnerung um ${t} Uhr gesetzt 🔔`);
+  showToast(`Erinnerung um ${t} Uhr gesetzt`);
 });
 
 // ══════════════════════════════════════════════
@@ -2201,7 +2506,7 @@ function showInstallBanner(){
   if(document.getElementById('install-banner')||isStandalone)return;
   const banner=document.createElement('div');banner.id='install-banner';
   banner.style.cssText=`position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:rgba(250,247,255,0.97);border:1px solid rgba(155,127,232,0.25);border-radius:18px;padding:11px 15px;z-index:150;display:flex;align-items:center;gap:11px;box-shadow:0 8px 28px rgba(140,110,200,0.2);backdrop-filter:blur(18px);opacity:0;transition:all 0.4s cubic-bezier(0.16,1,0.3,1);max-width:320px;width:calc(100% - 40px);`;
-  banner.innerHTML=`<span style="font-size:19px;">📲</span><div style="flex:1;"><div style="font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:500;color:#2d2540;">flux als App installieren</div><div style="font-size:11px;color:#9080b0;margin-top:1px;">Schneller Zugriff vom Homescreen</div></div><button id="install-yes" style="background:linear-gradient(135deg,#9b7fe8,#e8a4d0);border:none;border-radius:11px;color:#fff;font-size:12px;font-weight:600;padding:6px 12px;cursor:pointer;font-family:'Space Grotesk',sans-serif;white-space:nowrap;flex-shrink:0;">Installieren</button><button id="install-no" style="background:none;border:none;color:#b0a0c8;font-size:15px;cursor:pointer;padding:4px;line-height:1;flex-shrink:0;">✕</button>`;
+  banner.innerHTML=`<span style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#9b7fe8;"><svg width="22" height="22" style="color:#9b7fe8;"><use href="#ic-phone"/></svg></span><div style="flex:1;"><div style="font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:500;color:#2d2540;">flux als App installieren</div><div style="font-size:11px;color:#9080b0;margin-top:1px;">Schneller Zugriff vom Homescreen</div></div><button id="install-yes" style="background:linear-gradient(135deg,#9b7fe8,#e8a4d0);border:none;border-radius:11px;color:#fff;font-size:12px;font-weight:600;padding:6px 12px;cursor:pointer;font-family:'Space Grotesk',sans-serif;white-space:nowrap;flex-shrink:0;">Installieren</button><button id="install-no" style="background:none;border:none;color:#b0a0c8;font-size:15px;cursor:pointer;padding:4px;line-height:1;flex-shrink:0;">✕</button>`;
   document.body.appendChild(banner);
   requestAnimationFrame(()=>{banner.style.opacity='1';banner.style.transform='translateX(-50%) translateY(0)';});
   const dismiss=()=>{banner.style.opacity='0';banner.style.transform='translateX(-50%) translateY(20px)';setTimeout(()=>banner.remove(),400);};
@@ -2209,13 +2514,13 @@ function showInstallBanner(){
   document.getElementById('install-no').onclick=()=>{localStorage.setItem('flux_install_dismissed','1');dismiss();};
 }
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstallPrompt=e;});
-window.addEventListener('appinstalled',()=>{installFabs.forEach(f=>{f.style.opacity='0';setTimeout(()=>f.style.display='none',350);});showToast('flux wurde installiert ✦');});
+window.addEventListener('appinstalled',()=>{installFabs.forEach(f=>{f.style.opacity='0';setTimeout(()=>f.style.display='none',350);});showToast('flux wurde installiert');});
 
 function showIOSHint(){
   if(document.getElementById('ios-install-hint'))return;
   const hint=document.createElement('div');hint.id='ios-install-hint';
   hint.style.cssText=`position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(16px);background:rgba(250,247,255,0.97);border:1px solid rgba(155,127,232,0.25);border-radius:18px;padding:14px 18px;z-index:150;box-shadow:0 8px 28px rgba(140,110,200,0.2);backdrop-filter:blur(18px);opacity:0;transition:all 0.35s cubic-bezier(0.16,1,0.3,1);max-width:280px;width:calc(100% - 40px);text-align:center;`;
-  hint.innerHTML=`<div style="font-size:20px;margin-bottom:7px;">📲</div><div style="font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:500;color:#2d2540;margin-bottom:5px;">Zum Homescreen hinzufügen</div><div style="font-size:12px;color:#9080b0;line-height:1.6;">Tippe auf <span style="color:#9b7fe8;">Teilen</span> ⎙<br>dann <span style="color:#9b7fe8;">„Zum Home-Bildschirm"</span></div><button style="margin-top:11px;background:none;border:1px solid rgba(155,127,232,0.25);border-radius:10px;color:#b0a0c8;font-size:12px;padding:5px 14px;cursor:pointer;" onclick="this.closest('#ios-install-hint').remove();">OK</button>`;
+  hint.innerHTML=`<div style="display:flex;justify-content:center;margin-bottom:7px;"><svg width="22" height="22" style="color:#9b7fe8;"><use href="#ic-phone"/></svg></div><div style="font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:500;color:#2d2540;margin-bottom:5px;">Zum Homescreen hinzufügen</div><div style="font-size:12px;color:#9080b0;line-height:1.6;">Tippe auf <span style="color:#9b7fe8;">Teilen</span> ⎙<br>dann <span style="color:#9b7fe8;">„Zum Home-Bildschirm"</span></div><button style="margin-top:11px;background:none;border:1px solid rgba(155,127,232,0.25);border-radius:10px;color:#b0a0c8;font-size:12px;padding:5px 14px;cursor:pointer;" onclick="this.closest('#ios-install-hint').remove();">OK</button>`;
   document.body.appendChild(hint);
   requestAnimationFrame(()=>{hint.style.opacity='1';hint.style.transform='translateX(-50%) translateY(0)';});
   setTimeout(()=>{if(hint.parentNode){hint.style.opacity='0';setTimeout(()=>hint.remove(),350);}},8000);
@@ -2303,7 +2608,7 @@ async function initFirebase(){
           const localTs=new Set(state.entries.map(e=>e.ts));
           remote.forEach(e=>{if(!localTs.has(e.ts))state.entries.push(e);});
           state.entries.sort((a,b)=>b.ts-a.ts);saveLocal();updateInsights();buildCalendar();updateDayChart();
-          showToast('☁️ Cloud synchronisiert');
+          showToast('Cloud synchronisiert');
         }catch(e){console.warn('Firestore load failed:',e);}
       }else{fbConnected=false;setFbDot('off');setUserAvatar(null);showAuthScreen();}
     });
