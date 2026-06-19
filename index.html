@@ -90,7 +90,7 @@ html,body{
 .screen.right{transform:translateX(100%);opacity:0;}
 
 /* ── Header ── */
-.header{padding:env(safe-area-inset-top, 48px) 0 12px;padding-top:max(env(safe-area-inset-top),44px);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.header{padding:env(safe-area-inset-top, 48px) 0 12px;padding-top:max(env(safe-area-inset-top),clamp(20px,6vh,44px));display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
 .logo-text{
   font-family:'Space Grotesk',sans-serif;
   font-size:22px;font-weight:700;letter-spacing:-0.8px;
@@ -124,7 +124,7 @@ html,body{
   align-items:center;gap:10px;position:relative;overflow:hidden;
   cursor:ns-resize;user-select:none;-webkit-user-select:none;
   transition:border-color 0.3s,box-shadow 0.3s;
-  height:clamp(220px,42vw,290px);flex-shrink:0;
+  height:clamp(200px,46vw,290px);flex-shrink:0;
   box-shadow:0 2px 20px var(--shadow),0 0 0 0.5px var(--card-border);
   touch-action:none;
 }
@@ -482,6 +482,29 @@ input[type="date"]::-webkit-calendar-picker-indicator{opacity:0.4;}
 }
 .settings-fab:active{transform:scale(0.88);}
 @media all and (display-mode:standalone){.install-fab{display:none !important;}}
+
+/* ── Small screen fixes (320–360px) ── */
+@media (max-width:375px){
+  .header{padding-top:max(env(safe-area-inset-top),28px);padding-bottom:8px;}
+  .date-chip{font-size:11px;padding:6px 10px;}
+  .slider-card{height:clamp(220px,62vw,270px);padding:12px 8px;gap:6px;border-radius:22px;}
+  .slider-value{font-size:24px;}
+  .slider-label{font-size:9px;letter-spacing:0.8px;}
+  .liquid-slider{width:clamp(34px,9vw,46px);min-height:70px;}
+  .mood-emoji{width:22px;height:22px;}
+  #dash .sliders-row{gap:8px;margin-bottom:10px;}
+  .cycle-row{padding:11px 12px;}
+  .cycle-toggle-text{font-size:13px;}
+  .save-btn{padding:15px;font-size:15px;min-height:50px;}
+  .tags-section{padding:12px 12px 10px;}
+  .screen{padding:0 12px 20px;}
+  .day-chart-card{padding:10px 12px;}
+  .section-title{font-size:20px;}
+  .glass-card{padding:14px;}
+  .stat-num{font-size:18px;}
+  .stats-row{gap:6px;}
+  .stat-pill{padding:10px 4px;}
+}
 
 /* Slider drag-handle cue */
 .slider-card::before{
