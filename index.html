@@ -120,11 +120,11 @@ html,body{
   flex:1;min-width:0;
   background:var(--card);border:1px solid var(--card-border);
   border-radius:28px;
-  padding:16px 8px;display:flex;flex-direction:column;
-  align-items:center;gap:8px;position:relative;overflow:hidden;
+  padding:18px 12px 16px;display:flex;flex-direction:column;
+  align-items:center;gap:10px;position:relative;overflow:hidden;
   cursor:ns-resize;user-select:none;-webkit-user-select:none;
   transition:border-color 0.3s,box-shadow 0.3s;
-  height:clamp(200px,46vw,290px);flex-shrink:0;
+  height:clamp(260px,60vw,360px);flex-shrink:0;
   box-shadow:0 2px 20px var(--shadow),0 0 0 0.5px var(--card-border);
   touch-action:none;
 }
@@ -138,9 +138,9 @@ html,body{
 }
 .slider-label{font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:var(--text-dim);font-weight:500;text-align:center;line-height:1.5;flex-shrink:0;}
 .liquid-slider{
-  flex:1;width:clamp(40px,10vw,56px);position:relative;
+  flex:1;width:clamp(60px,16vw,80px);position:relative;
   background:rgba(155,127,232,0.07);border-radius:28px;overflow:hidden;
-  border:1px solid rgba(155,127,232,0.15);min-height:100px;
+  border:1px solid rgba(155,127,232,0.15);min-height:140px;
   will-change:contents;
 }
 .liquid-fill{
@@ -148,7 +148,7 @@ html,body{
   background-size:100% 300%;
   animation:colorShift 6s ease infinite;
 }
-.liquid-fill::before{content:'';position:absolute;top:0;left:0;right:0;height:10px;background:rgba(255,255,255,0.5);border-radius:50%;filter:blur(3px);animation:liquidSurface 3s ease-in-out infinite;}
+.liquid-fill::before{content:'';position:absolute;top:0;left:0;right:0;height:14px;background:rgba(255,255,255,0.5);border-radius:50%;filter:blur(4px);animation:liquidSurface 3s ease-in-out infinite;}
 .liquid-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,0.3) 0%,transparent 50%);}
 @keyframes liquidSurface{0%,100%{transform:scaleX(1);opacity:0.8;}50%{transform:scaleX(1.12) translateY(-2px);opacity:1;}}
 .slider-card.dragging .liquid-fill{animation:colorShiftFast 2s ease infinite;}
@@ -159,15 +159,15 @@ html,body{
 @keyframes colorShift{0%{background-position:0% 0%;}50%{background-position:0% 60%;}100%{background-position:0% 0%}}
 @keyframes colorShiftFast{0%{background-position:0% 0%;}50%{background-position:0% 80%;}100%{background-position:0% 0%}}
 .slider-value{
-  position:absolute;bottom:10px;left:50%;transform:translateX(-50%);
-  font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;letter-spacing:-0.3px;
+  position:absolute;bottom:14px;left:50%;transform:translateX(-50%);
+  font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;letter-spacing:-0.5px;
   color:#fff;line-height:1;white-space:nowrap;z-index:2;pointer-events:none;
   text-shadow:0 1px 6px rgba(0,0,0,0.4),0 0 12px rgba(0,0,0,0.3);
-  background:rgba(0,0,0,0.18);border-radius:8px;padding:2px 5px;
+  background:rgba(0,0,0,0.18);border-radius:10px;padding:4px 8px;
   backdrop-filter:blur(2px);
 }
-.slider-pct{font-size:0.75em;font-weight:500;margin-left:0.5px;}
-.mood-emoji{width:26px;height:26px;flex-shrink:0;transition:transform 0.3s;display:flex;align-items:center;justify-content:center;}
+.slider-pct{font-size:0.7em;font-weight:500;margin-left:1px;}
+.mood-emoji{width:32px;height:32px;flex-shrink:0;transition:transform 0.3s;display:flex;align-items:center;justify-content:center;}
 
 /* ── Cycle toggle on dashboard ── */
 .cycle-row{
@@ -508,11 +508,11 @@ input[type="date"]::-webkit-calendar-picker-indicator{opacity:0.4;}
 @media (max-width:375px){
   .header{padding-top:max(env(safe-area-inset-top),28px);padding-bottom:8px;}
   .date-chip{font-size:11px;padding:6px 10px;}
-  .slider-card{height:clamp(220px,62vw,270px);padding:12px 8px;gap:6px;border-radius:22px;}
-  .slider-value{font-size:24px;}
+  .slider-card{height:clamp(240px,68vw,310px);padding:14px 10px;gap:8px;border-radius:22px;}
+  .slider-value{font-size:17px;}
   .slider-label{font-size:9px;letter-spacing:0.8px;}
-  .liquid-slider{width:clamp(34px,9vw,46px);min-height:70px;}
-  .mood-emoji{width:22px;height:22px;}
+  .liquid-slider{width:clamp(52px,14vw,68px);min-height:110px;}
+  .mood-emoji{width:28px;height:28px;}
   #dash .sliders-row{gap:8px;margin-bottom:10px;}
   .cycle-row{padding:11px 12px;}
   .cycle-toggle-text{font-size:13px;}
@@ -1112,12 +1112,12 @@ input[type="date"]::-webkit-calendar-picker-indicator{opacity:0.4;}
       <div class="scroll-content">
         <div class="sliders-row">
           <div class="slider-card" id="body-slider-card">
-            <div class="mood-emoji" id="body-emoji"><svg width="22" height="22" style="color:var(--accent);flex-shrink:0;" aria-hidden="true"><use href="#ic-body"/></svg></div>
+            <div class="mood-emoji" id="body-emoji"><svg width="28" height="28" style="color:var(--accent);flex-shrink:0;" aria-hidden="true"><use href="#ic-body"/></svg></div>
             <div class="slider-label">Körper<br>Energie</div>
             <div class="liquid-slider" id="body-track"><div class="liquid-fill" id="body-fill" style="height:72%"></div><div class="slider-value" id="body-val">72<span class="slider-pct">%</span></div></div>
           </div>
           <div class="slider-card" id="emotion-slider-card">
-            <div class="mood-emoji" id="emotion-emoji"><svg width="22" height="22" style="color:var(--accent3);flex-shrink:0;" aria-hidden="true"><use href="#ic-emotion"/></svg></div>
+            <div class="mood-emoji" id="emotion-emoji"><svg width="28" height="28" style="color:var(--accent3);flex-shrink:0;" aria-hidden="true"><use href="#ic-emotion"/></svg></div>
             <div class="slider-label">Emotionales<br>Befinden</div>
             <div class="liquid-slider" id="emotion-track"><div class="liquid-fill" id="emotion-fill" style="height:65%"></div><div class="slider-value" id="emotion-val">65<span class="slider-pct">%</span></div></div>
           </div>
@@ -1358,6 +1358,38 @@ const DEFAULT_TAGS = [
   {id:'reise',      label:'Reise',      icon:'ic-reise'},
 ];
 
+// Icon-Map + saubere Labels für alle bekannten Standard-IDs
+const DEFAULT_ICON_MAP = {
+  'sport':     {icon:'ic-sport',      label:'Sport'},
+  'arbeit':    {icon:'ic-arbeit',     label:'Arbeit'},
+  'schlaf':    {icon:'ic-schlaf',     label:'Schlaf'},
+  'freunde':   {icon:'ic-freunde',    label:'Freunde'},
+  'natur':     {icon:'ic-natur',      label:'Natur'},
+  'kreativ':   {icon:'ic-kreativ',    label:'Kreativ'},
+  'ernährung': {icon:'ic-ernährung',  label:'Ernährung'},
+  'meditation':{icon:'ic-meditation', label:'Meditation'},
+  'musik':     {icon:'ic-musik',      label:'Musik'},
+  'lesen':     {icon:'ic-lesen',      label:'Lesen'},
+  'stress':    {icon:'ic-stress',     label:'Stress'},
+  'reise':     {icon:'ic-reise',      label:'Reise'},
+};
+
+// Entfernt alle Emoji-Zeichen und übrig gebliebene Leerzeichen am Anfang
+function stripEmoji(str) {
+  return str.replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\u{1FA00}-\u{1FAFF}\u{FE00}-\u{FE0F}]/gu, '').replace(/^\s+/, '').trim();
+}
+
+// Tags aus localStorage laden und vollständig bereinigen
+let savedTags = JSON.parse(localStorage.getItem('flux_tags') || 'null');
+if (savedTags) {
+  savedTags = savedTags.map(t => {
+    const def = DEFAULT_ICON_MAP[t.id];
+    if (def) return {...t, icon: def.icon, label: def.label}; // Standard-Tag: Icon + Label komplett überschreiben
+    return {...t, icon: t.icon || 'ic-tag', label: stripEmoji(t.label)}; // Custom-Tag: Emoji aus Label entfernen
+  });
+  localStorage.setItem('flux_tags', JSON.stringify(savedTags)); // Sofort zurückschreiben
+}
+
 const state = {
   current: 1,
   bodyVal: 72,
@@ -1366,7 +1398,7 @@ const state = {
   migraineToday: false,
   activeTags: new Set(),
   entries: JSON.parse(localStorage.getItem('flux_entries') || '[]'),
-  tags: JSON.parse(localStorage.getItem('flux_tags') || 'null') || DEFAULT_TAGS,
+  tags: savedTags || DEFAULT_TAGS,
   reminder: localStorage.getItem('flux_reminder') || null,
   reminderDays: JSON.parse(localStorage.getItem('flux_reminder_days') || '[1,2,3,4,5]'),
   viewYear: new Date().getFullYear(),
@@ -1393,8 +1425,8 @@ const now = new Date();
 });
 
 // ── Emoji helpers ──
-function bodyEmoji(v)    { const c=v>=80?'#e84040':v>=60?'var(--accent)':v>=40?'var(--text-faint)':'var(--accent2)'; return `<svg width="22" height="22" style="color:${c}"><use href="#ic-body"/></svg>`; }
-function emotionEmoji(v) { const c=v>=80?'#e06090':v>=60?'var(--accent3)':v>=40?'var(--text-faint)':'var(--accent2)'; return `<svg width="22" height="22" style="color:${c}"><use href="#ic-emotion"/></svg>`; }
+function bodyEmoji(v)    { const c=v>=80?'#e84040':v>=60?'var(--accent)':v>=40?'var(--text-faint)':'var(--accent2)'; return `<svg width="28" height="28" style="color:${c}"><use href="#ic-body"/></svg>`; }
+function emotionEmoji(v) { const c=v>=80?'#e06090':v>=60?'var(--accent3)':v>=40?'var(--text-faint)':'var(--accent2)'; return `<svg width="28" height="28" style="color:${c}"><use href="#ic-emotion"/></svg>`; }
 
 // ══════════════════════════════════════════════
 // TAGS GRID (Dashboard)
