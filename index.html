@@ -146,6 +146,7 @@ html,body{
   font-style:italic;
   background:linear-gradient(135deg,#7c5cbf 0%,#c060a8 100%);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  padding-bottom:2px;display:inline-block;overflow:visible;
 }
 .date-chip{
   font-size:12px;color:var(--text-dim);letter-spacing:0.2px;
@@ -423,7 +424,8 @@ html,body{
   background:rgba(245,242,255,0.72);
   backdrop-filter:blur(24px) saturate(1.4);
   -webkit-backdrop-filter:blur(24px) saturate(1.4);
-  box-shadow:0 -4px 24px rgba(90,70,160,0.07);
+  box-shadow:0 -1px 0 rgba(155,127,232,0.08),0 -4px 24px rgba(90,70,160,0.06);
+  border-top:none;
 }
 .nav-labels{display:flex;justify-content:center;align-items:center;padding:2px 16px 2px;flex-shrink:0;}
 .nav-label{
@@ -974,6 +976,19 @@ input[type="date"]::-webkit-calendar-picker-indicator{opacity:0.4;}
   text-align:center;margin-top:14px;font-size:10px;color:#c0b0d8;letter-spacing:0.5px;
   font-family:'Space Grotesk',sans-serif;
 }
+
+/* Nova analyse period chips */
+.nova-period-chip{
+  font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:500;
+  padding:5px 13px;border-radius:20px;border:1px solid rgba(155,127,232,0.22);
+  background:rgba(155,127,232,0.07);color:var(--text-dim);cursor:pointer;
+  transition:all 0.2s cubic-bezier(0.22,1,0.36,1);white-space:nowrap;
+  -webkit-tap-highlight-color:transparent;
+}
+.nova-period-chip.active{
+  background:var(--accent);color:#fff;border-color:var(--accent);
+  box-shadow:0 2px 10px rgba(124,92,191,0.35);
+}
 </style>
 </head>
 <body>
@@ -1373,20 +1388,40 @@ input[type="date"]::-webkit-calendar-picker-indicator{opacity:0.4;}
         <div class="glass-card" id="nova-summary-card" style="margin-bottom:14px;padding:18px;position:relative;overflow:hidden;">
           <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
             <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#7c5cbf,#e891c8);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 10px rgba(124,92,191,0.35);">
-              <svg width="20" height="20" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <ellipse cx="10.5" cy="13" rx="1.8" ry="2.2" fill="white"/>
-                <ellipse cx="19.5" cy="13" rx="1.8" ry="2.2" fill="white"/>
-                <circle cx="11" cy="13.5" r="1" fill="rgba(124,92,191,0.9)"/>
-                <circle cx="20" cy="13.5" r="1" fill="rgba(124,92,191,0.9)"/>
-                <path d="M10 19.5 Q15 23.5 20 19.5" stroke="white" stroke-width="1.8" stroke-linecap="round" fill="none"/>
-                <path d="M24 5 L24.6 6.6 L26.2 7.2 L24.6 7.8 L24 9.4 L23.4 7.8 L21.8 7.2 L23.4 6.6 Z" fill="white" opacity="0.8"/>
-              </svg>
+              <svg width="20" height="20" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 13 Q3 6 16 4 Q29 6 28 13 Q30 8 28 5 Q22 -1 16 0 Q10 -1 4 5 Q2 8 4 13Z" fill="rgba(180,140,255,0.6)"/>
+          <ellipse cx="16" cy="16" rx="9" ry="10.5" fill="rgba(220,210,255,0.95)"/>
+          <path d="M7 11 Q3 16 4 22 Q5 26 8 27 Q6 23 7 18 Q7.5 14 9 12Z" fill="rgba(160,110,240,0.75)"/>
+          <path d="M25 11 Q29 16 28 22 Q27 26 24 27 Q26 23 25 18 Q24.5 14 23 12Z" fill="rgba(160,110,240,0.75)"/>
+          <path d="M8 10 Q10 4 16 3.5 Q22 4 24 10 Q21 6 16 6 Q11 6 8 10Z" fill="rgba(170,120,250,0.9)"/>
+          <path d="M14.5 7.5 L16 6.5 L17.5 7.5 L16 8Z" fill="rgba(180,230,255,0.9)"/>
+          <ellipse cx="12" cy="15.5" rx="2.2" ry="1.6" fill="white"/>
+          <ellipse cx="20" cy="15.5" rx="2.2" ry="1.6" fill="white"/>
+          <ellipse cx="12" cy="15.5" rx="1.4" ry="1.2" fill="rgba(100,200,255,0.95)"/>
+          <ellipse cx="20" cy="15.5" rx="1.4" ry="1.2" fill="rgba(100,200,255,0.95)"/>
+          <circle cx="12.2" cy="15.7" r="0.7" fill="rgba(30,60,120,0.9)"/>
+          <circle cx="20.2" cy="15.7" r="0.7" fill="rgba(30,60,120,0.9)"/>
+          <circle cx="12.6" cy="15.1" r="0.3" fill="white" opacity="0.9"/>
+          <circle cx="20.6" cy="15.1" r="0.3" fill="white" opacity="0.9"/>
+          <path d="M15.2 18.5 Q16 19.2 16.8 18.5" stroke="rgba(150,120,200,0.4)" stroke-width="0.6" fill="none"/>
+          <path d="M12.5 21 Q16 23.5 19.5 21" stroke="rgba(140,100,200,0.7)" stroke-width="0.9" stroke-linecap="round" fill="none"/>
+          <ellipse cx="10" cy="18.5" rx="2" ry="1.2" fill="rgba(232,145,200,0.2)"/>
+          <ellipse cx="22" cy="18.5" rx="2" ry="1.2" fill="rgba(232,145,200,0.2)"/>
+        </svg>
             </div>
             <div>
               <div style="font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;color:var(--text);letter-spacing:-0.2px;">Nova</div>
               <div style="font-size:10px;color:var(--text-faint);letter-spacing:0.5px;">KI-Analyse deiner Energie</div>
             </div>
             <button id="nova-refresh-btn" style="margin-left:auto;background:rgba(155,127,232,0.1);border:1px solid rgba(155,127,232,0.2);border-radius:20px;padding:5px 12px;font-size:11px;color:var(--accent);cursor:pointer;font-family:'Space Grotesk',sans-serif;font-weight:500;transition:all 0.2s;white-space:nowrap;">Analyse</button>
+          </div>
+          <!-- Zeitraum-Filter -->
+          <div id="nova-period-filter" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;padding:0 2px;">
+            <button class="nova-period-chip active" data-p="7d">7 Tage</button>
+            <button class="nova-period-chip" data-p="30d">30 Tage</button>
+            <button class="nova-period-chip" data-p="90d">3 Monate</button>
+            <button class="nova-period-chip" data-p="1y">1 Jahr</button>
+            <button class="nova-period-chip" data-p="all">Gesamt</button>
           </div>
           <div id="nova-summary-text" style="font-size:13px;color:var(--text-dim);line-height:1.7;min-height:40px;">
             <span style="color:var(--text-faint);font-style:italic;">Tippe auf „Analyse" für deine persönliche KI-Zusammenfassung.</span>
@@ -1536,11 +1571,6 @@ input[type="date"]::-webkit-calendar-picker-indicator{opacity:0.4;}
       <div class="nav-label active" id="nav-1" onclick="goTo(1)">Dashboard</div>
       <div class="nav-label" id="nav-2" onclick="goTo(2)">Kalender</div>
     </div>
-    <div class="nav-dots">
-      <div class="dot" id="dot-0" onclick="goTo(0)"></div>
-      <div class="dot active" id="dot-1" onclick="goTo(1)"></div>
-      <div class="dot" id="dot-2" onclick="goTo(2)"></div>
-    </div>
   </div>
 </div>
 
@@ -1550,33 +1580,65 @@ input[type="date"]::-webkit-calendar-picker-indicator{opacity:0.4;}
 <!-- Nova Chat FAB -->
 <button id="nova-fab" title="Nova fragen" style="position:fixed;bottom:96px;right:20px;width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,#7c5cbf,#e891c8);border:none;cursor:pointer;z-index:9999;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 22px rgba(124,92,191,0.5),0 1px 4px rgba(124,92,191,0.25);transition:transform 0.2s,box-shadow 0.2s;">
   <!-- Nova face -->
-  <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <!-- Eyes -->
-    <ellipse cx="10.5" cy="13" rx="1.8" ry="2.2" fill="white"/>
-    <ellipse cx="19.5" cy="13" rx="1.8" ry="2.2" fill="white"/>
+  <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Hair back layer -->
+    <path d="M4 13 Q3 6 16 4 Q29 6 28 13 Q30 8 28 5 Q22 -1 16 0 Q10 -1 4 5 Q2 8 4 13Z" fill="rgba(180,140,255,0.6)"/>
+    <!-- Face shape -->
+    <ellipse cx="16" cy="16" rx="9" ry="10.5" fill="rgba(220,210,255,0.95)"/>
+    <!-- Hair sides flowing -->
+    <path d="M7 11 Q3 16 4 22 Q5 26 8 27 Q6 23 7 18 Q7.5 14 9 12Z" fill="rgba(160,110,240,0.75)"/>
+    <path d="M25 11 Q29 16 28 22 Q27 26 24 27 Q26 23 25 18 Q24.5 14 23 12Z" fill="rgba(160,110,240,0.75)"/>
+    <!-- Hair top -->
+    <path d="M8 10 Q10 4 16 3.5 Q22 4 24 10 Q21 6 16 6 Q11 6 8 10Z" fill="rgba(170,120,250,0.9)"/>
+    <!-- Cyber forehead mark -->
+    <path d="M14.5 7.5 L16 6.5 L17.5 7.5 L16 8Z" fill="rgba(180,230,255,0.9)"/>
+    <!-- Eyes - glowing -->
+    <ellipse cx="12" cy="15.5" rx="2.2" ry="1.6" fill="white"/>
+    <ellipse cx="20" cy="15.5" rx="2.2" ry="1.6" fill="white"/>
+    <!-- Iris glow -->
+    <ellipse cx="12" cy="15.5" rx="1.4" ry="1.2" fill="rgba(100,200,255,0.95)"/>
+    <ellipse cx="20" cy="15.5" rx="1.4" ry="1.2" fill="rgba(100,200,255,0.95)"/>
     <!-- Pupils -->
-    <circle cx="11" cy="13.5" r="1" fill="rgba(124,92,191,0.9)"/>
-    <circle cx="20" cy="13.5" r="1" fill="rgba(124,92,191,0.9)"/>
+    <circle cx="12.2" cy="15.7" r="0.7" fill="rgba(30,60,120,0.9)"/>
+    <circle cx="20.2" cy="15.7" r="0.7" fill="rgba(30,60,120,0.9)"/>
+    <!-- Eye shine -->
+    <circle cx="12.6" cy="15.1" r="0.3" fill="white" opacity="0.9"/>
+    <circle cx="20.6" cy="15.1" r="0.3" fill="white" opacity="0.9"/>
+    <!-- Subtle nose -->
+    <path d="M15.2 18.5 Q16 19.2 16.8 18.5" stroke="rgba(150,120,200,0.4)" stroke-width="0.6" fill="none"/>
     <!-- Smile -->
-    <path d="M10 19.5 Q15 23.5 20 19.5" stroke="white" stroke-width="1.8" stroke-linecap="round" fill="none"/>
-    <!-- Sparkle top-right -->
-    <path d="M24 5 L24.6 6.6 L26.2 7.2 L24.6 7.8 L24 9.4 L23.4 7.8 L21.8 7.2 L23.4 6.6 Z" fill="white" opacity="0.8"/>
+    <path d="M12.5 21 Q16 23.5 19.5 21" stroke="rgba(140,100,200,0.7)" stroke-width="0.9" stroke-linecap="round" fill="none"/>
+    <!-- Cheek glow -->
+    <ellipse cx="10" cy="18.5" rx="2" ry="1.2" fill="rgba(232,145,200,0.2)"/>
+    <ellipse cx="22" cy="18.5" rx="2" ry="1.2" fill="rgba(232,145,200,0.2)"/>
   </svg>
 </button>
 
 <!-- Nova Chat Modal -->
 <div id="nova-chat-overlay" style="position:fixed;inset:0;z-index:9998;display:none;flex-direction:column;align-items:center;justify-content:flex-end;background:rgba(40,25,70,0);backdrop-filter:blur(0px);-webkit-backdrop-filter:blur(0px);transition:background 0.38s ease,backdrop-filter 0.38s ease,-webkit-backdrop-filter 0.38s ease;">
-  <div id="nova-chat-sheet" style="width:100%;max-width:430px;height:72vh;background:#fdfbff;border-radius:28px 28px 0 0;border:1px solid var(--card-border);border-bottom:none;display:flex;flex-direction:column;box-shadow:0 -8px 48px rgba(90,70,160,0.18);transform:translateY(100%);transition:transform 0.46s cubic-bezier(0.22,1,0.36,1);">
+  <div id="nova-chat-sheet" style="width:100%;max-width:430px;height:72svh;max-height:72svh;background:#fdfbff;border-radius:28px 28px 0 0;border:1px solid var(--card-border);border-bottom:none;display:flex;flex-direction:column;box-shadow:0 -8px 48px rgba(90,70,160,0.18);transform:translateY(100%);transition:transform 0.46s cubic-bezier(0.22,1,0.36,1);">
     <!-- Header -->
     <div style="padding:16px 20px 14px;border-bottom:1px solid rgba(155,127,232,0.1);display:flex;align-items:center;gap:12px;flex-shrink:0;">
       <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#7c5cbf,#e891c8);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 10px rgba(124,92,191,0.3);">
-        <svg width="22" height="22" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <ellipse cx="10.5" cy="13" rx="1.8" ry="2.2" fill="white"/>
-          <ellipse cx="19.5" cy="13" rx="1.8" ry="2.2" fill="white"/>
-          <circle cx="11" cy="13.5" r="1" fill="rgba(124,92,191,0.9)"/>
-          <circle cx="20" cy="13.5" r="1" fill="rgba(124,92,191,0.9)"/>
-          <path d="M10 19.5 Q15 23.5 20 19.5" stroke="white" stroke-width="1.8" stroke-linecap="round" fill="none"/>
-          <path d="M24 5 L24.6 6.6 L26.2 7.2 L24.6 7.8 L24 9.4 L23.4 7.8 L21.8 7.2 L23.4 6.6 Z" fill="white" opacity="0.8"/>
+        <svg width="24" height="24" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 13 Q3 6 16 4 Q29 6 28 13 Q30 8 28 5 Q22 -1 16 0 Q10 -1 4 5 Q2 8 4 13Z" fill="rgba(180,140,255,0.6)"/>
+          <ellipse cx="16" cy="16" rx="9" ry="10.5" fill="rgba(220,210,255,0.95)"/>
+          <path d="M7 11 Q3 16 4 22 Q5 26 8 27 Q6 23 7 18 Q7.5 14 9 12Z" fill="rgba(160,110,240,0.75)"/>
+          <path d="M25 11 Q29 16 28 22 Q27 26 24 27 Q26 23 25 18 Q24.5 14 23 12Z" fill="rgba(160,110,240,0.75)"/>
+          <path d="M8 10 Q10 4 16 3.5 Q22 4 24 10 Q21 6 16 6 Q11 6 8 10Z" fill="rgba(170,120,250,0.9)"/>
+          <path d="M14.5 7.5 L16 6.5 L17.5 7.5 L16 8Z" fill="rgba(180,230,255,0.9)"/>
+          <ellipse cx="12" cy="15.5" rx="2.2" ry="1.6" fill="white"/>
+          <ellipse cx="20" cy="15.5" rx="2.2" ry="1.6" fill="white"/>
+          <ellipse cx="12" cy="15.5" rx="1.4" ry="1.2" fill="rgba(100,200,255,0.95)"/>
+          <ellipse cx="20" cy="15.5" rx="1.4" ry="1.2" fill="rgba(100,200,255,0.95)"/>
+          <circle cx="12.2" cy="15.7" r="0.7" fill="rgba(30,60,120,0.9)"/>
+          <circle cx="20.2" cy="15.7" r="0.7" fill="rgba(30,60,120,0.9)"/>
+          <circle cx="12.6" cy="15.1" r="0.3" fill="white" opacity="0.9"/>
+          <circle cx="20.6" cy="15.1" r="0.3" fill="white" opacity="0.9"/>
+          <path d="M15.2 18.5 Q16 19.2 16.8 18.5" stroke="rgba(150,120,200,0.4)" stroke-width="0.6" fill="none"/>
+          <path d="M12.5 21 Q16 23.5 19.5 21" stroke="rgba(140,100,200,0.7)" stroke-width="0.9" stroke-linecap="round" fill="none"/>
+          <ellipse cx="10" cy="18.5" rx="2" ry="1.2" fill="rgba(232,145,200,0.2)"/>
+          <ellipse cx="22" cy="18.5" rx="2" ry="1.2" fill="rgba(232,145,200,0.2)"/>
         </svg>
       </div>
       <div style="flex:1;">
@@ -2015,13 +2077,19 @@ function showToast(msg) {
 window.goTo = function(idx) {
   if(idx===state.current)return;
   ['insights','dash','calendar'].forEach((id,i)=>{
-    const el=document.getElementById(id);el.className='screen';
+    const el=document.getElementById(id);
+    el.className='screen';
+    el.style.opacity='0';
     if(i<idx)el.classList.add('left');
     else if(i>idx)el.classList.add('right');
-    else el.classList.add('active');
+    else {
+      el.classList.add('active');
+      requestAnimationFrame(()=>requestAnimationFrame(()=>{ el.style.opacity='1'; }));
+    }
   });
   [0,1,2].forEach(i=>{
-    document.getElementById(`dot-${i}`).classList.toggle('active',i===idx);
+    const dot=document.getElementById(`dot-${i}`);
+    if(dot) dot.classList.toggle('active',i===idx);
     document.getElementById(`nav-${i}`).classList.toggle('active',i===idx);
   });
   state.current=idx;
@@ -2356,10 +2424,11 @@ function updateInsights() {
     tagIds.forEach(t => {
       const avg   = Math.round(tagTotal[t]/tagCount[t]);
       const found = state.tags.find(tg => tg.id === t);
-      const label = found ? found.label : t;
+      const rawLabel = found ? (found.label || t) : t;
+      const usedLabel = /^custom_\d+$/.test(rawLabel) ? 'Eigenes Tag' : rawLabel;
       const iconHtml = found ? tagIconSvg(found, 12) : '';
       const div = document.createElement('div'); div.className='corr-item';
-      div.innerHTML = `<div class="corr-dot" style="background:var(--accent2);"></div><div class="corr-name" style="display:flex;align-items:center;gap:4px;">${iconHtml}${label}</div><div class="corr-bar-wrap"><div class="corr-bar" style="width:0%;background:var(--accent);"></div></div><div class="corr-pct">${avg}%</div>`;
+      div.innerHTML = `<div class="corr-dot" style="background:var(--accent2);"></div><div class="corr-name" style="display:flex;align-items:center;gap:4px;">${iconHtml}${usedLabel}</div><div class="corr-bar-wrap"><div class="corr-bar" style="width:0%;background:var(--accent);"></div></div><div class="corr-pct">${avg}%</div>`;
       list.appendChild(div);
       requestAnimationFrame(() => setTimeout(() => { div.querySelector('.corr-bar').style.width = avg + '%'; }, 60));
     });
@@ -3195,12 +3264,23 @@ document.getElementById('nova-refresh-btn').addEventListener('click', async () =
   loadEl.style.display = 'flex';
   try {
     const name = localStorage.getItem('flux_display_name') || '';
-    const recent = state.entries.slice(0, 14);
-    const avgBody = recent.length ? Math.round(recent.reduce((s,e)=>s+e.body,0)/recent.length) : null;
-    const avgEmo  = recent.length ? Math.round(recent.reduce((s,e)=>s+e.emotion,0)/recent.length) : null;
+    const now = new Date();
+    const periodLabels = {'7d':'den letzten 7 Tagen','30d':'den letzten 30 Tagen','90d':'den letzten 3 Monaten','1y':'dem letzten Jahr','all':'dem gesamten Zeitraum'};
+    const cutoffMap = {
+      '7d': new Date(now - 7*86400000),
+      '30d': new Date(now - 30*86400000),
+      '90d': new Date(now - 90*86400000),
+      '1y': new Date(now.getFullYear(), 0, 1),
+      'all': new Date(0)
+    };
+    const cutoff = cutoffMap[novaSummaryPeriod] || cutoffMap['7d'];
+    const filtered = state.entries.filter(e => new Date(e.ts) >= cutoff);
+    const periodLabel = periodLabels[novaSummaryPeriod] || 'den letzten 7 Tagen';
+    const avgBody = filtered.length ? Math.round(filtered.reduce((s,e)=>s+e.body,0)/filtered.length) : null;
+    const avgEmo  = filtered.length ? Math.round(filtered.reduce((s,e)=>s+e.emotion,0)/filtered.length) : null;
     const prompt = avgBody
-      ? `Analysiere die Energie-Daten kurz und ermutigend: Ø Körper ${avgBody}%, Ø Emotion ${avgEmo}%, ${recent.length} Einträge. Gib eine 2-3 Sätze persönliche Zusammenfassung${name ? ` für ${name}` : ''}.`
-      : `Die Person hat noch keine Einträge. Motiviere sie freundlich, heute mit dem Tracken anzufangen.`;
+      ? `Analysiere die Energie-Daten für ${periodLabel} kurz und ermutigend: Ø Körper ${avgBody}%, Ø Emotion ${avgEmo}%, ${filtered.length} Einträge. Gib eine 2-3 Sätze persönliche Zusammenfassung${name ? ` für ${name}` : ''}.`
+      : `Die Person hat im Zeitraum "${periodLabel}" keine Einträge. Motiviere sie freundlich, mit dem Tracken anzufangen.`;
     const text = await novaAsk([{role:'user', content: prompt}]);
     loadEl.style.display = 'none';
     textEl.style.opacity = '1';
@@ -3215,6 +3295,15 @@ document.getElementById('nova-refresh-btn').addEventListener('click', async () =
 
 // ── Nova Chat ──
 let novaChatHistory = [];
+let novaSummaryPeriod = '7d';
+
+window.setNovaPeriod = function(btn, period) {
+  novaSummaryPeriod = period;
+  document.querySelectorAll('.nova-period-chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  // Clear previous summary so it re-generates for new period
+  document.getElementById('nova-summary-text').innerHTML = '<span style="color:var(--text-faint);font-style:italic;">Tippe auf „Analyse“ für deine persönliche KI-Zusammenfassung.</span>';
+};
 
 function novaAddMsg(text, role, animate = false) {
   const msgs = document.getElementById('nova-messages');
@@ -3297,20 +3386,34 @@ function resetNovaChatTimeout() {
   }, NOVA_CHAT_TIMEOUT_MS);
 }
 
+// ── Keyboard-aware chat positioning ──
+function _updateChatForViewport() {
+  const sheet = document.getElementById('nova-chat-sheet');
+  if (!sheet) return;
+  if (window.visualViewport) {
+    const vv = window.visualViewport;
+    // offset from bottom of visual viewport to bottom of layout viewport
+    const bottomOffset = window.innerHeight - vv.height - vv.offsetTop;
+    sheet.style.marginBottom = Math.max(0, bottomOffset) + 'px';
+  }
+}
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', _updateChatForViewport);
+  window.visualViewport.addEventListener('scroll', _updateChatForViewport);
+}
+
 function openNovaChat() {
   const overlay = document.getElementById('nova-chat-overlay');
   const sheet   = document.getElementById('nova-chat-sheet');
   overlay.style.display = 'flex';
-  // Animate in: small rAF delay so transition triggers
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      overlay.style.background = 'rgba(40,25,70,0.55)';
-      overlay.style.backdropFilter = 'blur(12px)';
-      overlay.style.webkitBackdropFilter = 'blur(12px)';
-      sheet.style.transform = 'translateY(0)';
-    });
-  });
-  if(novaChatHistory.length === 0) {
+  _updateChatForViewport();
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    overlay.style.background = 'rgba(40,25,70,0.55)';
+    overlay.style.backdropFilter = 'blur(14px)';
+    overlay.style.webkitBackdropFilter = 'blur(14px)';
+    sheet.style.transform = 'translateY(0)';
+  }));
+  if (novaChatHistory.length === 0) {
     const name = localStorage.getItem('flux_display_name') || '';
     const greeting = name
       ? `Hey ${name} ✦ Ich bin Nova, deine Energie-Assistentin. Wie kann ich dir heute helfen?`
@@ -3318,20 +3421,23 @@ function openNovaChat() {
     setTimeout(() => {
       novaAddMsg(greeting, 'nova', true);
       novaChatHistory.push({role:'assistant', content: greeting});
-    }, 300);
+    }, 280);
   }
   resetNovaChatTimeout();
-  setTimeout(()=>{ try{ document.getElementById('nova-input').focus(); }catch(e){} }, 460);
+  setTimeout(() => { try { document.getElementById('nova-input').focus(); } catch(e) {} }, 460);
 }
 
 function closeNovaChat() {
   const overlay = document.getElementById('nova-chat-overlay');
   const sheet   = document.getElementById('nova-chat-sheet');
+  sheet.style.transform = 'translateY(100%)';
   overlay.style.background = 'rgba(40,25,70,0)';
   overlay.style.backdropFilter = 'blur(0px)';
   overlay.style.webkitBackdropFilter = 'blur(0px)';
-  sheet.style.transform = 'translateY(100%)';
-  setTimeout(() => { overlay.style.display = 'none'; }, 460);
+  setTimeout(() => {
+    overlay.style.display = 'none';
+    sheet.style.marginBottom = '0px';
+  }, 460);
   resetNovaChatTimeout();
 }
 
@@ -3373,6 +3479,16 @@ if('serviceWorker' in navigator){
   }).catch(()=>{});
   navigator.serviceWorker.addEventListener('controllerchange',()=>location.reload());
 }
+
+// ── Nova period chip delegation ──
+document.getElementById('nova-period-filter').addEventListener('click', function(e) {
+  const btn = e.target.closest('.nova-period-chip');
+  if (!btn) return;
+  novaSummaryPeriod = btn.dataset.p;
+  document.querySelectorAll('.nova-period-chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('nova-summary-text').innerHTML = '<span style="color:var(--text-faint);font-style:italic;">Tippe auf „Analyse“ für deine persönliche KI-Zusammenfassung.</span>';
+});
 </script>
 </body>
 </html>
