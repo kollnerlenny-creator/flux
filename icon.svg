@@ -1,0 +1,46 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1a0f35"/>
+      <stop offset="100%" stop-color="#0f0820"/>
+    </linearGradient>
+    <linearGradient id="w1" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#c4a8f8"/>
+      <stop offset="100%" stop-color="#f4b8e8"/>
+    </linearGradient>
+    <linearGradient id="w2" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#f4b8e8"/>
+      <stop offset="100%" stop-color="#d8c4fc"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background rounded rect -->
+  <rect width="512" height="512" rx="115" fill="url(#bg)"/>
+
+  <!-- Subtle inner glow ring -->
+  <rect width="512" height="512" rx="115" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="2"/>
+
+  <!-- Wave 1: Körper-Energie (lila → pink) -->
+  <path d="M64 220
+    C128 140 192 140 256 220
+    C320 300 384 300 448 220"
+    fill="none"
+    stroke="url(#w1)"
+    stroke-width="42"
+    stroke-linecap="round"
+    stroke-linejoin="round"/>
+
+  <!-- Wave 2: Emotions-Energie (pink → lila) -->
+  <path d="M64 292
+    C128 372 192 372 256 292
+    C320 212 384 212 448 292"
+    fill="none"
+    stroke="url(#w2)"
+    stroke-width="42"
+    stroke-linecap="round"
+    stroke-linejoin="round"/>
+
+  <!-- Crossing glow dot where waves intersect -->
+  <circle cx="256" cy="256" r="28" fill="white" opacity="0.12"/>
+  <circle cx="256" cy="256" r="14" fill="white" opacity="0.18"/>
+</svg>
