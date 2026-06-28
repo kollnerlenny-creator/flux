@@ -736,7 +736,8 @@ input[type="date"]::-webkit-calendar-picker-indicator{opacity:0.4;}
 
 /* Corr items stagger in */
 .corr-item{
-  animation:corrIn 0.45s cubic-bezier(0.22,1,0.36,1) both;
+  /* no default animation — items animate only when JS adds .anim class */
+  opacity:1;
 }
 
 /* Avatar dropdown fade */
@@ -998,7 +999,7 @@ input[type="date"]::-webkit-calendar-picker-indicator{opacity:0.4;}
   position:fixed;inset:0;z-index:99999;
   background:linear-gradient(160deg,#f0eaff 0%,#ede4f7 55%,#f4eef8 100%);
   display:flex;align-items:center;justify-content:center;
-  transition:opacity 0.55s cubic-bezier(0.22,1,0.36,1),transform 0.55s cubic-bezier(0.22,1,0.36,1);
+  transition:opacity 0.8s cubic-bezier(0.22,1,0.36,1),transform 0.8s cubic-bezier(0.22,1,0.36,1);
 }
 #flux-splash.splash-out{
   opacity:0;transform:scale(1.04);pointer-events:none;
@@ -1015,15 +1016,15 @@ input[type="date"]::-webkit-calendar-picker-indicator{opacity:0.4;}
 }
 .splash-w1{
   stroke-dasharray:240;stroke-dashoffset:240;
-  animation:waveDraw 0.9s cubic-bezier(0.22,1,0.36,1) 0.15s forwards;
+  animation:waveDraw 1.6s cubic-bezier(0.22,1,0.36,1) 0.3s forwards;
 }
 .splash-w2{
   stroke-dasharray:240;stroke-dashoffset:240;
-  animation:waveDraw 0.9s cubic-bezier(0.22,1,0.36,1) 0.35s forwards;
+  animation:waveDraw 1.6s cubic-bezier(0.22,1,0.36,1) 0.65s forwards;
 }
 .splash-dot{
   opacity:0;transform:scale(0);transform-origin:68px 30px;
-  animation:dotPop 0.4s cubic-bezier(0.34,1.56,0.64,1) 0.9s forwards;
+  animation:dotPop 0.6s cubic-bezier(0.34,1.56,0.64,1) 1.8s forwards;
 }
 @keyframes waveDraw{
   to{stroke-dashoffset:0;}
@@ -1037,7 +1038,7 @@ input[type="date"]::-webkit-calendar-picker-indicator{opacity:0.4;}
   background:linear-gradient(135deg,#7c5cbf,#c060a8);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
   padding:2px 4px 4px 2px;display:inline-block;overflow:visible;
-  opacity:0;animation:wordIn 0.6s cubic-bezier(0.22,1,0.36,1) 0.7s forwards;
+  opacity:0;animation:wordIn 0.9s cubic-bezier(0.22,1,0.36,1) 1.4s forwards;
 }
 @keyframes wordIn{
   from{opacity:0;transform:translateY(8px);}
@@ -1046,7 +1047,7 @@ input[type="date"]::-webkit-calendar-picker-indicator{opacity:0.4;}
 .splash-tagline{
   font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:500;
   letter-spacing:3px;color:#b8aad8;text-transform:uppercase;
-  opacity:0;animation:wordIn 0.5s cubic-bezier(0.22,1,0.36,1) 1.0s forwards;
+  opacity:0;animation:wordIn 0.8s cubic-bezier(0.22,1,0.36,1) 2.0s forwards;
 }
 /* ambient orbs behind splash */
 #flux-splash::before{
@@ -1062,6 +1063,191 @@ input[type="date"]::-webkit-calendar-picker-indicator{opacity:0.4;}
 @keyframes orbS{
   from{transform:translate(0,0) scale(1);}
   to{transform:translate(20px,-20px) scale(1.06);}
+}
+
+/* ── NOTE SECTION ── */
+.note-section{margin-bottom:12px;flex-shrink:0;}
+.note-wrap{
+  border-radius:18px;
+  background:var(--card);
+  border:1px solid var(--card-border);
+  box-shadow:0 2px 12px rgba(90,70,160,0.06);
+  overflow:hidden;
+}
+#entry-note{
+  width:100%;min-height:80px;max-height:160px;
+  padding:13px 14px 8px;
+  font-family:'Inter',sans-serif;font-size:14px;line-height:1.6;
+  color:var(--text);background:transparent;
+  border:none;outline:none;resize:none;
+  caret-color:var(--accent);
+}
+#entry-note::placeholder{color:var(--text-faint);}
+.note-actions{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:6px 10px 10px;border-top:1px solid rgba(200,188,240,0.15);
+}
+.note-audio-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:7px 14px;border-radius:99px;
+  background:rgba(124,92,191,0.08);
+  border:1px solid rgba(124,92,191,0.18);
+  color:var(--accent);font-size:12px;font-family:'Space Grotesk',sans-serif;font-weight:500;
+  cursor:pointer;transition:all 0.2s;
+  -webkit-tap-highlight-color:transparent;
+}
+.note-audio-btn:active{transform:scale(0.96);}
+.note-audio-btn.recording{
+  background:rgba(220,50,80,0.1);
+  border-color:rgba(220,50,80,0.35);
+  color:#dc3250;
+  animation:recPulse 1.2s ease-in-out infinite;
+}
+@keyframes recPulse{0%,100%{box-shadow:0 0 0 0 rgba(220,50,80,0.3);}50%{box-shadow:0 0 0 6px rgba(220,50,80,0);}}
+.note-char{font-size:11px;color:var(--text-faint);}
+
+.log-note{
+  margin-top:8px;padding:8px 10px;border-radius:10px;
+  background:rgba(124,92,191,0.05);border:1px solid rgba(124,92,191,0.1);
+  font-size:12px;color:var(--text-dim);line-height:1.55;
+  display:flex;align-items:flex-start;gap:6px;
+}
+
+/* ══ GLOBAL POLISH ══ */
+
+/* Rounder radius tokens */
+:root {
+  --r-sm:  14px;
+  --r-md:  20px;
+  --r-lg:  26px;
+  --r-xl:  32px;
+  --r-pill:99px;
+}
+
+/* Cards — rounder and more consistent */
+.glass-card { border-radius:var(--r-lg) !important; }
+.tags-section { border-radius:var(--r-lg) !important; }
+.corr-item { border-radius:var(--r-md) !important; }
+.stat-pill { border-radius:var(--r-md) !important; }
+.cal-legend { border-radius:var(--r-md) !important; }
+.day-detail { border-radius:var(--r-lg) !important; }
+.cycle-row { border-radius:var(--r-md) !important; }
+.note-wrap { border-radius:var(--r-lg) !important; }
+.log-note { border-radius:var(--r-sm) !important; }
+.mini-tag { border-radius:var(--r-pill) !important; }
+.save-btn { border-radius:var(--r-lg) !important; }
+.tag { border-radius:var(--r-pill) !important; }
+.date-chip { border-radius:var(--r-pill) !important; }
+.month-nav-btn { border-radius:50% !important; }
+.day-chart-card { border-radius:var(--r-lg) !important; }
+.nova-period-chip { border-radius:var(--r-pill) !important; }
+
+/* Smooth spring transitions everywhere */
+.glass-card, .stat-pill, .tags-section, .corr-item, .cycle-row, .note-wrap {
+  transition: box-shadow 0.3s cubic-bezier(0.22,1,0.36,1),
+              border-color 0.3s cubic-bezier(0.22,1,0.36,1),
+              transform 0.3s cubic-bezier(0.22,1,0.36,1);
+}
+.glass-card:active { transform: scale(0.99); }
+
+/* Better stagger for screen content */
+.screen.active > * { animation: fadeSlideUp 0.5s cubic-bezier(0.22,1,0.36,1) both; }
+.screen.active > *:nth-child(1) { animation-delay:0.04s; }
+.screen.active > *:nth-child(2) { animation-delay:0.09s; }
+.screen.active > *:nth-child(3) { animation-delay:0.14s; }
+.screen.active > *:nth-child(4) { animation-delay:0.19s; }
+.screen.active > *:nth-child(5) { animation-delay:0.24s; }
+
+/* Tag active state — spring pop */
+.tag { transition: all 0.22s cubic-bezier(0.34,1.56,0.64,1) !important; }
+.tag.active { transform: scale(1.04); }
+.tag:active { transform: scale(0.92) !important; }
+
+/* Save button — more satisfying press */
+.save-btn { transition: transform 0.16s cubic-bezier(0.34,1.56,0.64,1), opacity 0.16s, box-shadow 0.2s !important; }
+.save-btn:active { transform: scale(0.96) !important; }
+
+/* Slider cards — rounder pill shape */
+.slider-card { border-radius:32px !important; }
+.liquid-slider { border-radius:24px !important; }
+.liquid-fill { border-radius:24px !important; }
+
+/* Better bottom nav */
+#bottom-nav {
+  border-radius:28px 28px 0 0 !important;
+  padding-bottom:max(env(safe-area-inset-bottom, 12px), 12px) !important;
+  box-shadow: 0 -1px 0 rgba(155,127,232,0.08), 0 -8px 32px rgba(90,70,160,0.08) !important;
+  border-top: none !important;
+}
+
+/* Nav items — cleaner active state */
+.nav-item { border-radius: 16px; transition: all 0.22s cubic-bezier(0.22,1,0.36,1); }
+.nav-item.active { background: rgba(124,92,191,0.08); }
+.nav-item:active { transform: scale(0.9); }
+
+/* Droplet calendar — spring on select */
+.droplet-wrap { transition: transform 0.22s cubic-bezier(0.34,1.56,0.64,1); }
+.droplet-wrap:active { transform: scale(0.88); }
+
+/* Corr items — slide in stagger */
+/* corr-item animation handled by corrIn keyframe below */
+
+/* Stat pills — number pop animation */
+@keyframes numPop {
+  0%   { transform: scale(0.85); opacity:0.4; }
+  60%  { transform: scale(1.06); }
+  100% { transform: scale(1); opacity:1; }
+}
+.stat-num { animation: numPop 0.6s cubic-bezier(0.34,1.56,0.64,1) both; }
+
+/* Hint text — cleaner */
+.hint-text {
+  font-size:12px;
+  color:var(--text-faint);
+  letter-spacing:0.2px;
+  margin-bottom:8px;
+}
+
+/* Note section — more spacious */
+#entry-note {
+  font-size:15px !important;
+  padding:16px !important;
+  min-height:90px !important;
+}
+
+/* Better section titles */
+.section-title {
+  font-size:clamp(24px,6vw,30px) !important;
+  font-weight:600 !important;
+  letter-spacing:-0.8px !important;
+}
+
+/* Nova chat sheet — rounder top */
+#nova-chat-sheet { border-radius:32px 32px 0 0 !important; }
+
+/* Nova FAB — subtle glow pulse */
+@keyframes fabGlow {
+  0%,100% { box-shadow: 0 4px 22px rgba(124,92,191,0.5), 0 1px 4px rgba(124,92,191,0.25); }
+  50%      { box-shadow: 0 6px 28px rgba(124,92,191,0.65), 0 2px 8px rgba(232,145,200,0.3); }
+}
+#nova-fab { animation: fabGlow 3s ease-in-out infinite !important; }
+#nova-fab:active { transform: scale(0.9) !important; animation: none !important; }
+
+/* Splash — slight bounce on wordmark */
+@keyframes wordBounce {
+  0%   { opacity:0; transform:translateY(12px) scale(0.95); }
+  70%  { transform:translateY(-3px) scale(1.02); }
+  100% { opacity:1; transform:translateY(0) scale(1); }
+}
+.splash-wordmark { animation: wordBounce 0.9s cubic-bezier(0.22,1,0.36,1) 1.4s both !important; }
+
+/* Remove any leftover thick dividers */
+.nav-dots { display:none !important; }
+
+
+/* ── Nav always hidden on mobile — swipe to navigate ── */
+@media (max-width: 768px) {
+  #bottom-nav { display: none !important; }
 }
 </style>
 </head>
@@ -1486,26 +1672,7 @@ input[type="date"]::-webkit-calendar-picker-indicator{opacity:0.4;}
         <div class="glass-card" id="nova-summary-card" style="margin-bottom:14px;padding:18px;position:relative;overflow:hidden;">
           <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
             <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#7c5cbf,#e891c8);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 10px rgba(124,92,191,0.35);">
-              <svg width="20" height="20" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M4 13 Q3 6 16 4 Q29 6 28 13 Q30 8 28 5 Q22 -1 16 0 Q10 -1 4 5 Q2 8 4 13Z" fill="rgba(180,140,255,0.6)"/>
-          <ellipse cx="16" cy="16" rx="9" ry="10.5" fill="rgba(220,210,255,0.95)"/>
-          <path d="M7 11 Q3 16 4 22 Q5 26 8 27 Q6 23 7 18 Q7.5 14 9 12Z" fill="rgba(160,110,240,0.75)"/>
-          <path d="M25 11 Q29 16 28 22 Q27 26 24 27 Q26 23 25 18 Q24.5 14 23 12Z" fill="rgba(160,110,240,0.75)"/>
-          <path d="M8 10 Q10 4 16 3.5 Q22 4 24 10 Q21 6 16 6 Q11 6 8 10Z" fill="rgba(170,120,250,0.9)"/>
-          <path d="M14.5 7.5 L16 6.5 L17.5 7.5 L16 8Z" fill="rgba(180,230,255,0.9)"/>
-          <ellipse cx="12" cy="15.5" rx="2.2" ry="1.6" fill="white"/>
-          <ellipse cx="20" cy="15.5" rx="2.2" ry="1.6" fill="white"/>
-          <ellipse cx="12" cy="15.5" rx="1.4" ry="1.2" fill="rgba(100,200,255,0.95)"/>
-          <ellipse cx="20" cy="15.5" rx="1.4" ry="1.2" fill="rgba(100,200,255,0.95)"/>
-          <circle cx="12.2" cy="15.7" r="0.7" fill="rgba(30,60,120,0.9)"/>
-          <circle cx="20.2" cy="15.7" r="0.7" fill="rgba(30,60,120,0.9)"/>
-          <circle cx="12.6" cy="15.1" r="0.3" fill="white" opacity="0.9"/>
-          <circle cx="20.6" cy="15.1" r="0.3" fill="white" opacity="0.9"/>
-          <path d="M15.2 18.5 Q16 19.2 16.8 18.5" stroke="rgba(150,120,200,0.4)" stroke-width="0.6" fill="none"/>
-          <path d="M12.5 21 Q16 23.5 19.5 21" stroke="rgba(140,100,200,0.7)" stroke-width="0.9" stroke-linecap="round" fill="none"/>
-          <ellipse cx="10" cy="18.5" rx="2" ry="1.2" fill="rgba(232,145,200,0.2)"/>
-          <ellipse cx="22" cy="18.5" rx="2" ry="1.2" fill="rgba(232,145,200,0.2)"/>
-        </svg>
+              <svg<svg width="20" height="20" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="nf-skin" cx="50%" cy="45%" r="52%"><stop offset="0%" stop-color="#ede0ff"/><stop offset="100%" stop-color="#d4b8f0"/></radialGradient><radialGradient id="nf-hair" cx="50%" cy="30%" r="60%"><stop offset="0%" stop-color="#9b70e8"/><stop offset="100%" stop-color="#6a3ab0"/></radialGradient><radialGradient id="nf-iris" cx="35%" cy="35%" r="65%"><stop offset="0%" stop-color="#a0d8ff"/><stop offset="60%" stop-color="#5ab0f0"/><stop offset="100%" stop-color="#2060c0"/></radialGradient><radialGradient id="nf-cheek" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="rgba(240,140,180,0.45)"/><stop offset="100%" stop-color="rgba(240,140,180,0)"/></radialGradient></defs><path d="M6 17 Q5 7 16 4.5 Q27 7 26 17 Q28 11 26 7 Q21 1 16 1.5 Q11 1 6 7 Q4 11 6 17Z" fill="url(#nf-hair)"/><ellipse cx="16" cy="17" rx="9.5" ry="11" fill="url(#nf-skin)"/><path d="M6.5 13 Q3 19 5 25 Q6.5 29 9 29.5 Q7 26 7.5 21 Q8 16.5 9.5 14Z" fill="url(#nf-hair)"/><path d="M25.5 13 Q29 19 27 25 Q25.5 29 23 29.5 Q25 26 24.5 21 Q24 16.5 22.5 14Z" fill="url(#nf-hair)"/><path d="M6.5 12 Q9 4 16 3.5 Q23 4 25.5 12 Q22 7 16 7.5 Q10 7 6.5 12Z" fill="url(#nf-hair)"/><path d="M11 6 Q14 4.5 17 5.5" stroke="rgba(200,170,255,0.6)" stroke-width="1.5" stroke-linecap="round" fill="none"/><path d="M14.8 8 L16 7 L17.2 8 L16 8.8Z" fill="rgba(180,230,255,0.95)"/><circle cx="16" cy="8" r="0.6" fill="white" opacity="0.8"/><path d="M10 13.5 Q11.8 12.5 13.8 13" stroke="rgba(100,60,160,0.7)" stroke-width="1.1" stroke-linecap="round" fill="none"/><path d="M18.2 13 Q20.2 12.5 22 13.5" stroke="rgba(100,60,160,0.7)" stroke-width="1.1" stroke-linecap="round" fill="none"/><ellipse cx="12" cy="16" rx="2.6" ry="1.9" fill="white"/><ellipse cx="20" cy="16" rx="2.6" ry="1.9" fill="white"/><ellipse cx="12" cy="16.2" rx="1.8" ry="1.7" fill="url(#nf-iris)"/><ellipse cx="20" cy="16.2" rx="1.8" ry="1.7" fill="url(#nf-iris)"/><ellipse cx="12.2" cy="16.4" rx="0.95" ry="1.05" fill="#0a1a40"/><ellipse cx="20.2" cy="16.4" rx="0.95" ry="1.05" fill="#0a1a40"/><circle cx="12.8" cy="15.7" r="0.45" fill="white"/><circle cx="11.8" cy="16.8" r="0.2" fill="rgba(255,255,255,0.6)"/><circle cx="20.8" cy="15.7" r="0.45" fill="white"/><circle cx="19.8" cy="16.8" r="0.2" fill="rgba(255,255,255,0.6)"/><path d="M9.5 17.5 Q12 18.4 14.5 17.5" stroke="rgba(180,140,210,0.3)" stroke-width="0.6" fill="none"/><path d="M17.5 17.5 Q20 18.4 22.5 17.5" stroke="rgba(180,140,210,0.3)" stroke-width="0.6" fill="none"/><path d="M15 20.5 Q15.5 21.5 16 21.5 Q16.5 21.5 17 20.5" stroke="rgba(130,90,180,0.35)" stroke-width="0.7" stroke-linecap="round" fill="none"/><circle cx="14.8" cy="21" r="0.5" fill="rgba(130,90,180,0.15)"/><circle cx="17.2" cy="21" r="0.5" fill="rgba(130,90,180,0.15)"/><path d="M12.8 23.2 Q14 22.4 16 22.6 Q18 22.4 19.2 23.2" stroke="rgba(210,120,160,0.6)" stroke-width="0.7" fill="none" stroke-linecap="round"/><path d="M12.8 23.2 Q14.5 24.6 16 24.5 Q17.5 24.6 19.2 23.2" stroke="rgba(210,100,150,0.8)" stroke-width="1" fill="none" stroke-linecap="round"/><path d="M14 23 Q16 23.5 18 23" stroke="rgba(255,255,255,0.3)" stroke-width="0.5" fill="none"/><ellipse cx="10" cy="20" rx="2.5" ry="1.5" fill="url(#nf-cheek)"/><ellipse cx="22" cy="20" rx="2.5" ry="1.5" fill="url(#nf-cheek)"/><path d="M25 5 L25.5 6.4 L26.9 6.9 L25.5 7.4 L25 8.8 L24.5 7.4 L23.1 6.9 L24.5 6.4 Z" fill="rgba(200,230,255,0.9)"/></svg>
             </div>
             <div>
               <div style="font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;color:var(--text);letter-spacing:-0.2px;">Nova</div>
@@ -1605,6 +1772,24 @@ input[type="date"]::-webkit-calendar-picker-indicator{opacity:0.4;}
           <div class="tags-grid" id="tags-grid"></div>
         </div>
 
+        <!-- Notiz & Audio -->
+        <div class="note-section" id="note-section">
+          <div class="hint-text" style="margin-bottom:8px;">Wie war es? <span style="color:var(--text-faint);font-weight:400;">(optional)</span></div>
+          <div class="note-wrap">
+            <textarea id="entry-note" placeholder="z.B. Schlaf war tief und erholsam, aber zu kurz…" maxlength="500"></textarea>
+            <div class="note-actions">
+              <button id="note-audio-btn" class="note-audio-btn" title="Spracheingabe">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                  <rect x="9" y="2" width="6" height="12" rx="3" stroke="currentColor" stroke-width="1.8"/>
+                  <path d="M5 10a7 7 0 0014 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                  <line x1="12" y1="19" x2="12" y2="22" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+                <span id="note-audio-label">Sprechen</span>
+              </button>
+              <span id="note-char-count" class="note-char">0 / 500</span>
+            </div>
+          </div>
+        </div>
 
         <!-- Tagesverlauf -->
         <div class="day-chart-card" id="day-chart-wrap" style="margin-bottom:12px;flex-shrink:0;">
@@ -1678,38 +1863,7 @@ input[type="date"]::-webkit-calendar-picker-indicator{opacity:0.4;}
 <!-- Nova Chat FAB -->
 <button id="nova-fab" title="Nova fragen" style="position:fixed;bottom:96px;right:20px;width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,#7c5cbf,#e891c8);border:none;cursor:pointer;z-index:9999;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 22px rgba(124,92,191,0.5),0 1px 4px rgba(124,92,191,0.25);transition:transform 0.2s,box-shadow 0.2s;">
   <!-- Nova face -->
-  <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <!-- Hair back layer -->
-    <path d="M4 13 Q3 6 16 4 Q29 6 28 13 Q30 8 28 5 Q22 -1 16 0 Q10 -1 4 5 Q2 8 4 13Z" fill="rgba(180,140,255,0.6)"/>
-    <!-- Face shape -->
-    <ellipse cx="16" cy="16" rx="9" ry="10.5" fill="rgba(220,210,255,0.95)"/>
-    <!-- Hair sides flowing -->
-    <path d="M7 11 Q3 16 4 22 Q5 26 8 27 Q6 23 7 18 Q7.5 14 9 12Z" fill="rgba(160,110,240,0.75)"/>
-    <path d="M25 11 Q29 16 28 22 Q27 26 24 27 Q26 23 25 18 Q24.5 14 23 12Z" fill="rgba(160,110,240,0.75)"/>
-    <!-- Hair top -->
-    <path d="M8 10 Q10 4 16 3.5 Q22 4 24 10 Q21 6 16 6 Q11 6 8 10Z" fill="rgba(170,120,250,0.9)"/>
-    <!-- Cyber forehead mark -->
-    <path d="M14.5 7.5 L16 6.5 L17.5 7.5 L16 8Z" fill="rgba(180,230,255,0.9)"/>
-    <!-- Eyes - glowing -->
-    <ellipse cx="12" cy="15.5" rx="2.2" ry="1.6" fill="white"/>
-    <ellipse cx="20" cy="15.5" rx="2.2" ry="1.6" fill="white"/>
-    <!-- Iris glow -->
-    <ellipse cx="12" cy="15.5" rx="1.4" ry="1.2" fill="rgba(100,200,255,0.95)"/>
-    <ellipse cx="20" cy="15.5" rx="1.4" ry="1.2" fill="rgba(100,200,255,0.95)"/>
-    <!-- Pupils -->
-    <circle cx="12.2" cy="15.7" r="0.7" fill="rgba(30,60,120,0.9)"/>
-    <circle cx="20.2" cy="15.7" r="0.7" fill="rgba(30,60,120,0.9)"/>
-    <!-- Eye shine -->
-    <circle cx="12.6" cy="15.1" r="0.3" fill="white" opacity="0.9"/>
-    <circle cx="20.6" cy="15.1" r="0.3" fill="white" opacity="0.9"/>
-    <!-- Subtle nose -->
-    <path d="M15.2 18.5 Q16 19.2 16.8 18.5" stroke="rgba(150,120,200,0.4)" stroke-width="0.6" fill="none"/>
-    <!-- Smile -->
-    <path d="M12.5 21 Q16 23.5 19.5 21" stroke="rgba(140,100,200,0.7)" stroke-width="0.9" stroke-linecap="round" fill="none"/>
-    <!-- Cheek glow -->
-    <ellipse cx="10" cy="18.5" rx="2" ry="1.2" fill="rgba(232,145,200,0.2)"/>
-    <ellipse cx="22" cy="18.5" rx="2" ry="1.2" fill="rgba(232,145,200,0.2)"/>
-  </svg>
+  <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="nf-skin" cx="50%" cy="45%" r="52%"><stop offset="0%" stop-color="#ede0ff"/><stop offset="100%" stop-color="#d4b8f0"/></radialGradient><radialGradient id="nf-hair" cx="50%" cy="30%" r="60%"><stop offset="0%" stop-color="#9b70e8"/><stop offset="100%" stop-color="#6a3ab0"/></radialGradient><radialGradient id="nf-iris" cx="35%" cy="35%" r="65%"><stop offset="0%" stop-color="#a0d8ff"/><stop offset="60%" stop-color="#5ab0f0"/><stop offset="100%" stop-color="#2060c0"/></radialGradient><radialGradient id="nf-cheek" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="rgba(240,140,180,0.45)"/><stop offset="100%" stop-color="rgba(240,140,180,0)"/></radialGradient></defs><path d="M6 17 Q5 7 16 4.5 Q27 7 26 17 Q28 11 26 7 Q21 1 16 1.5 Q11 1 6 7 Q4 11 6 17Z" fill="url(#nf-hair)"/><ellipse cx="16" cy="17" rx="9.5" ry="11" fill="url(#nf-skin)"/><path d="M6.5 13 Q3 19 5 25 Q6.5 29 9 29.5 Q7 26 7.5 21 Q8 16.5 9.5 14Z" fill="url(#nf-hair)"/><path d="M25.5 13 Q29 19 27 25 Q25.5 29 23 29.5 Q25 26 24.5 21 Q24 16.5 22.5 14Z" fill="url(#nf-hair)"/><path d="M6.5 12 Q9 4 16 3.5 Q23 4 25.5 12 Q22 7 16 7.5 Q10 7 6.5 12Z" fill="url(#nf-hair)"/><path d="M11 6 Q14 4.5 17 5.5" stroke="rgba(200,170,255,0.6)" stroke-width="1.5" stroke-linecap="round" fill="none"/><path d="M14.8 8 L16 7 L17.2 8 L16 8.8Z" fill="rgba(180,230,255,0.95)"/><circle cx="16" cy="8" r="0.6" fill="white" opacity="0.8"/><path d="M10 13.5 Q11.8 12.5 13.8 13" stroke="rgba(100,60,160,0.7)" stroke-width="1.1" stroke-linecap="round" fill="none"/><path d="M18.2 13 Q20.2 12.5 22 13.5" stroke="rgba(100,60,160,0.7)" stroke-width="1.1" stroke-linecap="round" fill="none"/><ellipse cx="12" cy="16" rx="2.6" ry="1.9" fill="white"/><ellipse cx="20" cy="16" rx="2.6" ry="1.9" fill="white"/><ellipse cx="12" cy="16.2" rx="1.8" ry="1.7" fill="url(#nf-iris)"/><ellipse cx="20" cy="16.2" rx="1.8" ry="1.7" fill="url(#nf-iris)"/><ellipse cx="12.2" cy="16.4" rx="0.95" ry="1.05" fill="#0a1a40"/><ellipse cx="20.2" cy="16.4" rx="0.95" ry="1.05" fill="#0a1a40"/><circle cx="12.8" cy="15.7" r="0.45" fill="white"/><circle cx="11.8" cy="16.8" r="0.2" fill="rgba(255,255,255,0.6)"/><circle cx="20.8" cy="15.7" r="0.45" fill="white"/><circle cx="19.8" cy="16.8" r="0.2" fill="rgba(255,255,255,0.6)"/><path d="M9.5 17.5 Q12 18.4 14.5 17.5" stroke="rgba(180,140,210,0.3)" stroke-width="0.6" fill="none"/><path d="M17.5 17.5 Q20 18.4 22.5 17.5" stroke="rgba(180,140,210,0.3)" stroke-width="0.6" fill="none"/><path d="M15 20.5 Q15.5 21.5 16 21.5 Q16.5 21.5 17 20.5" stroke="rgba(130,90,180,0.35)" stroke-width="0.7" stroke-linecap="round" fill="none"/><circle cx="14.8" cy="21" r="0.5" fill="rgba(130,90,180,0.15)"/><circle cx="17.2" cy="21" r="0.5" fill="rgba(130,90,180,0.15)"/><path d="M12.8 23.2 Q14 22.4 16 22.6 Q18 22.4 19.2 23.2" stroke="rgba(210,120,160,0.6)" stroke-width="0.7" fill="none" stroke-linecap="round"/><path d="M12.8 23.2 Q14.5 24.6 16 24.5 Q17.5 24.6 19.2 23.2" stroke="rgba(210,100,150,0.8)" stroke-width="1" fill="none" stroke-linecap="round"/><path d="M14 23 Q16 23.5 18 23" stroke="rgba(255,255,255,0.3)" stroke-width="0.5" fill="none"/><ellipse cx="10" cy="20" rx="2.5" ry="1.5" fill="url(#nf-cheek)"/><ellipse cx="22" cy="20" rx="2.5" ry="1.5" fill="url(#nf-cheek)"/><path d="M25 5 L25.5 6.4 L26.9 6.9 L25.5 7.4 L25 8.8 L24.5 7.4 L23.1 6.9 L24.5 6.4 Z" fill="rgba(200,230,255,0.9)"/></svg>
 </button>
 
 <!-- Nova Chat Modal -->
@@ -1718,26 +1872,7 @@ input[type="date"]::-webkit-calendar-picker-indicator{opacity:0.4;}
     <!-- Header -->
     <div style="padding:16px 20px 14px;border-bottom:1px solid rgba(155,127,232,0.1);display:flex;align-items:center;gap:12px;flex-shrink:0;">
       <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#7c5cbf,#e891c8);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 10px rgba(124,92,191,0.3);">
-        <svg width="24" height="24" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M4 13 Q3 6 16 4 Q29 6 28 13 Q30 8 28 5 Q22 -1 16 0 Q10 -1 4 5 Q2 8 4 13Z" fill="rgba(180,140,255,0.6)"/>
-          <ellipse cx="16" cy="16" rx="9" ry="10.5" fill="rgba(220,210,255,0.95)"/>
-          <path d="M7 11 Q3 16 4 22 Q5 26 8 27 Q6 23 7 18 Q7.5 14 9 12Z" fill="rgba(160,110,240,0.75)"/>
-          <path d="M25 11 Q29 16 28 22 Q27 26 24 27 Q26 23 25 18 Q24.5 14 23 12Z" fill="rgba(160,110,240,0.75)"/>
-          <path d="M8 10 Q10 4 16 3.5 Q22 4 24 10 Q21 6 16 6 Q11 6 8 10Z" fill="rgba(170,120,250,0.9)"/>
-          <path d="M14.5 7.5 L16 6.5 L17.5 7.5 L16 8Z" fill="rgba(180,230,255,0.9)"/>
-          <ellipse cx="12" cy="15.5" rx="2.2" ry="1.6" fill="white"/>
-          <ellipse cx="20" cy="15.5" rx="2.2" ry="1.6" fill="white"/>
-          <ellipse cx="12" cy="15.5" rx="1.4" ry="1.2" fill="rgba(100,200,255,0.95)"/>
-          <ellipse cx="20" cy="15.5" rx="1.4" ry="1.2" fill="rgba(100,200,255,0.95)"/>
-          <circle cx="12.2" cy="15.7" r="0.7" fill="rgba(30,60,120,0.9)"/>
-          <circle cx="20.2" cy="15.7" r="0.7" fill="rgba(30,60,120,0.9)"/>
-          <circle cx="12.6" cy="15.1" r="0.3" fill="white" opacity="0.9"/>
-          <circle cx="20.6" cy="15.1" r="0.3" fill="white" opacity="0.9"/>
-          <path d="M15.2 18.5 Q16 19.2 16.8 18.5" stroke="rgba(150,120,200,0.4)" stroke-width="0.6" fill="none"/>
-          <path d="M12.5 21 Q16 23.5 19.5 21" stroke="rgba(140,100,200,0.7)" stroke-width="0.9" stroke-linecap="round" fill="none"/>
-          <ellipse cx="10" cy="18.5" rx="2" ry="1.2" fill="rgba(232,145,200,0.2)"/>
-          <ellipse cx="22" cy="18.5" rx="2" ry="1.2" fill="rgba(232,145,200,0.2)"/>
-        </svg>
+        <svg width="24" height="24" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="nf-skin" cx="50%" cy="45%" r="52%"><stop offset="0%" stop-color="#ede0ff"/><stop offset="100%" stop-color="#d4b8f0"/></radialGradient><radialGradient id="nf-hair" cx="50%" cy="30%" r="60%"><stop offset="0%" stop-color="#9b70e8"/><stop offset="100%" stop-color="#6a3ab0"/></radialGradient><radialGradient id="nf-iris" cx="35%" cy="35%" r="65%"><stop offset="0%" stop-color="#a0d8ff"/><stop offset="60%" stop-color="#5ab0f0"/><stop offset="100%" stop-color="#2060c0"/></radialGradient><radialGradient id="nf-cheek" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="rgba(240,140,180,0.45)"/><stop offset="100%" stop-color="rgba(240,140,180,0)"/></radialGradient></defs><path d="M6 17 Q5 7 16 4.5 Q27 7 26 17 Q28 11 26 7 Q21 1 16 1.5 Q11 1 6 7 Q4 11 6 17Z" fill="url(#nf-hair)"/><ellipse cx="16" cy="17" rx="9.5" ry="11" fill="url(#nf-skin)"/><path d="M6.5 13 Q3 19 5 25 Q6.5 29 9 29.5 Q7 26 7.5 21 Q8 16.5 9.5 14Z" fill="url(#nf-hair)"/><path d="M25.5 13 Q29 19 27 25 Q25.5 29 23 29.5 Q25 26 24.5 21 Q24 16.5 22.5 14Z" fill="url(#nf-hair)"/><path d="M6.5 12 Q9 4 16 3.5 Q23 4 25.5 12 Q22 7 16 7.5 Q10 7 6.5 12Z" fill="url(#nf-hair)"/><path d="M11 6 Q14 4.5 17 5.5" stroke="rgba(200,170,255,0.6)" stroke-width="1.5" stroke-linecap="round" fill="none"/><path d="M14.8 8 L16 7 L17.2 8 L16 8.8Z" fill="rgba(180,230,255,0.95)"/><circle cx="16" cy="8" r="0.6" fill="white" opacity="0.8"/><path d="M10 13.5 Q11.8 12.5 13.8 13" stroke="rgba(100,60,160,0.7)" stroke-width="1.1" stroke-linecap="round" fill="none"/><path d="M18.2 13 Q20.2 12.5 22 13.5" stroke="rgba(100,60,160,0.7)" stroke-width="1.1" stroke-linecap="round" fill="none"/><ellipse cx="12" cy="16" rx="2.6" ry="1.9" fill="white"/><ellipse cx="20" cy="16" rx="2.6" ry="1.9" fill="white"/><ellipse cx="12" cy="16.2" rx="1.8" ry="1.7" fill="url(#nf-iris)"/><ellipse cx="20" cy="16.2" rx="1.8" ry="1.7" fill="url(#nf-iris)"/><ellipse cx="12.2" cy="16.4" rx="0.95" ry="1.05" fill="#0a1a40"/><ellipse cx="20.2" cy="16.4" rx="0.95" ry="1.05" fill="#0a1a40"/><circle cx="12.8" cy="15.7" r="0.45" fill="white"/><circle cx="11.8" cy="16.8" r="0.2" fill="rgba(255,255,255,0.6)"/><circle cx="20.8" cy="15.7" r="0.45" fill="white"/><circle cx="19.8" cy="16.8" r="0.2" fill="rgba(255,255,255,0.6)"/><path d="M9.5 17.5 Q12 18.4 14.5 17.5" stroke="rgba(180,140,210,0.3)" stroke-width="0.6" fill="none"/><path d="M17.5 17.5 Q20 18.4 22.5 17.5" stroke="rgba(180,140,210,0.3)" stroke-width="0.6" fill="none"/><path d="M15 20.5 Q15.5 21.5 16 21.5 Q16.5 21.5 17 20.5" stroke="rgba(130,90,180,0.35)" stroke-width="0.7" stroke-linecap="round" fill="none"/><circle cx="14.8" cy="21" r="0.5" fill="rgba(130,90,180,0.15)"/><circle cx="17.2" cy="21" r="0.5" fill="rgba(130,90,180,0.15)"/><path d="M12.8 23.2 Q14 22.4 16 22.6 Q18 22.4 19.2 23.2" stroke="rgba(210,120,160,0.6)" stroke-width="0.7" fill="none" stroke-linecap="round"/><path d="M12.8 23.2 Q14.5 24.6 16 24.5 Q17.5 24.6 19.2 23.2" stroke="rgba(210,100,150,0.8)" stroke-width="1" fill="none" stroke-linecap="round"/><path d="M14 23 Q16 23.5 18 23" stroke="rgba(255,255,255,0.3)" stroke-width="0.5" fill="none"/><ellipse cx="10" cy="20" rx="2.5" ry="1.5" fill="url(#nf-cheek)"/><ellipse cx="22" cy="20" rx="2.5" ry="1.5" fill="url(#nf-cheek)"/><path d="M25 5 L25.5 6.4 L26.9 6.9 L25.5 7.4 L25 8.8 L24.5 7.4 L23.1 6.9 L24.5 6.4 Z" fill="rgba(200,230,255,0.9)"/></svg>
       </div>
       <div style="flex:1;">
         <div style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;color:var(--text);letter-spacing:-0.3px;">Nova</div>
@@ -2139,11 +2274,14 @@ document.getElementById('save-btn').addEventListener('click', async function(e) 
 
   const ts=Date.now();
   const dateObj=new Date(ts);
+  const noteEl = document.getElementById('entry-note');
+  const noteText = noteEl ? noteEl.value.trim() : '';
   const entry={
     ts, date:dateObj.toISOString().slice(0,10),
     time:dateObj.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'}),
     body:state.bodyVal, emotion:state.emotionVal,
     tags:[...state.activeTags],
+    note: noteText,
     cycle:state.cycleToday,
     migraine:state.migraineToday,
   };
@@ -2153,6 +2291,7 @@ document.getElementById('save-btn').addEventListener('click', async function(e) 
 
   state.activeTags.clear();
   buildTagsGrid();
+  if(noteEl){ noteEl.value=''; document.getElementById('note-char-count').textContent='0 / 500'; }
 
   const ov=document.getElementById('save-overlay');
   ov.classList.add('show');setTimeout(()=>ov.classList.remove('show'),800);
@@ -2736,6 +2875,7 @@ function renderDayDetail(day,month,year,logs){
           <div class="mini-bar-track"><div class="mini-bar-fill-emo" style="width:${e.emotion}%;"></div></div>
           <div class="log-metric-val">${e.emotion}%</div>
         </div>
+        ${e.note ? `<div class="log-note"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" style="color:var(--text-faint);flex-shrink:0;"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>${e.note}</div>` : ''}
       </div>
     </div>`;
   }).join('');
@@ -3591,7 +3731,7 @@ document.getElementById('nova-period-filter').addEventListener('click', function
 // ── Splash dismiss ──
 (function(){
   const splash = document.getElementById('flux-splash');
-  const minTime = 1800;
+  const minTime = 3200;
   const t0 = Date.now();
   function hideSplash(){
     const elapsed = Date.now() - t0;
@@ -3607,6 +3747,110 @@ document.getElementById('nova-period-filter').addEventListener('click', function
     window.addEventListener('load', hideSplash);
   }
 })();
+
+
+// ── Note textarea char counter ──
+const entryNoteEl = document.getElementById('entry-note');
+const noteCharEl  = document.getElementById('note-char-count');
+if (entryNoteEl) {
+  entryNoteEl.addEventListener('input', () => {
+    noteCharEl.textContent = entryNoteEl.value.length + ' / 500';
+  });
+}
+
+// ── Speech-to-text for note ──
+const audioBtn   = document.getElementById('note-audio-btn');
+const audioLabel = document.getElementById('note-audio-label');
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+let recognition  = null;
+let isRecording  = false;
+let finalTranscript = '';
+
+function stopRecording() {
+  isRecording = false;
+  if (audioBtn) {
+    audioBtn.classList.remove('recording');
+    audioBtn.style.color = '';
+  }
+  if (audioLabel) audioLabel.textContent = 'Sprechen';
+  try { if (recognition) recognition.stop(); } catch(e) {}
+}
+
+function startRecording() {
+  if (!SpeechRecognition) {
+    showToast('Spracheingabe wird auf diesem Gerät nicht unterstützt');
+    return;
+  }
+  try {
+    recognition = new SpeechRecognition();
+    recognition.lang = 'de-DE';
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.maxAlternatives = 1;
+
+    recognition.onstart = () => {
+      isRecording = true;
+      if (audioBtn) audioBtn.classList.add('recording');
+      if (audioLabel) audioLabel.textContent = 'Tippen zum Stoppen';
+      finalTranscript = entryNoteEl ? entryNoteEl.value : '';
+    };
+
+    recognition.onresult = (e) => {
+      let interim = '';
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        const t = e.results[i][0].transcript;
+        if (e.results[i].isFinal) {
+          finalTranscript += (finalTranscript && !finalTranscript.endsWith(' ') ? ' ' : '') + t;
+        } else {
+          interim = t;
+        }
+      }
+      if (entryNoteEl) {
+        entryNoteEl.value = finalTranscript + (interim ? ' ' + interim : '');
+        if (noteCharEl) noteCharEl.textContent = entryNoteEl.value.length + ' / 500';
+      }
+    };
+
+    recognition.onerror = (e) => {
+      console.warn('Speech error:', e.error);
+      if (e.error === 'not-allowed' || e.error === 'permission-denied') {
+        showToast('Mikrofon-Zugriff verweigert — bitte in den Einstellungen erlauben');
+      } else if (e.error === 'network') {
+        showToast('Keine Verbindung für Spracheingabe');
+      } else if (e.error === 'no-speech') {
+        showToast('Keine Sprache erkannt — versuch es nochmal');
+      } else {
+        showToast('Spracheingabe fehlgeschlagen: ' + e.error);
+      }
+      stopRecording();
+    };
+
+    recognition.onend = () => {
+      if (isRecording) stopRecording();
+    };
+
+    recognition.start();
+  } catch(err) {
+    console.error('Speech start error:', err);
+    showToast('Spracheingabe konnte nicht gestartet werden');
+    stopRecording();
+  }
+}
+
+if (audioBtn) {
+  if (!SpeechRecognition) {
+    // Gracefully hide on unsupported browsers
+    audioBtn.style.display = 'none';
+  } else {
+    audioBtn.addEventListener('click', () => {
+      if (isRecording) {
+        stopRecording();
+      } else {
+        startRecording();
+      }
+    });
+  }
+}
 
 </script>
 </body>
