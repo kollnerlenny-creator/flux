@@ -204,14 +204,14 @@ html,body{
 .liquid-fill{
   position:absolute;bottom:0;left:0;right:0;border-radius:28px;overflow:hidden;will-change:height;
   background-size:100% 300%;
-  animation:colorShift 6s ease infinite;
+  animation:colorShift 14s ease infinite;
 }
 .liquid-fill::before{content:'';position:absolute;top:0;left:0;right:0;height:14px;background:rgba(255,255,255,0.5);border-radius:50%;filter:blur(4px);animation:liquidSurface 3s ease-in-out infinite;}
 .liquid-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,0.3) 0%,transparent 50%);}
-@keyframes liquidSurface{0%,100%{transform:scaleX(1);opacity:0.8;}50%{transform:scaleX(1.12) translateY(-2px);opacity:1;}}
-.slider-card.dragging .liquid-fill{animation:colorShiftFast 2s ease infinite;}
-.slider-card.dragging .liquid-fill::before{animation:liquidSurfaceFast 0.65s ease-in-out infinite;}
-@keyframes liquidSurfaceFast{0%,100%{transform:scaleX(1) translateY(0);opacity:0.9;}50%{transform:scaleX(1.22) translateY(-4px);opacity:1;}}
+@keyframes liquidSurface{0%,100%{transform:scaleX(1);opacity:0.5;}50%{transform:scaleX(1.06) translateY(-1px);opacity:0.7;}}
+.slider-card.dragging .liquid-fill{animation:colorShiftFast 6s ease infinite;}
+.slider-card.dragging .liquid-fill::before{animation:liquidSurfaceFast 1.4s ease-in-out infinite;}
+@keyframes liquidSurfaceFast{0%,100%{transform:scaleX(1) translateY(0);opacity:0.6;}50%{transform:scaleX(1.08) translateY(-2px);opacity:0.8;}}
 #body-fill{background:linear-gradient(180deg,#9b7fe8,#5bbfbf,#7c5cbf,#5bbfbf,#9b7fe8);background-size:100% 400%;}
 #emotion-fill{background:linear-gradient(180deg,#e891c8,#b39ddb,#f0a8d8,#9b7fe8,#e891c8);background-size:100% 400%;}
 @keyframes colorShift{0%{background-position:0% 0%;}50%{background-position:0% 60%;}100%{background-position:0% 0%}}
@@ -689,36 +689,7 @@ input[type="date"]::-webkit-calendar-picker-indicator{opacity:0.4;}
   to{opacity:1;transform:translateY(0);}
 }
 
-/* Tag chips pop in */
-.tag{
-  animation:tagPop 0.38s cubic-bezier(0.22,1,0.36,1) both;
-}
-.tags-grid .tag:nth-child(1){animation-delay:0.02s;}
-.tags-grid .tag:nth-child(2){animation-delay:0.05s;}
-.tags-grid .tag:nth-child(3){animation-delay:0.08s;}
-.tags-grid .tag:nth-child(4){animation-delay:0.11s;}
-.tags-grid .tag:nth-child(5){animation-delay:0.14s;}
-.tags-grid .tag:nth-child(6){animation-delay:0.17s;}
-.tags-grid .tag:nth-child(7){animation-delay:0.20s;}
-.tags-grid .tag:nth-child(8){animation-delay:0.23s;}
-.tags-grid .tag:nth-child(9){animation-delay:0.26s;}
-.tags-grid .tag:nth-child(10){animation-delay:0.29s;}
-.tags-grid .tag:nth-child(11){animation-delay:0.32s;}
-.tags-grid .tag:nth-child(12){animation-delay:0.35s;}
-@keyframes tagPop{
-  from{opacity:0;transform:scale(0.82) translateY(4px);}
-  to{opacity:1;transform:scale(1) translateY(0);}
-}
-
-/* Tag active toggle pulse */
-.tag.active{
-  animation:tagActivate 0.32s cubic-bezier(0.22,1,0.36,1);
-}
-@keyframes tagActivate{
-  0%{transform:scale(1);}
-  45%{transform:scale(0.92);}
-  100%{transform:scale(1);}
-}
+/* Tags – keine Einblend-Animation */
 
 /* Nav label slide indicator */
 .nav-label{
@@ -1176,9 +1147,9 @@ input[type="date"]::-webkit-calendar-picker-indicator{opacity:0.4;}
 .screen.active > *:nth-child(5) { animation-delay:0.24s; }
 
 /* Tag active state — spring pop */
-.tag { transition: all 0.22s cubic-bezier(0.34,1.56,0.64,1) !important; }
-.tag.active { transform: scale(1.04); }
-.tag:active { transform: scale(0.92) !important; }
+.tag { transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease, box-shadow 0.18s ease !important; }
+.tag.active { transform: none; }
+.tag:active { transform: scale(0.96) !important; }
 
 /* Save button — more satisfying press */
 .save-btn { transition: transform 0.16s cubic-bezier(0.34,1.56,0.64,1), opacity 0.16s, box-shadow 0.2s !important; }
@@ -2029,7 +2000,15 @@ input[type="date"]::-webkit-calendar-picker-indicator{opacity:0.4;}
       </div>
     </div>
     <div style="font-size:11px;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;font-weight:500;">Tätigkeiten</div>
-    <div id="edit-tags-grid" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px;"></div>
+    <div id="edit-tags-grid" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;"></div>
+    <div style="font-size:11px;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;font-weight:500;">Notiz</div>
+    <div style="position:relative;margin-bottom:18px;">
+      <textarea id="edit-note" maxlength="500" placeholder="Wie war der Tag? Was ist aufgefallen…" style="width:100%;min-height:76px;background:rgba(155,127,232,0.06);border:1.5px solid rgba(155,127,232,0.2);border-radius:16px;padding:12px 14px 36px;font-size:14px;font-family:'Inter',sans-serif;color:var(--text);outline:none;resize:none;line-height:1.55;transition:border-color 0.2s;box-sizing:border-box;"></textarea>
+      <div style="position:absolute;bottom:8px;left:10px;right:10px;display:flex;align-items:center;justify-content:space-between;pointer-events:none;">
+        <button id="edit-audio-btn" style="pointer-events:all;display:inline-flex;align-items:center;gap:5px;padding:5px 11px;border-radius:99px;background:rgba(124,92,191,0.08);border:1px solid rgba(124,92,191,0.18);color:var(--accent);font-size:11px;font-family:'Space Grotesk',sans-serif;font-weight:500;cursor:pointer;transition:all 0.2s;-webkit-tap-highlight-color:transparent;"><svg width="12" height="12" style="color:currentColor;flex-shrink:0;" viewBox="0 0 20 20" fill="none"><rect x="7" y="2" width="6" height="10" rx="3" stroke="currentColor" stroke-width="1.6"/><path d="M4 10a6 6 0 0012 0" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M10 16v2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Sprache</button>
+        <div id="edit-note-char" style="font-size:10px;color:var(--text-faint);">0 / 500</div>
+      </div>
+    </div>
     <div style="display:flex;gap:10px;">
       <button id="edit-cancel-btn" class="modal-btn-secondary">Abbrechen</button>
       <button id="edit-save-btn" class="modal-btn-primary" style="flex:2;">Speichern</button>
@@ -3127,6 +3106,9 @@ window.openEditModal=function(entry){
   editCycleVal=!!entry.cycle;updateEditCyclePip();
   editMigraineVal=!!entry.migraine;updateEditMigrainePip();
   buildEditTagsGrid(entry.tags||[]);
+  const editNoteEl=document.getElementById('edit-note');
+  const editNoteChar=document.getElementById('edit-note-char');
+  if(editNoteEl){editNoteEl.value=entry.note||'';if(editNoteChar)editNoteChar.textContent=(entry.note||'').length+' / 500';}
   document.getElementById('edit-modal').classList.add('open');
 };
 
@@ -3144,11 +3126,56 @@ window.openAddModal=function(dateStr){
   editCycleVal=false;updateEditCyclePip();
   editMigraineVal=false;updateEditMigrainePip();
   buildEditTagsGrid([]);
+  const editNoteEl=document.getElementById('edit-note');
+  const editNoteChar=document.getElementById('edit-note-char');
+  if(editNoteEl){editNoteEl.value='';if(editNoteChar)editNoteChar.textContent='0 / 500';}
   document.getElementById('edit-modal').classList.add('open');
 };
 
 document.getElementById('edit-body').addEventListener('input',function(){document.getElementById('edit-body-val').textContent=this.value+'%';});
 document.getElementById('edit-emotion').addEventListener('input',function(){document.getElementById('edit-emotion-val').textContent=this.value+'%';});
+document.getElementById('edit-note').addEventListener('input',function(){document.getElementById('edit-note-char').textContent=this.value.length+' / 500';});
+
+// Mikrofon für Edit-Modal
+let editIsRecording=false;
+const editAudioBtn=document.getElementById('edit-audio-btn');
+let editRecognition=null;
+function stopEditRecording(){
+  editIsRecording=false;
+  if(editRecognition){try{editRecognition.stop();}catch(e){}}
+  editRecognition=null;
+  if(editAudioBtn){editAudioBtn.style.background='rgba(124,92,191,0.08)';editAudioBtn.style.borderColor='rgba(124,92,191,0.18)';editAudioBtn.style.color='var(--accent)';editAudioBtn.style.animation='';}
+}
+function startEditRecording(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){showToast('Spracheingabe nicht unterstützt');return;}
+  editIsRecording=true;
+  if(editAudioBtn){editAudioBtn.style.background='rgba(220,50,80,0.1)';editAudioBtn.style.borderColor='rgba(220,50,80,0.35)';editAudioBtn.style.color='#dc3250';editAudioBtn.style.animation='recPulse 1.2s ease-in-out infinite';}
+  editRecognition=new SR();
+  editRecognition.lang='de-DE';editRecognition.interimResults=true;editRecognition.continuous=false;
+  let final='';
+  editRecognition.onresult=(ev)=>{
+    let interim='';
+    for(let i=ev.resultIndex;i<ev.results.length;i++){
+      if(ev.results[i].isFinal)final+=ev.results[i][0].transcript;
+      else interim=ev.results[i][0].transcript;
+    }
+    const el=document.getElementById('edit-note');
+    if(el){el.value=final+(interim?' '+interim:'');document.getElementById('edit-note-char').textContent=el.value.length+' / 500';}
+  };
+  editRecognition.onerror=(e)=>{
+    if(e.error==='not-allowed')showToast('Mikrofon-Zugriff verweigert');
+    else if(e.error==='no-speech')showToast('Keine Sprache erkannt');
+    stopEditRecording();
+  };
+  editRecognition.onend=()=>{if(editIsRecording)stopEditRecording();};
+  try{editRecognition.start();}catch(e){stopEditRecording();}
+}
+if(editAudioBtn){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){editAudioBtn.style.display='none';}
+  else{editAudioBtn.addEventListener('click',()=>{if(editIsRecording)stopEditRecording();else startEditRecording();});}
+}
 document.getElementById('edit-cancel-btn').addEventListener('click',()=>document.getElementById('edit-modal').classList.remove('open'));
 document.getElementById('edit-modal').addEventListener('click',e=>{if(e.target===e.currentTarget)e.currentTarget.classList.remove('open');});
 
@@ -3157,6 +3184,7 @@ document.getElementById('edit-save-btn').addEventListener('click',async()=>{
   const bodyVal=parseInt(document.getElementById('edit-body').value);
   const emoVal=parseInt(document.getElementById('edit-emotion').value);
   const selectedTags=[...editActiveTags];
+  const editNoteVal=(document.getElementById('edit-note')?.value||'').trim();
 
   if(editModalMode==='edit'&&editTargetTs!==null){
     const idx=state.entries.findIndex(e=>e.ts===editTargetTs);
@@ -3165,13 +3193,14 @@ document.getElementById('edit-save-btn').addEventListener('click',async()=>{
       state.entries[idx].emotion=emoVal;state.entries[idx].tags=selectedTags;
       state.entries[idx].cycle=editCycleVal;
       state.entries[idx].migraine=editMigraineVal;
+      state.entries[idx].note=editNoteVal;
       saveLocal();
       if(fbConnected&&db&&currentUser){
         try{
           const{collection,query:fsQ,where,getDocs,updateDoc}=await import('https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js');
           const q=fsQ(collection(db,'logs'),where('uid','==',currentUser.uid),where('ts','==',editTargetTs));
           const snap=await getDocs(q);
-          snap.forEach(d=>updateDoc(d.ref,{time:timeVal,body:bodyVal,emotion:emoVal,tags:selectedTags,cycle:editCycleVal,migraine:editMigraineVal}));
+          snap.forEach(d=>updateDoc(d.ref,{time:timeVal,body:bodyVal,emotion:emoVal,tags:selectedTags,cycle:editCycleVal,migraine:editMigraineVal,note:editNoteVal}));
         }catch(e){console.warn('Firestore update failed:',e);}
       }
       showToast('Eintrag aktualisiert ✦');
@@ -3183,7 +3212,7 @@ document.getElementById('edit-save-btn').addEventListener('click',async()=>{
     const[hh,mm]=timeVal.split(':').map(Number);
     dateObj.setHours(hh,mm,0,0);
     const ts=dateObj.getTime();
-    const entry={ts,date:dateStr,time:timeVal,body:bodyVal,emotion:emoVal,tags:selectedTags,cycle:editCycleVal,migraine:editMigraineVal};
+    const entry={ts,date:dateStr,time:timeVal,body:bodyVal,emotion:emoVal,tags:selectedTags,cycle:editCycleVal,migraine:editMigraineVal,note:editNoteVal};
     state.entries.push(entry);state.entries.sort((a,b)=>b.ts-a.ts);
     saveLocal();await saveToFirestore(entry);
     showToast('Eintrag hinzugefügt ✦');
@@ -3381,7 +3410,7 @@ function showInstallBanner(){
   if(document.getElementById('install-banner')||isStandalone)return;
   const banner=document.createElement('div');banner.id='install-banner';
   banner.style.cssText=`position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:rgba(250,247,255,0.97);border:1px solid rgba(155,127,232,0.25);border-radius:18px;padding:11px 15px;z-index:150;display:flex;align-items:center;gap:11px;box-shadow:0 8px 28px rgba(140,110,200,0.2);backdrop-filter:blur(40px);opacity:0;transition:all 0.4s cubic-bezier(0.16,1,0.3,1);max-width:320px;width:calc(100% - 40px);`;
-  banner.innerHTML=`<span style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#9b7fe8;"><svg width="22" height="22" style="color:#9b7fe8;"><use href="#ic-phone"/></svg></span><div style="flex:1;"><div style="font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:500;color:#2d2540;">flux als App installieren</div><div style="font-size:11px;color:#9080b0;margin-top:1px;">Schneller Zugriff vom Homescreen</div></div><button id="install-yes" style="background:linear-gradient(135deg,#9b7fe8,#e8a4d0);border:none;border-radius:11px;color:#fff;font-size:12px;font-weight:600;padding:6px 12px;cursor:pointer;font-family:'Space Grotesk',sans-serif;white-space:nowrap;flex-shrink:0;">Installieren</button><button id="install-no" style="background:none;border:none;color:#b0a0c8;font-size:15px;cursor:pointer;padding:4px;line-height:1;flex-shrink:0;">✕</button>`;
+  banner.innerHTML=`<span style="width:34px;height:34px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="34" height="34" viewBox="0 0 120 60" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="bw1" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#c4a8f8"/><stop offset="100%" stop-color="#f4b8e8"/></linearGradient><linearGradient id="bw2" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#f4b8e8"/><stop offset="100%" stop-color="#d8c4fc"/></linearGradient></defs><path d="M8 20 C28 4 48 4 68 20 C88 36 108 36 128 20" fill="none" stroke="url(#bw1)" stroke-width="7" stroke-linecap="round"/><path d="M8 40 C28 56 48 56 68 40 C88 24 108 24 128 40" fill="none" stroke="url(#bw2)" stroke-width="7" stroke-linecap="round"/><circle cx="68" cy="30" r="5" fill="white" opacity="0.5"/></svg></span><div style="flex:1;"><div style="font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;color:#2d2540;letter-spacing:-0.2px;">flux installieren</div><div style="font-size:11px;color:#9080b0;margin-top:1px;">Schneller Zugriff vom Homescreen</div></div><button id="install-yes" style="background:linear-gradient(135deg,#9b7fe8,#e8a4d0);border:none;border-radius:11px;color:#fff;font-size:12px;font-weight:600;padding:6px 12px;cursor:pointer;font-family:'Space Grotesk',sans-serif;white-space:nowrap;flex-shrink:0;">Installieren</button><button id="install-no" style="background:none;border:none;color:#b0a0c8;font-size:15px;cursor:pointer;padding:4px;line-height:1;flex-shrink:0;">✕</button>`;
   document.body.appendChild(banner);
   requestAnimationFrame(()=>{banner.style.opacity='1';banner.style.transform='translateX(-50%) translateY(0)';});
   const dismiss=()=>{banner.style.opacity='0';banner.style.transform='translateX(-50%) translateY(20px)';setTimeout(()=>banner.remove(),400);};
@@ -3395,7 +3424,7 @@ function showIOSHint(){
   if(document.getElementById('ios-install-hint'))return;
   const hint=document.createElement('div');hint.id='ios-install-hint';
   hint.style.cssText=`position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(16px);background:rgba(250,247,255,0.97);border:1px solid rgba(155,127,232,0.25);border-radius:18px;padding:14px 18px;z-index:150;box-shadow:0 8px 28px rgba(140,110,200,0.2);backdrop-filter:blur(40px);opacity:0;transition:all 0.35s cubic-bezier(0.16,1,0.3,1);max-width:280px;width:calc(100% - 40px);text-align:center;`;
-  hint.innerHTML=`<div style="display:flex;justify-content:center;margin-bottom:7px;"><svg width="22" height="22" style="color:#9b7fe8;"><use href="#ic-phone"/></svg></div><div style="font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:500;color:#2d2540;margin-bottom:5px;">Zum Homescreen hinzufügen</div><div style="font-size:12px;color:#9080b0;line-height:1.6;">Tippe auf <span style="color:#9b7fe8;">Teilen</span> ⎙<br>dann <span style="color:#9b7fe8;">„Zum Home-Bildschirm"</span></div><button style="margin-top:11px;background:none;border:1px solid rgba(155,127,232,0.25);border-radius:10px;color:#b0a0c8;font-size:12px;padding:5px 14px;cursor:pointer;" onclick="this.closest('#ios-install-hint').remove();">OK</button>`;
+  hint.innerHTML=`<div style="display:flex;justify-content:center;margin-bottom:7px;"><svg width="38" height="22" viewBox="0 0 120 60" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="hw1" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#c4a8f8"/><stop offset="100%" stop-color="#f4b8e8"/></linearGradient><linearGradient id="hw2" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#f4b8e8"/><stop offset="100%" stop-color="#d8c4fc"/></linearGradient></defs><path d="M8 20 C28 4 48 4 68 20 C88 36 108 36 128 20" fill="none" stroke="url(#hw1)" stroke-width="7" stroke-linecap="round"/><path d="M8 40 C28 56 48 56 68 40 C88 24 108 24 128 40" fill="none" stroke="url(#hw2)" stroke-width="7" stroke-linecap="round"/><circle cx="68" cy="30" r="5" fill="white" opacity="0.5"/></svg></div><div style="font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;color:#2d2540;margin-bottom:5px;letter-spacing:-0.2px;">flux installieren</div><div style="font-size:12px;color:#9080b0;line-height:1.6;">Tippe auf <span style="color:#9b7fe8;">Teilen</span> ⎙<br>dann <span style="color:#9b7fe8;">„Zum Home-Bildschirm"</span></div><button style="margin-top:11px;background:none;border:1px solid rgba(155,127,232,0.25);border-radius:10px;color:#b0a0c8;font-size:12px;padding:5px 14px;cursor:pointer;" onclick="this.closest('#ios-install-hint').remove();">OK</button>`;
   document.body.appendChild(hint);
   requestAnimationFrame(()=>{hint.style.opacity='1';hint.style.transform='translateX(-50%) translateY(0)';});
   setTimeout(()=>{if(hint.parentNode){hint.style.opacity='0';setTimeout(()=>hint.remove(),350);}},8000);
