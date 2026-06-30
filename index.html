@@ -357,6 +357,10 @@ html,body{
   -webkit-backdrop-filter:blur(40px);
 }
 .month-nav-btn:active{transform:scale(0.9);background:var(--bg2);}
+.cal-desktop-layout{display:block;}
+.cal-main-col{width:100%;}
+.cal-side-col{width:100%;}
+.day-detail-placeholder{display:none;}
 .month-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:clamp(2px,1vw,5px);margin-top:6px;flex-shrink:0;width:100%;}
 .day-label{font-size:10px;letter-spacing:0.5px;text-transform:uppercase;color:var(--text-faint);text-align:center;padding-bottom:6px;font-weight:500;}
 .droplet-wrap{
@@ -424,6 +428,7 @@ html,body{
   color:rgba(200,60,80,0.7);font-size:16px;pointer-events:none;opacity:0;transition:opacity 0.15s;
 }
 .log-entry-row.swiping .swipe-delete-bg{opacity:1;}
+.log-delete-btn-desktop{ display:none; }
 .log-inner{position:relative;transition:transform 0.25s cubic-bezier(0.16,1,0.3,1);background:transparent;will-change:transform;}
 .log-entry-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
 .log-time{font-family:'Space Grotesk',sans-serif;font-size:13px;color:var(--accent);letter-spacing:0.4px;font-weight:600;}
@@ -595,6 +600,303 @@ input[type="date"]::-webkit-calendar-picker-indicator{opacity:0.4;}
   .stat-num{font-size:18px;}
   .stats-row{gap:6px;}
   .stat-pill{padding:10px 4px;}
+}
+
+/* ══════════════════════════════════════════════
+   DESKTOP LAYOUT ≥ 900px
+══════════════════════════════════════════════ */
+@media (min-width:900px){
+
+  /* Body scrollable on desktop */
+  html,body{
+    overflow:auto;
+    overscroll-behavior:auto;
+    touch-action:auto;
+    height:auto;
+    min-height:100vh;
+  }
+
+  /* Orbs — scale up subtly */
+  .orb1{width:700px;height:700px;}
+  .orb2{width:550px;height:550px;}
+  .orb3{width:360px;height:360px;}
+
+  /* ── App shell: sidebar links, screens rechts ── */
+  #app{
+    max-width:100%;
+    width:100%;
+    height:100vh;
+    flex-direction:row;
+    align-items:stretch;
+    padding:0;
+    gap:0;
+  }
+
+  /* Kein max-width auf #screens — füllt den Rest */
+  #screens{
+    flex:1;
+    overflow:hidden;
+    position:relative;
+    min-width:0;
+    height:100vh;
+  }
+
+  /* Screens scrollen, kein horizontal-clip */
+  .screen{
+    padding:0 clamp(20px,3vw,40px) 32px;
+    overflow-y:auto;
+    overflow-x:hidden;
+  }
+
+  /* Screen-Transition auf Desktop deaktivieren — kein Wischen */
+  .screen{
+    transition:opacity 0.22s ease !important;
+  }
+  .screen.left,
+  .screen.right{
+    transform:none !important;
+    opacity:0 !important;
+    pointer-events:none !important;
+  }
+  .screen.active{
+    transform:none !important;
+    opacity:1 !important;
+    pointer-events:all !important;
+  }
+
+  /* Logo im Screen-Header auf Desktop ausblenden */
+  .logo-text{ display:none !important; }
+
+  /* Dash-Header-Avatar ausblenden — Sidebar übernimmt das */
+  #user-avatar{ display:none !important; }
+
+  /* Install-FABs in Screens ausblenden */
+  #install-fab-0,#install-fab-1,#install-fab-2{ display:none !important; }
+
+  /* Nova-FAB ausblenden (Sidebar hat Button) */
+  #nova-fab{ display:none !important; }
+
+  /* ── Kein Touch auf Desktop: Lösch-Button statt Wischen ── */
+  .log-delete-btn-desktop{ display:inline-flex !important; align-items:center; justify-content:center; }
+  .log-delete-btn-desktop:hover{ background:rgba(200,60,80,0.08) !important; }
+  .swipe-delete-bg{ display:none !important; }
+  .gesture-hint{ display:none !important; }
+  .nav-dots{ display:none !important; }
+
+  /* Avatar-Dropdown — bei Sidebar-Trigger oben links */
+  #avatar-dropdown{
+    top:84px !important;
+    left:20px !important;
+    right:auto !important;
+    position:fixed !important;
+  }
+
+  /* Header auf Desktop */
+  .header{
+    padding-top:28px;
+    padding-bottom:16px;
+  }
+
+  /* Sidebar */
+  #desktop-sidebar{
+    display:flex !important;
+    flex-direction:column;
+    width:220px;
+    flex-shrink:0;
+    padding:28px 16px 24px;
+    border-right:1px solid rgba(255,255,255,0.30);
+    background:rgba(255,255,255,0.12);
+    backdrop-filter:blur(40px);
+    -webkit-backdrop-filter:blur(40px);
+    gap:4px;
+    height:100vh;
+    position:sticky;
+    top:0;
+    overflow-y:auto;
+  }
+
+  /* Slider-Cards etwas höher */
+  .slider-card{
+    height:clamp(300px,30vw,400px);
+  }
+
+  /* Modals zentriert */
+  .modal-overlay{
+    align-items:center;
+    justify-content:center;
+  }
+  .modal-sheet{
+    border-radius:28px !important;
+    border-bottom:1px solid var(--card-border) !important;
+    max-width:480px;
+    max-height:85vh;
+    transform:scale(0.95) !important;
+    transition:transform 0.32s cubic-bezier(0.16,1,0.3,1), opacity 0.22s ease !important;
+    opacity:0;
+  }
+  .modal-overlay.open .modal-sheet{
+    transform:scale(1) !important;
+    opacity:1;
+  }
+  .modal-handle{ display:none; }
+
+  /* Nova Chat — schwebendes Panel rechts unten */
+  #nova-chat-overlay{
+    align-items:flex-end;
+    justify-content:flex-end;
+    padding-bottom:24px;
+    padding-right:32px;
+  }
+
+  /* Stats grid */
+  .stats-row{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(100px,1fr));
+    gap:10px;
+  }
+
+  /* Droplet Hover */
+  .droplet-wrap:hover .droplet{
+    transform:scale(1.25) translateY(-3px);
+    box-shadow:0 4px 16px rgba(155,127,232,0.35);
+  }
+  .droplet-wrap{ cursor:pointer; }
+
+  /* Toast */
+  #toast{ bottom:32px; }
+
+  /* ── Kalender: großes Grid links, Tagesdetail rechts ── */
+  #calendar .scroll-content{ max-width:none; }
+  .cal-desktop-layout{
+    display:flex;
+    align-items:flex-start;
+    gap:32px;
+    max-width:1100px;
+    margin:0 auto;
+  }
+  .cal-main-col{
+    flex:1 1 600px;
+    min-width:0;
+  }
+  .cal-side-col{
+    flex:0 0 340px;
+    position:sticky;
+    top:8px;
+  }
+  .month-grid{
+    gap:8px;
+  }
+  .droplet{
+    max-width:48px;
+    max-height:48px;
+  }
+  .droplet-num{ font-size:11px; }
+  .day-detail{
+    margin-top:0 !important;
+  }
+  .day-detail-placeholder{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    min-height:240px;
+    text-align:center;
+    color:var(--text-faint);
+    font-size:13px;
+    line-height:1.6;
+    background:var(--card-bg);
+    border:1px solid var(--card-border);
+    border-radius:24px;
+    padding:24px;
+  }
+  .droplet-num{ font-size:9px; }
+
+  /* ── Wave Chart: mehr Höhe, kein Abschneiden ── */
+  .wave-chart{ height:160px !important; }
+  #wave-svg{ height:160px; }
+
+  /* ── Nova: Vollbild zentriert mit blur-Overlay, voll rund, breites Querformat ── */
+  #nova-chat-overlay{
+    align-items:center !important;
+    justify-content:center !important;
+    padding:0 !important;
+  }
+  #nova-chat-sheet{
+    height:min(640px,78vh) !important;
+    max-height:680px !important;
+    width:min(820px,90vw) !important;
+    max-width:min(820px,90vw) !important;
+    border-radius:28px !important;
+    overflow:hidden !important;
+    border:1px solid rgba(255,255,255,0.25) !important;
+    box-shadow:0 24px 80px rgba(80,50,140,0.28) !important;
+    transform:scale(0.96) translateY(16px) !important;
+    transition:transform 0.35s cubic-bezier(0.16,1,0.3,1), opacity 0.25s ease !important;
+    opacity:0;
+  }
+  #nova-chat-overlay.open #nova-chat-sheet,
+  #nova-chat-sheet[style*="scale(1)"]{
+    transform:scale(1) translateY(0) !important;
+    opacity:1 !important;
+  }
+
+} /* Ende @media (min-width:900px) */
+
+/* ── Sidebar hidden on mobile ── */
+#desktop-sidebar{ display:none; }
+
+.sidebar-logo{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:26px;font-weight:700;letter-spacing:-1px;font-style:italic;
+  background:linear-gradient(135deg,#7c5cbf 0%,#c060a8 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  padding:0 8px 20px;
+  display:block;flex-shrink:0;
+}
+.sidebar-nav-item{
+  display:flex;align-items:center;gap:11px;
+  padding:11px 14px;border-radius:16px;
+  font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:500;
+  color:var(--text-dim);cursor:pointer;
+  transition:all 0.18s ease;
+  border:1px solid transparent;
+  user-select:none;-webkit-tap-highlight-color:transparent;
+}
+.sidebar-nav-item:hover{
+  background:rgba(255,255,255,0.20);color:var(--text);
+  border-color:rgba(255,255,255,0.30);
+}
+.sidebar-nav-item.active{
+  background:rgba(124,92,191,0.12);color:var(--accent);
+  border-color:rgba(124,92,191,0.22);
+}
+.sidebar-nav-icon{
+  width:20px;height:20px;flex-shrink:0;display:flex;align-items:center;justify-content:center;
+}
+.sidebar-divider{
+  height:1px;background:rgba(155,127,232,0.12);margin:10px 8px;flex-shrink:0;
+}
+.sidebar-nova-btn{
+  margin-top:auto;display:flex;align-items:center;gap:11px;
+  padding:12px 14px;border-radius:16px;
+  background:linear-gradient(135deg,rgba(124,92,191,0.15),rgba(232,145,200,0.12));
+  border:1px solid rgba(124,92,191,0.22);
+  font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:500;
+  color:var(--accent);cursor:pointer;transition:all 0.18s;
+}
+.sidebar-nova-btn:hover{
+  background:linear-gradient(135deg,rgba(124,92,191,0.22),rgba(232,145,200,0.18));
+}
+.sidebar-settings-btn{
+  display:flex;align-items:center;gap:11px;
+  padding:11px 14px;border-radius:16px;
+  font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:500;
+  color:var(--text-dim);cursor:pointer;
+  transition:all 0.18s;border:1px solid transparent;margin-top:6px;
+}
+.sidebar-settings-btn:hover{
+  background:rgba(255,255,255,0.15);color:var(--text);
+  border-color:rgba(255,255,255,0.25);
 }
 
 /* Slider drag-handle cue */
@@ -1210,8 +1512,10 @@ input[type="date"]::-webkit-calendar-picker-indicator{opacity:0.4;}
   letter-spacing:-0.8px !important;
 }
 
-/* Nova chat sheet — rounder top */
-#nova-chat-sheet { border-radius:32px 32px 0 0 !important; }
+/* Nova chat sheet — rounder top (mobile bottom-sheet) */
+@media (max-width:899px){
+  #nova-chat-sheet { border-radius:32px 32px 0 0 !important; }
+}
 
 /* Nova FAB — subtle glow pulse */
 @keyframes fabGlow {
@@ -1549,6 +1853,19 @@ input[type="date"]::-webkit-calendar-picker-indicator{opacity:0.4;}
     <path d="M10 7c0-1 .5-1.5 1-2s.5-1.5 0-2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
     <path d="M13 7c0-1 .5-1.5 1-2s.5-1.5 0-2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
   </symbol>
+  <symbol id="ic-calendar" viewBox="0 0 20 20" fill="none">
+    <rect x="3" y="5" width="14" height="13" rx="3" stroke="currentColor" stroke-width="1.6"/>
+    <path d="M3 9h14" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+    <path d="M7 3v4M13 3v4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+    <circle cx="7" cy="13" r="1" fill="currentColor"/>
+    <circle cx="10" cy="13" r="1" fill="currentColor"/>
+    <circle cx="13" cy="13" r="1" fill="currentColor"/>
+  </symbol>
+  <symbol id="ic-bulb" viewBox="0 0 20 20" fill="none">
+    <path d="M10 3a5 5 0 0 1 3.5 8.5c-.5.5-.5 1-.5 1.5H7c0-.5 0-1-.5-1.5A5 5 0 0 1 10 3z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M7.5 16.5h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M8.5 18.5h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+  </symbol>
 </defs>
 </svg>
 
@@ -1560,6 +1877,7 @@ input[type="date"]::-webkit-calendar-picker-indicator{opacity:0.4;}
 
 <!-- ══ AUTH SCREEN ══ -->
 <div id="auth-screen">
+  <button id="auth-close-btn" title="Ohne Konto fortfahren" style="position:absolute;top:24px;right:24px;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25);color:rgba(255,255,255,0.85);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:17px;z-index:10;backdrop-filter:blur(8px);">✕</button>
   <div class="auth-card">
     <div class="auth-logo-wrap">
       <span class="auth-logo">flux</span>
@@ -1590,6 +1908,58 @@ input[type="date"]::-webkit-calendar-picker-indicator{opacity:0.4;}
 </div>
 
 <div id="app">
+
+  <!-- ── DESKTOP SIDEBAR ── -->
+  <div id="desktop-sidebar">
+    <span class="sidebar-logo">flux</span>
+
+    <!-- Avatar in Sidebar -->
+    <div id="sidebar-avatar-wrap" style="display:flex;align-items:center;gap:10px;padding:8px 14px 16px;border-bottom:1px solid rgba(155,127,232,0.12);margin-bottom:8px;cursor:pointer;">
+      <div id="sidebar-avatar-icon" style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,rgba(155,127,232,0.22),rgba(232,164,208,0.22));border:1px solid rgba(155,127,232,0.3);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;font-family:'Space Grotesk',sans-serif;color:var(--accent);flex-shrink:0;">?</div>
+      <div style="flex:1;min-width:0;">
+        <div id="sidebar-avatar-name" style="font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Kein Konto</div>
+        <div style="font-size:10px;color:var(--text-faint);margin-top:1px;">Profil & Einstellungen</div>
+      </div>
+    </div>
+
+    <div class="sidebar-nav-item active" id="snav-2" onclick="goTo(2)">
+      <span class="sidebar-nav-icon"><svg width="18" height="18" style="color:currentColor"><use href="#ic-body"/></svg></span>
+      Dashboard
+    </div>
+    <div class="sidebar-nav-item" id="snav-0" onclick="goTo(0)">
+      <span class="sidebar-nav-icon"><svg width="18" height="18" style="color:currentColor"><use href="#ic-sparkle"/></svg></span>
+      Einblicke
+    </div>
+    <div class="sidebar-nav-item" id="snav-3" onclick="goTo(3)">
+      <span class="sidebar-nav-icon"><svg width="18" height="18" style="color:currentColor"><use href="#ic-calendar"/></svg></span>
+      Kalender
+    </div>
+    <div class="sidebar-nav-item" id="snav-1" onclick="goTo(1)">
+      <span class="sidebar-nav-icon"><svg width="18" height="18" style="color:currentColor"><use href="#ic-bulb"/></svg></span>
+      Tipps
+    </div>
+
+    <div class="sidebar-divider"></div>
+
+    <div class="sidebar-nova-btn" id="desktop-nova-btn">
+      <svg width="18" height="18" viewBox="0 0 24 24"><path d="M12 1 L13.8 10.2 L23 12 L13.8 13.8 L12 23 L10.2 13.8 L1 12 L10.2 10.2 Z" fill="currentColor"/></svg>
+      Nova fragen
+    </div>
+
+    <div class="sidebar-settings-btn" id="desktop-settings-btn">
+      <span class="sidebar-nav-icon">⚙️</span>
+      Einstellungen
+    </div>
+  </div>
+
+  <!-- Avatar-Dropdown — eigenständig im DOM, unabhängig vom Header-Avatar, immer erreichbar -->
+  <div id="avatar-dropdown" style="display:none;position:fixed;top:80px;right:20px;background:rgba(250,247,255,0.98);border:1px solid var(--card-border);border-radius:16px;padding:8px;min-width:175px;box-shadow:0 8px 32px var(--shadow-md);z-index:1000;backdrop-filter:blur(16px);">
+    <div id="avatar-name" style="font-size:12px;color:var(--text-dim);padding:6px 10px 10px;border-bottom:1px solid rgba(155,127,232,0.1);margin-bottom:4px;font-family:'Space Grotesk',sans-serif;font-weight:500;"></div>
+    <button id="avatar-rename-btn" style="width:100%;text-align:left;background:none;border:none;color:var(--text);font-size:14px;padding:10px 10px;cursor:pointer;border-radius:10px;font-family:'Space Grotesk',sans-serif;min-height:44px;display:flex;align-items:center;gap:8px;transition:background 0.18s;"><svg width="16" height="16" style="color:var(--accent);flex-shrink:0;" aria-hidden="true"><use href="#ic-sparkle"/></svg> Name ändern</button>
+    <button id="avatar-login-btn" style="display:none;width:100%;text-align:left;background:none;border:none;color:var(--accent);font-size:14px;padding:10px 10px;cursor:pointer;border-radius:10px;font-family:'Space Grotesk',sans-serif;min-height:44px;align-items:center;gap:8px;transition:background 0.18s;"><svg width="16" height="16" style="color:var(--accent);flex-shrink:0;" viewBox="0 0 20 20" fill="none"><path d="M8 4l6 6-6 6M3 10h11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> Anmelden</button>
+    <button id="auth-logout-btn" style="width:100%;text-align:left;background:none;border:none;color:#c04060;font-size:14px;padding:10px 10px;cursor:pointer;border-radius:10px;font-family:'Space Grotesk',sans-serif;min-height:44px;display:flex;align-items:center;gap:8px;transition:background 0.18s;"><svg width="16" height="16" style="color:#c04060;flex-shrink:0;" aria-hidden="true"><use href="#ic-logout"/></svg> Abmelden</button>
+  </div>
+
   <div id="screens">
 
     <!-- ══ INSIGHTS ══ -->
@@ -1769,11 +2139,6 @@ input[type="date"]::-webkit-calendar-picker-indicator{opacity:0.4;}
           <div class="date-chip" id="dash-date"></div>
           <div id="user-avatar" style="display:none;position:relative;">
             <div id="avatar-btn" style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,rgba(155,127,232,0.2),rgba(232,164,208,0.2));border:1px solid rgba(155,127,232,0.3);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;user-select:none;color:var(--accent);font-weight:600;font-family:'Space Grotesk',sans-serif;">?</div>
-            <div id="avatar-dropdown" style="display:none;position:fixed;top:80px;right:20px;background:rgba(250,247,255,0.98);border:1px solid var(--card-border);border-radius:16px;padding:8px;min-width:175px;box-shadow:0 8px 32px var(--shadow-md);z-index:1000;backdrop-filter:blur(16px);">
-              <div id="avatar-name" style="font-size:12px;color:var(--text-dim);padding:6px 10px 10px;border-bottom:1px solid rgba(155,127,232,0.1);margin-bottom:4px;font-family:'Space Grotesk',sans-serif;font-weight:500;"></div>
-              <button id="avatar-rename-btn" style="width:100%;text-align:left;background:none;border:none;color:var(--text);font-size:14px;padding:10px 10px;cursor:pointer;border-radius:10px;font-family:'Space Grotesk',sans-serif;min-height:44px;display:flex;align-items:center;gap:8px;transition:background 0.18s;"><svg width="16" height="16" style="color:var(--accent);flex-shrink:0;" aria-hidden="true"><use href="#ic-sparkle"/></svg> Name ändern</button>
-              <button id="auth-logout-btn" style="width:100%;text-align:left;background:none;border:none;color:#c04060;font-size:14px;padding:10px 10px;cursor:pointer;border-radius:10px;font-family:'Space Grotesk',sans-serif;min-height:44px;display:flex;align-items:center;gap:8px;transition:background 0.18s;"><svg width="16" height="16" style="color:#c04060;flex-shrink:0;" aria-hidden="true"><use href="#ic-logout"/></svg> Abmelden</button>
-            </div>
           </div>
         </div>
       </div>
@@ -1878,20 +2243,30 @@ input[type="date"]::-webkit-calendar-picker-indicator{opacity:0.4;}
         </div>
       </div>
       <div class="scroll-content">
-        <div class="month-nav">
-          <button class="month-nav-btn" id="cal-prev">‹</button>
-          <div class="section-title" id="cal-month-label" style="margin:0;font-size:20px;"></div>
-          <button class="month-nav-btn" id="cal-next">›</button>
+        <div class="cal-desktop-layout">
+          <div class="cal-main-col">
+            <div class="month-nav">
+              <button class="month-nav-btn" id="cal-prev">‹</button>
+              <div class="section-title" id="cal-month-label" style="margin:0;font-size:20px;"></div>
+              <button class="month-nav-btn" id="cal-next">›</button>
+            </div>
+            <div class="month-grid" id="cal-grid"></div>
+            <div class="cal-legend">
+              <div class="legend-item"><div class="legend-dot" style="background:linear-gradient(135deg,#a8e8e0,#9b7fe8);"></div>Hoch</div>
+              <div class="legend-item"><div class="legend-dot" style="background:linear-gradient(135deg,#9b7fe8,#c4a9f5);"></div>Mittel</div>
+              <div class="legend-item"><div class="legend-dot" style="background:linear-gradient(135deg,#c4a9f5,#d8c8f0);"></div>Niedrig</div>
+              <div class="legend-item"><div class="legend-dot" style="background:#f090b8;width:6px;height:6px;"></div>Periode</div>
+              <div class="legend-item"><div class="legend-dot" style="background:#b060d0;width:6px;height:6px;"></div>Migräne</div>
+            </div>
+          </div>
+          <div class="cal-side-col">
+            <div id="day-detail-placeholder" class="day-detail-placeholder">
+              <span style="font-size:28px;display:block;margin-bottom:8px;opacity:0.5;">📅</span>
+              Wähle einen Tag aus,<br>um Details zu sehen
+            </div>
+            <div class="day-detail" id="day-detail" style="display:none;"></div>
+          </div>
         </div>
-        <div class="month-grid" id="cal-grid"></div>
-        <div class="cal-legend">
-          <div class="legend-item"><div class="legend-dot" style="background:linear-gradient(135deg,#a8e8e0,#9b7fe8);"></div>Hoch</div>
-          <div class="legend-item"><div class="legend-dot" style="background:linear-gradient(135deg,#9b7fe8,#c4a9f5);"></div>Mittel</div>
-          <div class="legend-item"><div class="legend-dot" style="background:linear-gradient(135deg,#c4a9f5,#d8c8f0);"></div>Niedrig</div>
-          <div class="legend-item"><div class="legend-dot" style="background:#f090b8;width:6px;height:6px;"></div>Periode</div>
-          <div class="legend-item"><div class="legend-dot" style="background:#b060d0;width:6px;height:6px;"></div>Migräne</div>
-        </div>
-        <div class="day-detail" id="day-detail" style="display:none;"></div>
         <div class="gesture-hint" style="margin-top:12px;padding-bottom:4px;">← Dashboard &nbsp;|&nbsp; Kalender</div>
       </div>
     </div>
@@ -1934,7 +2309,7 @@ input[type="date"]::-webkit-calendar-picker-indicator{opacity:0.4;}
       <!-- Initial greeting injected via JS -->
     </div>
     <!-- Input -->
-    <div style="padding:12px 14px max(env(safe-area-inset-bottom),16px);border-top:1px solid rgba(155,127,232,0.1);display:flex;gap:10px;align-items:flex-end;flex-shrink:0;background:rgba(253,251,255,0.95);border-radius:0 0 0 0;">
+    <div id="nova-input-footer" style="padding:12px 14px max(env(safe-area-inset-bottom),16px);border-top:1px solid rgba(155,127,232,0.1);display:flex;gap:10px;align-items:flex-end;flex-shrink:0;background:rgba(253,251,255,0.95);">
       <textarea id="nova-input" placeholder="Frag Nova…" rows="1" style="flex:1;background:rgba(155,127,232,0.07);border:1.5px solid rgba(155,127,232,0.2);border-radius:16px;padding:12px 14px;font-size:14px;font-family:'Inter',sans-serif;color:var(--text);outline:none;resize:none;max-height:100px;line-height:1.5;transition:border-color 0.2s;"></textarea>
       <button id="nova-send-btn" style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#7c5cbf,#e891c8);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 3px 12px rgba(124,92,191,0.35);transition:transform 0.15s,opacity 0.2s;">
         <svg width="18" height="18" viewBox="0 0 20 20" fill="none" style="color:white;"><path d="M3 10l14-7-7 14V10H3z" fill="currentColor"/></svg>
@@ -2386,6 +2761,9 @@ window.goTo = function(idx) {
     if(dot) dot.classList.toggle('active',i===idx);
     const navEl=document.getElementById(`nav-${i}`);
     if(navEl) navEl.classList.toggle('active',i===idx);
+    // Sidebar
+    const snavEl=document.getElementById(`snav-${i}`);
+    if(snavEl) snavEl.classList.toggle('active',i===idx);
   });
   state.current=idx;
   if(idx===0)updateInsights();
@@ -2393,7 +2771,19 @@ window.goTo = function(idx) {
   if(idx===3)buildCalendar();
 };
 
-// Swipe
+// Desktop settings button → Settings-Modal öffnen
+const desktopSettingsBtn=document.getElementById('desktop-settings-btn');
+if(desktopSettingsBtn) desktopSettingsBtn.addEventListener('click',()=>{
+  const savedName = localStorage.getItem('flux_display_name') || '';
+  document.getElementById('display-name-input').value = savedName;
+  selectedIconId = 'ic-tag';
+  buildSettingsTagsList();
+  buildIconCatalog();
+  document.getElementById('new-tag-name').value='';
+  document.getElementById('settings-modal').classList.add('open');
+});
+
+// Swipe — nur auf Touch-Geräten
 let tx=0,ty=0,tt=0,lastTap=0;
 document.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;ty=e.touches[0].clientY;tt=Date.now();},{passive:true});
 document.addEventListener('touchend',e=>{
@@ -2405,9 +2795,6 @@ document.addEventListener('touchend',e=>{
     if(dx>0&&state.current>0)goTo(state.current-1);
   }
 },{passive:true});
-let mx=0;
-document.addEventListener('mousedown',e=>{mx=e.clientX;});
-document.addEventListener('mouseup',e=>{const dx=e.clientX-mx;if(Math.abs(dx)>90){if(dx<0&&state.current<3)goTo(state.current+1);if(dx>0&&state.current>0)goTo(state.current-1);}});
 
 
 // ══════════════════════════════════════════════
@@ -2734,7 +3121,6 @@ function updateInsights() {
 }
 
 function drawWave(entries) {
-  const W=320, H=90;
   const dateMap = {};
   entries.forEach(e => {
     if (!dateMap[e.date]) dateMap[e.date] = {body:e.body, emotion:e.emotion, n:1};
@@ -2773,6 +3159,11 @@ function drawWave(entries) {
     labels = days.map(d => dayNames[new Date(d+'T12:00:00').getDay()]);
   }
 
+  const waveSvg = document.getElementById('wave-svg');
+  const chartRect = waveSvg ? waveSvg.getBoundingClientRect() : {width:320,height:90};
+  const W = Math.max(chartRect.width || 320, 320);
+  const H = Math.max(chartRect.height || 90, 90);
+  if(waveSvg) waveSvg.setAttribute('viewBox', `0 0 ${W} ${H}`);
   const waveEmpty = document.getElementById('wave-empty');
   const waveChart = document.querySelector('.wave-chart');
   const waveDays  = document.getElementById('wave-days');
@@ -2942,6 +3333,7 @@ function renderDayDetail(day,month,year,logs){
           <div class="log-time">${formatTime(e)} Uhr${cycleHtml}${migraineHtml}</div>
           <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;flex:1;margin-left:8px;">${tagsHtml}</div>
           <button data-edit-ts="${e.ts}" style="background:none;border:1px solid rgba(155,127,232,0.25);border-radius:8px;color:var(--accent);font-size:10px;padding:3px 7px;cursor:pointer;font-family:'Space Grotesk',sans-serif;flex-shrink:0;margin-left:6px;"><svg width="13" height="13" style="color:var(--accent);flex-shrink:0;" aria-hidden="true"><use href="#ic-edit"/></svg></button>
+          <button data-delete-ts="${e.ts}" class="log-delete-btn-desktop" style="background:none;border:1px solid rgba(200,60,80,0.25);border-radius:8px;color:#c83c50;font-size:10px;padding:3px 7px;cursor:pointer;font-family:'Space Grotesk',sans-serif;flex-shrink:0;margin-left:4px;"><svg width="13" height="13" style="color:#c83c50;flex-shrink:0;" aria-hidden="true"><use href="#ic-trash"/></svg></button>
         </div>
         <div class="log-metric-row">
           <div class="log-metric-label" style="display:flex;align-items:center;gap:3px;"><svg width="11" height="11" style="color:var(--accent);flex-shrink:0;" aria-hidden="true"><use href="#ic-body"/></svg> Körper</div>
@@ -2958,7 +3350,10 @@ function renderDayDetail(day,month,year,logs){
     </div>`;
   }).join('');
 
-  const closeHint=`<div class="detail-close-hint">↑ Nochmal klicken · ← wischen zum Löschen</div>`;
+  const isDesktopView = window.matchMedia('(min-width:900px)').matches;
+  const closeHint = isDesktopView
+    ? `<div class="detail-close-hint">↑ Nochmal klicken zum Schließen</div>`
+    : `<div class="detail-close-hint">↑ Nochmal klicken · ← wischen zum Löschen</div>`;
   detail.innerHTML=header+rows+closeHint;
 
   // + Log button
@@ -2972,6 +3367,15 @@ function renderDayDetail(day,month,year,logs){
       const ts=parseInt(btn.dataset.editTs);
       const entry=state.entries.find(en=>en.ts===ts);
       if(entry)window.openEditModal(entry);
+    });
+  });
+
+  // Delete buttons (Desktop — kein Touch/Wischen nötig)
+  detail.querySelectorAll('[data-delete-ts]').forEach(btn=>{
+    btn.addEventListener('click',e=>{
+      e.stopPropagation();
+      const ts=parseInt(btn.dataset.deleteTs);
+      deleteEntry(ts,day,month,year);
     });
   });
 
@@ -3001,18 +3405,26 @@ function renderDayDetail(day,month,year,logs){
   });
 }
 
+function syncDetailPlaceholder(){
+  const ph=document.getElementById('day-detail-placeholder');
+  const detail=document.getElementById('day-detail');
+  if(!ph||!detail)return;
+  ph.style.display=(detail.style.display==='none'||!detail.style.display)?'flex':'none';
+}
+
 function showDayDetail(day,month,year,logs){
   const detail=document.getElementById('day-detail');
   const key=`${year}-${month}-${day}`;
   if(selectedDetailKey===key&&detail.style.display!=='none'){
     detail.style.opacity='0';detail.style.transform='translateY(8px)';detail.style.transition='opacity 0.22s ease,transform 0.22s ease';
-    setTimeout(()=>{detail.style.display='none';detail.style.opacity='';detail.style.transform='';detail.style.transition='';},230);
+    setTimeout(()=>{detail.style.display='none';detail.style.opacity='';detail.style.transform='';detail.style.transition='';syncDetailPlaceholder();},230);
     selectedDetailKey=null;
     document.querySelectorAll('.droplet-wrap.selected').forEach(w=>w.classList.remove('selected'));
     return;
   }
   selectedDetailKey=key;
   detail.style.display='block';detail.classList.remove('visible');void detail.offsetWidth;detail.classList.add('visible');
+  syncDetailPlaceholder();
   document.querySelectorAll('.droplet-wrap.selected').forEach(w=>w.classList.remove('selected'));
   document.getElementById('cal-grid').querySelectorAll('.droplet-wrap').forEach(wrap=>{
     const numEl=wrap.querySelector('.droplet-num');if(numEl&&parseInt(numEl.textContent)===day)wrap.classList.add('selected');
@@ -3044,6 +3456,7 @@ async function deleteEntry(ts,day,month,year){
   const detail=document.getElementById('day-detail');
   if(remaining.length>0)renderDayDetail(day,month,year,remaining);
   else{detail.style.display='none';selectedDetailKey=null;}
+  syncDetailPlaceholder();
   showToast('Eintrag gelöscht ✓');
 }
 
@@ -3226,6 +3639,7 @@ document.getElementById('edit-save-btn').addEventListener('click',async()=>{
     const logs=state.entries.filter(e=>e.date===dateStr2);
     if(logs.length>0)renderDayDetail(kd,km,ky,logs);
     else{detail.style.display='none';selectedDetailKey=null;}
+    syncDetailPlaceholder();
   }
 });
 
@@ -3326,17 +3740,12 @@ document.getElementById('save-name-btn').addEventListener('click',()=>{
   if (name) {
     localStorage.setItem('flux_display_name', name);
     updateGreeting();
-    // Avatar sofort aktualisieren
-    const avatarBtn = document.getElementById('avatar-btn');
-    const avatarName = document.getElementById('avatar-name');
-    if(avatarBtn) avatarBtn.textContent = name.charAt(0).toUpperCase();
-    if(avatarName) avatarName.textContent = name;
+    setUserAvatar(currentUser);
     showToast(`Hallo, ${name}! ✦`);
   } else {
     localStorage.removeItem('flux_display_name');
     updateGreeting();
-    // Avatar zurücksetzen auf Firebase-Name
-    if(currentUser) setUserAvatar(currentUser);
+    setUserAvatar(currentUser);
     showToast('Name entfernt.');
   }
 });
@@ -3360,11 +3769,11 @@ document.getElementById('settings-modal').addEventListener('click',e=>{if(e.targ
 // ══════════════════════════════════════════════
 document.getElementById('cal-prev').addEventListener('click',()=>{
   state.viewMonth--;if(state.viewMonth<0){state.viewMonth=11;state.viewYear--;}
-  document.getElementById('day-detail').style.display='none';selectedDetailKey=null;buildCalendar();
+  document.getElementById('day-detail').style.display='none';selectedDetailKey=null;buildCalendar();syncDetailPlaceholder();
 });
 document.getElementById('cal-next').addEventListener('click',()=>{
   state.viewMonth++;if(state.viewMonth>11){state.viewMonth=0;state.viewYear++;}
-  document.getElementById('day-detail').style.display='none';selectedDetailKey=null;buildCalendar();
+  document.getElementById('day-detail').style.display='none';selectedDetailKey=null;buildCalendar();syncDetailPlaceholder();
 });
 
 // ══════════════════════════════════════════════
@@ -3471,7 +3880,27 @@ async function handleAuth(){
     setAuthError(msgs[e.code]||e.message);setAuthLoading(false);
   }
 }
-async function handleLogout(){if(!auth)return;const{signOut}=await import('https://www.gstatic.com/firebasejs/11.9.0/firebase-auth.js');await signOut(auth);}
+async function handleLogout(){
+  let didSignOut=false;
+  try{
+    if(auth && currentUser){const{signOut}=await import('https://www.gstatic.com/firebasejs/11.9.0/firebase-auth.js');await signOut(auth);didSignOut=true;}
+  }catch(e){console.warn('Signout error:',e);}
+  // Immer lokalen State zurücksetzen — App bleibt sichtbar, kein Zwang zurück zum Login
+  currentUser=null;fbConnected=false;
+  document.getElementById('avatar-dropdown').style.display='none';
+  localStorage.removeItem('flux_display_name');
+  setUserAvatar(null);
+  updateGreeting();
+  showToast('Abgemeldet.');
+  // App-Sichtbarkeit sicherstellen, falls onAuthStateChanged den Auth-Screen triggert
+  setTimeout(()=>{
+    const appEl=document.getElementById('app');
+    if(appEl && appEl.style.display==='none') hideAuthScreen();
+  }, 60);
+}
+
+// Logout-Button immer verdrahten (unabhängig von Firebase)
+document.getElementById('auth-logout-btn').onclick=()=>{ document.getElementById('avatar-dropdown').style.display='none'; handleLogout(); };
 
 function setFbDot(state){
   const dot=document.getElementById('fb-dot-inline');if(!dot)return;
@@ -3480,20 +3909,58 @@ function setFbDot(state){
   else{dot.style.background='rgba(155,127,232,0.25)';dot.style.boxShadow='none';}
 }
 function setUserAvatar(user){
-  const av=document.getElementById('user-avatar');if(!av)return;
+  const av=document.getElementById('user-avatar');
+  // Sidebar avatar
+  const sIcon=document.getElementById('sidebar-avatar-icon');
+  const sName=document.getElementById('sidebar-avatar-name');
+  const loginBtn=document.getElementById('avatar-login-btn');
+  const logoutBtn=document.getElementById('auth-logout-btn');
+
+  const localName = localStorage.getItem('flux_display_name');
+
   if(user){
-    av.style.display='block';
-    // Seed local name from Firebase profile if not yet set
-    if(!localStorage.getItem('flux_display_name') && user.displayName) {
-      localStorage.setItem('flux_display_name', user.displayName);
+    if(!localName && user.displayName) localStorage.setItem('flux_display_name', user.displayName);
+    const name = localStorage.getItem('flux_display_name') || user.displayName || user.email.split('@')[0];
+    if(av){
+      av.style.display='block';
+      const nameEl=document.getElementById('avatar-name');
+      const btnEl=document.getElementById('avatar-btn');
+      if(nameEl) nameEl.textContent=name;
+      if(btnEl) btnEl.textContent=name.charAt(0).toUpperCase();
     }
-    const localName = localStorage.getItem('flux_display_name');
-    const name = localName || user.displayName || user.email.split('@')[0];
-    document.getElementById('avatar-name').textContent = name;
-    document.getElementById('avatar-btn').textContent = name.charAt(0).toUpperCase();
+    if(sIcon) sIcon.textContent=name.charAt(0).toUpperCase();
+    if(sName) sName.textContent=name;
+    if(loginBtn) loginBtn.style.display='none';
+    if(logoutBtn) logoutBtn.style.display='flex';
+  } else {
+    const name = localName || null;
+    if(av){
+      av.style.display='block';
+      const nameEl=document.getElementById('avatar-name');
+      const btnEl=document.getElementById('avatar-btn');
+      if(nameEl) nameEl.textContent=name||'Kein Konto';
+      if(btnEl) btnEl.textContent=name?name.charAt(0).toUpperCase():'?';
+    }
+    if(sIcon) sIcon.textContent=name?name.charAt(0).toUpperCase():'?';
+    if(sName) sName.textContent=name||'Kein Konto';
+    if(loginBtn) loginBtn.style.display='flex';
+    if(logoutBtn) logoutBtn.style.display=name?'flex':'none';
   }
-  else{av.style.display='none';}
 }
+
+// Avatar direkt beim Start anzeigen
+setUserAvatar(null);
+
+// "Anmelden" im Avatar-Dropdown → Auth-Screen öffnen
+document.getElementById('avatar-login-btn').addEventListener('click',()=>{
+  document.getElementById('avatar-dropdown').style.display='none';
+  showAuthScreen();
+});
+
+// Auth-Screen schließen ohne Login (zurück zur App im lokalen Modus)
+document.getElementById('auth-close-btn').addEventListener('click',()=>{
+  hideAuthScreen();
+});
 
 // "Name ändern" im Avatar-Dropdown → Settings-Modal öffnen + Fokus auf Namensfeld
 document.addEventListener('click', e => {
@@ -3514,9 +3981,16 @@ document.addEventListener('click', e => {
   }
 });
 document.addEventListener('click',e=>{
-  const btn=document.getElementById('avatar-btn');const drop=document.getElementById('avatar-dropdown');if(!btn||!drop)return;
-  if(btn.contains(e.target)){drop.style.display=drop.style.display==='none'?'block':'none';}
-  else if(!drop.contains(e.target)){drop.style.display='none';}
+  const btn=document.getElementById('avatar-btn');
+  const sidebarTrigger=document.getElementById('sidebar-avatar-wrap');
+  const drop=document.getElementById('avatar-dropdown');
+  if(!drop)return;
+  const clickedTrigger=(btn&&btn.contains(e.target))||(sidebarTrigger&&sidebarTrigger.contains(e.target));
+  if(clickedTrigger){
+    drop.style.display=drop.style.display==='none'||!drop.style.display?'block':'none';
+  } else if(!drop.contains(e.target)){
+    drop.style.display='none';
+  }
 });
 
 async function saveToFirestore(entry){
@@ -3540,9 +4014,9 @@ async function initFirebase(){
     const{getAuth,onAuthStateChanged}=await import('https://www.gstatic.com/firebasejs/11.9.0/firebase-auth.js');
     const app=initializeApp(FIREBASE_CONFIG);db=getFirestore(app);auth=getAuth(app);
     document.getElementById('auth-btn').onclick=handleAuth;
-    document.getElementById('auth-logout-btn').onclick=()=>{document.getElementById('avatar-dropdown').style.display='none';handleLogout();};
     document.getElementById('auth-switch-btn').onclick=()=>switchAuthMode('register');
     document.getElementById('auth-password').addEventListener('keydown',e=>{if(e.key==='Enter')handleAuth();});
+    let authCheckDone=false;
     onAuthStateChanged(auth,async user=>{
       currentUser=user;
       if(user){
@@ -3561,7 +4035,14 @@ async function initFirebase(){
           state.entries.sort((a,b)=>b.ts-a.ts);saveLocal();updateInsights();buildCalendar();updateDayChart();
           showToast('Cloud synchronisiert');
         }catch(e){console.warn('Firestore load failed:',e);}
-      }else{fbConnected=false;setFbDot('off');setUserAvatar(null);showAuthScreen();}
+      }else{
+        fbConnected=false;setFbDot('off');setUserAvatar(null);
+        // Nur beim allerersten Check (kein vorheriger Login in dieser Session) den Auth-Screen zeigen.
+        // Nach manuellem Abmelden bleibt die App nutzbar (lokaler Modus).
+        if(!authCheckDone) showAuthScreen();
+        else hideAuthScreen();
+      }
+      authCheckDone=true;
     });
   }catch(e){console.warn('Firebase error:',e.message);hideAuthScreen();setFbDot('error');}
 }
@@ -3771,13 +4252,15 @@ if (window.visualViewport) {
 function openNovaChat() {
   const overlay = document.getElementById('nova-chat-overlay');
   const sheet   = document.getElementById('nova-chat-sheet');
+  const isDesktop = window.matchMedia('(min-width:900px)').matches;
   overlay.style.display = 'flex';
   _updateChatForViewport();
   requestAnimationFrame(() => requestAnimationFrame(() => {
-    overlay.style.background = 'rgba(40,25,70,0.55)';
-    overlay.style.backdropFilter = 'blur(14px)';
-    overlay.style.webkitBackdropFilter = 'blur(14px)';
-    sheet.style.transform = 'translateY(0)';
+    overlay.style.background = 'rgba(40,25,70,0.45)';
+    overlay.style.backdropFilter = 'blur(18px)';
+    overlay.style.webkitBackdropFilter = 'blur(18px)';
+    sheet.style.transform = 'scale(1) translateY(0)';
+    sheet.style.opacity = '1';
   }));
   if (novaChatHistory.length === 0) {
     const name = localStorage.getItem('flux_display_name') || '';
@@ -3796,7 +4279,9 @@ function openNovaChat() {
 function closeNovaChat() {
   const overlay = document.getElementById('nova-chat-overlay');
   const sheet   = document.getElementById('nova-chat-sheet');
-  sheet.style.transform = 'translateY(100%)';
+  const isDesktop = window.matchMedia('(min-width:900px)').matches;
+  sheet.style.transform = isDesktop ? 'scale(0.96) translateY(20px)' : 'translateY(100%)';
+  sheet.style.opacity = isDesktop ? '0' : '1';
   overlay.style.background = 'rgba(40,25,70,0)';
   overlay.style.backdropFilter = 'blur(0px)';
   overlay.style.webkitBackdropFilter = 'blur(0px)';
@@ -3810,9 +4295,12 @@ function closeNovaChat() {
 window.openNovaChat = openNovaChat;
 window.closeNovaChat = closeNovaChat;
 document.getElementById('nova-fab').addEventListener('click', openNovaChat);
+// Desktop sidebar Nova button
+const _dsNova = document.getElementById('desktop-nova-btn');
+if(_dsNova) _dsNova.addEventListener('click', openNovaChat);
 document.getElementById('nova-chat-close').addEventListener('click', closeNovaChat);
 document.getElementById('nova-chat-overlay').addEventListener('click', e => {
-  if(e.target === e.currentTarget) { document.getElementById('nova-chat-overlay').style.display='none'; }
+  if(e.target === e.currentTarget) { closeNovaChat(); }
 });
 document.getElementById('nova-send-btn').addEventListener('click', novaSend);
 document.getElementById('nova-input').addEventListener('keydown', e => {
